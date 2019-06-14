@@ -6,6 +6,8 @@ enum SUBID
 	//客户端命令结构
 	SUB_C_MANUALCARDS		= 1; // 手动摆牌 CMD_C_ManualCards
 	SUB_C_MAKESUREDUNHANDTY = 2; // 确定三墩牌型 CMD_C_MakesureDunHandTy
+	
+	SUB_S_COMPARECARDS      = 301;// 玩家之间两两比牌 CMD_S_CompareCards
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,11 +93,6 @@ message PlayerItem
 	optional EnumCards     enums   = 9; //枚举牌型
 	optional bytes cpy    		   = 10;//剩余牌
 	//optional GroupDunData group  = 11;//选择一组墩(含头墩/中墩/尾墩)
-	repeated ComparePlayer peers   = 11;//比牌对方  peers[GAME_PLAYER-1]
-	repeated CompareResult results = 12;//比牌结果results[GAME_PLAYER-1]
-	optional int32 allshoot        = 13;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
-	optional int32 fromchairId	   = 14;//若allshoot=-1被全垒打，记下全垒打桌椅ID
-	optional int32 deltascore	   = 15;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
 }
 ////////////////////////////////////////////////////////////////////////////////
 //游戏开始
@@ -111,6 +108,13 @@ message CMD_S_GameStart
 };
 ////////////////////////////////////////////////////////////////////////////////
 //手动摆牌
+message CMD_C_ManualCards
+{
+	optional int32 dt    = 1; //客户端选择了哪一墩，标记0-头/1-中/2-尾
+	optional bytes cards = 2; //客户端选择了哪些牌，作为一墩，后端用余牌再计算枚举
+}
+////////////////////////////////////////////////////////////////////////////////
+//手动摆牌
 message CMD_S_ManualCards
 {
 	optional EnumCards enums = 1; //枚举牌型
@@ -119,15 +123,19 @@ message CMD_S_ManualCards
 	optional bytes cpy       = 4; //剩余牌
 }
 ////////////////////////////////////////////////////////////////////////////////
-//手动摆牌
-message CMD_C_ManualCards
-{
-	optional int32 dt    = 1; //客户端选择了哪一墩，标记0-头/1-中/2-尾
-	optional bytes cards = 2; //客户端选择了哪些牌，作为一墩，后端用余牌再计算枚举
-}
-////////////////////////////////////////////////////////////////////////////////
 //确定牌型，所有玩家都确定牌型后比牌
 message CMD_C_MakesureDunHandTy
 {
 	required int32 groupindex = 1; //>=0从枚举的几组墩中选择一组，-1手动摆牌确认
+}
+////////////////////////////////////////////////////////////////////////////////
+//玩家之间两两比牌
+message CMD_S_CompareCards
+{
+	required PlayerItem player     = 1;//座椅玩家
+	repeated ComparePlayer peers   = 2;//比牌对方  peers[GAME_PLAYER-1]
+	repeated CompareResult results = 3;//比牌结果results[GAME_PLAYER-1]
+	optional int32 allshoot        = 4;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
+	optional int32 fromchairId	   = 5;//若allshoot=-1被全垒打，记下全垒打桌椅ID
+	optional int32 deltascore	   = 6;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
 }

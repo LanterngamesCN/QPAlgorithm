@@ -4433,7 +4433,7 @@ namespace S13S {
 				}
 				assert(c >= MIN_GAME_PLAYER);
 				//玩家之间两两比牌，头敦与头敦比，中墩与中墩比，尾墩与尾墩比
-				s13s::PlayerItem player_items[GAME_PLAYER];
+				s13s::CMD_S_CompareCards compareCards[GAME_PLAYER];
 				std::vector<std::vector<int>> vec;
 				CFuncC fnC;
 				fnC.FuncC(c, 2, vec);
@@ -4445,15 +4445,15 @@ namespace S13S {
 					int dst_chairid = chairIDs[(*it)[1]];//dst椅子ID
 					assert(src_chairid < GAME_PLAYER);
 					assert(dst_chairid < GAME_PLAYER);
-					player_items[src_chairid].set_chairid(src_chairid);
-					player_items[dst_chairid].set_chairid(dst_chairid);
+					compareCards[src_chairid].mutable_player()->set_chairid(src_chairid);
+					compareCards[dst_chairid].mutable_player()->set_chairid(dst_chairid);
 					//获取src确定的三墩牌型
 					S13S::CGameLogic::groupdun_t const *src = handInfos[src_chairid].GetSelected();
 					//获取dst确定的三墩牌型
 					S13S::CGameLogic::groupdun_t const *dst = handInfos[dst_chairid].GetSelected();
 					{
 						//追加src比牌对象 ////////////
-						s13s::ComparePlayer* src_peer = player_items[src_chairid].add_peers();
+						s13s::ComparePlayer* src_peer = compareCards[src_chairid].add_peers();
 						{
 							//比牌对象桌椅ID
 							src_peer->set_chairid(dst_chairid);
@@ -4478,11 +4478,11 @@ namespace S13S {
 							}
 						}
 						//追加src比牌结果 ////////////
-						s13s::CompareResult* src_result = player_items[src_chairid].add_results();
+						s13s::CompareResult* src_result = compareCards[src_chairid].add_results();
 					}
 					{
 						//追加dst比牌对象 ////////////
-						s13s::ComparePlayer* dst_peer = player_items[dst_chairid].add_peers();
+						s13s::ComparePlayer* dst_peer = compareCards[dst_chairid].add_peers();
 						{
 							//比牌对象桌椅ID
 							dst_peer->set_chairid(src_chairid);
@@ -4507,7 +4507,7 @@ namespace S13S {
 							}
 						}
 						//追加dst比牌结果 ////////////
-						s13s::CompareResult* dst_result = player_items[dst_chairid].add_results();
+						s13s::CompareResult* dst_result = compareCards[dst_chairid].add_results();
 					}
 					//////////////////////////////////////////////////////////////
 					//比较头敦
@@ -4561,10 +4561,10 @@ namespace S13S {
 							//头墩和
 							winner = src_chairid; loser = dst_chairid;
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//src比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//头墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4579,10 +4579,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//dst比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//头墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4601,10 +4601,10 @@ namespace S13S {
 						else if (handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Tysp ||
 								 handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty20) {
 								{
-									int index = player_items[winner].results_size() - 1;
+									int index = compareCards[winner].results_size() - 1;
 									assert(index >= 0);
 									//赢家比牌结果 ////////////
-									s13s::CompareResult* result = player_items[winner].mutable_results(index);
+									s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 									//头墩输赢信息
 									s13s::CompareItem* item = result->add_items();
 									{
@@ -4619,10 +4619,10 @@ namespace S13S {
 									}
 								}
 								{
-									int index = player_items[loser].results_size() - 1;
+									int index = compareCards[loser].results_size() - 1;
 									assert(index >= 0);
 									//输家比牌结果 ////////////
-									s13s::CompareResult* result = player_items[loser].mutable_results(index);
+									s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 									//头墩输赢信息
 									s13s::CompareItem* item = result->add_items();
 									{
@@ -4640,10 +4640,10 @@ namespace S13S {
 						//三条摆头敦获胜赢3水
 						else if (handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty30) {
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//赢家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//头墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4658,10 +4658,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//输家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//头墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4718,10 +4718,10 @@ namespace S13S {
 							//中墩和
 							winner = src_chairid; loser = dst_chairid;
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//src比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4736,10 +4736,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//dst比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4762,10 +4762,10 @@ namespace S13S {
 							handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty123 ||
 							handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Tysc) {
 								{
-									int index = player_items[winner].results_size() - 1;
+									int index = compareCards[winner].results_size() - 1;
 									assert(index >= 0);
 									//赢家比牌结果 ////////////
-									s13s::CompareResult* result = player_items[winner].mutable_results(index);
+									s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 									//中墩输赢信息
 									s13s::CompareItem* item = result->add_items();
 									{
@@ -4780,10 +4780,10 @@ namespace S13S {
 									}
 								}
 								{
-									int index = player_items[loser].results_size() - 1;
+									int index = compareCards[loser].results_size() - 1;
 									assert(index >= 0);
 									//输家比牌结果 ////////////
-									s13s::CompareResult* result = player_items[loser].mutable_results(index);
+									s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 									//中墩输赢信息
 									s13s::CompareItem* item = result->add_items();
 									{
@@ -4801,10 +4801,10 @@ namespace S13S {
 						//葫芦摆中敦获胜赢2水
 						else if (handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty32) {
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//赢家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4819,10 +4819,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//输家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4840,10 +4840,10 @@ namespace S13S {
 						//铁支摆中墩获胜赢8水
 						else if (handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty40) {
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//赢家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4858,10 +4858,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//输家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4879,10 +4879,10 @@ namespace S13S {
 						//同花顺摆中墩获胜赢10水
 						else if (handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty123sc) {
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//赢家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4897,10 +4897,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//输家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//中墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4957,10 +4957,10 @@ namespace S13S {
 							//尾墩和
 							winner = src_chairid; loser = dst_chairid;
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//src比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//尾墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -4975,10 +4975,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//dst比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//尾墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -5002,10 +5002,10 @@ namespace S13S {
 							handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Tysc ||
 							handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty32) {
 								{
-									int index = player_items[winner].results_size() - 1;
+									int index = compareCards[winner].results_size() - 1;
 									assert(index >= 0);
 									//赢家比牌结果 ////////////
-									s13s::CompareResult* result = player_items[winner].mutable_results(index);
+									s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 									//尾墩输赢信息
 									s13s::CompareItem* item = result->add_items();
 									{
@@ -5020,10 +5020,10 @@ namespace S13S {
 									}
 								}
 								{
-									int index = player_items[loser].results_size() - 1;
+									int index = compareCards[loser].results_size() - 1;
 									assert(index >= 0);
 									//输家比牌结果 ////////////
-									s13s::CompareResult* result = player_items[loser].mutable_results(index);
+									s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 									//尾墩输赢信息
 									s13s::CompareItem* item = result->add_items();
 									{
@@ -5041,10 +5041,10 @@ namespace S13S {
 						//铁支摆尾墩获胜赢4水
 						else if (handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty40) {
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//赢家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//尾墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -5059,10 +5059,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//输家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//尾墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -5080,10 +5080,10 @@ namespace S13S {
 						//同花顺摆尾墩获胜赢5水
 						else if (handInfos[winner].GetSelected()->duns[dt].ty_ == S13S::Ty123sc) {
 							{
-								int index = player_items[winner].results_size() - 1;
+								int index = compareCards[winner].results_size() - 1;
 								assert(index >= 0);
 								//赢家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[winner].mutable_results(index);
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//尾墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -5098,10 +5098,10 @@ namespace S13S {
 								}
 							}
 							{
-								int index = player_items[loser].results_size() - 1;
+								int index = compareCards[loser].results_size() - 1;
 								assert(index >= 0);
 								//输家比牌结果 ////////////
-								s13s::CompareResult* result = player_items[loser].mutable_results(index);
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//尾墩输赢信息
 								s13s::CompareItem* item = result->add_items();
 								{
@@ -5129,9 +5129,9 @@ namespace S13S {
 						//判断是否全垒打
 						int shootc = 0;
 						//遍历玩家所有比牌对象
-						for (int j = 0; j < player_items[i].peers_size(); ++j) {
-							//s13s::ComparePlayer const& peer = player_items[i].peers(j);
-							s13s::CompareResult const& result = player_items[i].results(j);
+						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
+							//s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+							s13s::CompareResult const& result = compareCards[i].results(j);
 							int winc = 0, lostc = 0, sumscore = 0;
 							assert(result.items_size() == 3);
 							//玩家与当前比牌对象比头/中/尾三墩输赢得水总分，不考虑打枪
@@ -5160,16 +5160,16 @@ namespace S13S {
 								const_cast<s13s::CompareResult&>(result).set_shoot(0);//-1被打枪/0不打枪/1打枪
 							}
 						}
-						if (shootc == player_items[i].peers_size() && player_items[i].peers_size() > 1) {
+						if (shootc == compareCards[i].peers_size() && compareCards[i].peers_size() > 1) {
 							//全垒打，玩家三墩全部胜过其它玩家，且至少打2枪，中枪者付给打枪者4倍的水
-							player_items[i].set_allshoot(1);//-1被全垒打/0无全垒打/1全垒打
+							compareCards[i].set_allshoot(1);//-1被全垒打/0无全垒打/1全垒打
 							for (int k = 0; k < GAME_PLAYER; ++k) {
 								if (true) {
 									if (k != i) {
 										//-1被全垒打/0无全垒打/1全垒打
-										player_items[k].set_allshoot(-1);
+										compareCards[k].set_allshoot(-1);
 										//allshoot=-1被全垒打，记下全垒打桌椅ID
-										player_items[k].set_fromchairid(i);
+										compareCards[k].set_fromchairid(i);
 									}
 								}
 							}
@@ -5182,19 +5182,19 @@ namespace S13S {
 						//玩家输赢得水总分
 						int deltascore = 0;
 						//遍历玩家所有比牌对象
-						for (int j = 0; j < player_items[i].peers_size(); ++j) {
-							s13s::ComparePlayer const& peer = player_items[i].peers(j);
-							s13s::CompareResult const& result = player_items[i].results(j);
+						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
+							s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+							s13s::CompareResult const& result = compareCards[i].results(j);
 							//1打枪(对当前比牌对象打枪)
 							if (result.shoot() == 1) {
 								//1全垒打
-								if (player_items[i].allshoot() == 1) {
+								if (compareCards[i].allshoot() == 1) {
 									//-1被全垒打/0无全垒打/1全垒打
 									deltascore += 4 * result.score();
 								}
 								else {
 									//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
-									if (player_items[i].allshoot() == -1) {
+									if (compareCards[i].allshoot() == -1) {
 									}
 									else {
 									}
@@ -5205,9 +5205,9 @@ namespace S13S {
 							//-1被打枪(被当前比牌对象打枪)
 							else if(result.shoot() == -1) {
 								//-1被全垒打
-								if (player_items[i].allshoot() == -1) {
+								if (compareCards[i].allshoot() == -1) {
 									//被当前比牌对象全垒打
-									if (peer.chairid() == player_items[i].fromchairid()) {
+									if (peer.chairid() == compareCards[i].fromchairid()) {
 										//-1被全垒打/0无全垒打/1全垒打
 										deltascore += 4 * result.score();
 									}
@@ -5225,18 +5225,18 @@ namespace S13S {
 							//0不打枪(与当前比牌对象互不打枪)
 							else {
 								//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
-								if (player_items[i].allshoot() == -1) {
+								if (compareCards[i].allshoot() == -1) {
 								}
 								else {
 									//一定不是全垒打，-1被打枪/0不打枪/1打枪
-									assert(player_items[i].allshoot() == 0);
+									assert(compareCards[i].allshoot() == 0);
 								}
 								assert(result.shoot() == 0);
 								deltascore += result.score();
 							}
 						}
 						//玩家输赢得水总分
-						player_items[i].set_deltascore(deltascore);
+						compareCards[i].set_deltascore(deltascore);
 					}
 				}
 				//json格式在线view工具：http://www.bejson.com/jsonviewernew/
@@ -5247,14 +5247,14 @@ namespace S13S {
 							//序列化std::string
 							//std::string data = rspdata.SerializeAsString();
 							//序列化bytes
-							int len = player_items[i].ByteSize();//len
+							int len = compareCards[i].ByteSize();//len
 							uint8_t *data = new uint8_t[len];
-							player_items[i].SerializeToArray(data, len);//data
-							std::string const& typeName = player_items[i].GetTypeName();//typename
+							compareCards[i].SerializeToArray(data, len);//data
+							std::string const& typeName = compareCards[i].GetTypeName();//typename
 							delete[] data;
 							//转换json格式
 							std::string jsonstr;
-							PB2JSON::Pb2Json::PbMsg2JsonStr(player_items[i], jsonstr, true);
+							PB2JSON::Pb2Json::PbMsg2JsonStr(compareCards[i], jsonstr, true);
 							printf("\n--- *** {\"%s\":\n", typeName.c_str());
 							printf("%s}\n\n", jsonstr.c_str());
 						}
