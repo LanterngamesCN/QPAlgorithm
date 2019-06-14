@@ -3897,18 +3897,18 @@ namespace S13S {
 							group->set_specialty(it->specialTy);
 							//[0]头敦(3)/[1]中墩(5)/[2]尾墩(5)
 							printf("第[%d]组\t=>>\t", j++ + 1);
-							for (int i = S13S::DunFirst; i <= S13S::DunLast; ++i) {
+							for (int k = S13S::DunFirst; k <= S13S::DunLast; ++k) {
 								//[0]头敦(3)/[1]中墩(5)/[2]尾墩(5)
 								s13s::DunData* dun_i = group->add_duns();
 								//标记0-头/1-中/2-尾
-								dun_i->set_id(i);
+								dun_i->set_id(k);
 								//墩对应普通牌型
-								dun_i->set_ty(it->duns[i].ty_);
+								dun_i->set_ty(it->duns[k].ty_);
 								//墩对应牌数c(3/5/5)
-								dun_i->set_c(it->duns[i].c);
+								dun_i->set_c(it->duns[k].c);
 								//墩牌数据(头墩(3)/中墩(5)/尾墩(5))
-								dun_i->set_cards(it->duns[i].cards, it->duns[i].c);
-								printf("dun[%d] c:=%d\t", i, it->duns[i].c);
+								dun_i->set_cards(it->duns[k].cards, it->duns[k].c);
+								printf("dun[%d] c:=%d\t", k, it->duns[k].c);
 							}
 							printf("\n\n");
 						}
@@ -4209,12 +4209,16 @@ namespace S13S {
 					if (true) {
 						//手牌排序
 						S13S::CGameLogic::SortCards(&(handCards[i])[0], MAX_COUNT, true, true, true);
-						printf("\n\n========================================================================\n");
-						printf("--- *** chairID = [%d]\n", i);
+						//printf("\n\n========================================================================\n");
+						//printf("--- *** chairID = [%d]\n", i);
 						//一副手牌
-						S13S::CGameLogic::PrintCardList(&(handCards[i])[0], MAX_COUNT);
+						//S13S::CGameLogic::PrintCardList(&(handCards[i])[0], MAX_COUNT);
 						//手牌牌型分析
 						int c = S13S::CGameLogic::AnalyseHandCards(&(handCards[i])[0], MAX_COUNT, enum_group_sz, handInfos[i]);
+						//有特殊牌型时
+						//if (handInfos[i].specialTy_ == S13S::TyNil) {
+						//	goto restart;
+						//}
 						//查看所有枚举牌型
 						handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
 						//查看手牌枚举三墩牌型
@@ -5164,6 +5168,8 @@ namespace S13S {
 									if (k != i) {
 										//-1被全垒打/0无全垒打/1全垒打
 										player_items[k].set_allshoot(-1);
+										//allshoot=-1被全垒打，记下全垒打桌椅ID
+										player_items[k].set_fromchairid(i);
 									}
 								}
 							}
@@ -5177,9 +5183,9 @@ namespace S13S {
 						int deltascore = 0;
 						//遍历玩家所有比牌对象
 						for (int j = 0; j < player_items[i].peers_size(); ++j) {
-							//s13s::ComparePlayer const& peer = player_items[i].peers(j);
+							s13s::ComparePlayer const& peer = player_items[i].peers(j);
 							s13s::CompareResult const& result = player_items[i].results(j);
-							//1打枪
+							//1打枪(对当前比牌对象打枪)
 							if (result.shoot() == 1) {
 								//1全垒打
 								if (player_items[i].allshoot() == 1) {
@@ -5187,31 +5193,45 @@ namespace S13S {
 									deltascore += 4 * result.score();
 								}
 								else {
+									//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+									if (player_items[i].allshoot() == -1) {
+									}
+									else {
+									}
 									//-1被打枪/0不打枪/1打枪
-									assert(player_items[i].allshoot() == 0);
-									//player_items[i].set_allshoot(0);
 									deltascore += 2 * result.score();
 								}
 							}
-							//-1被打枪
+							//-1被打枪(被当前比牌对象打枪)
 							else if(result.shoot() == -1) {
 								//-1被全垒打
 								if (player_items[i].allshoot() == -1) {
-									//-1被全垒打/0无全垒打/1全垒打
-									deltascore += 4 * result.score();
+									//被当前比牌对象全垒打
+									if (peer.chairid() == player_items[i].fromchairid()) {
+										//-1被全垒打/0无全垒打/1全垒打
+										deltascore += 4 * result.score();
+									}
+									//被另外比牌对象全垒打
+									else {
+										//-1被打枪/0不打枪/1打枪
+										deltascore += 2 * result.score();
+									}
 								}
 								else {
 									//-1被打枪/0不打枪/1打枪
-									assert(player_items[i].allshoot() == 0);
-									//player_items[i].set_allshoot(0);
 									deltascore += 2 * result.score();
 								}
 							}
-							//0不打枪
+							//0不打枪(与当前比牌对象互不打枪)
 							else {
+								//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+								if (player_items[i].allshoot() == -1) {
+								}
+								else {
+									//一定不是全垒打，-1被打枪/0不打枪/1打枪
+									assert(player_items[i].allshoot() == 0);
+								}
 								assert(result.shoot() == 0);
-								assert(player_items[i].allshoot() == 0);
-								//player_items[i].set_allshoot(0);
 								deltascore += result.score();
 							}
 						}
@@ -5241,7 +5261,7 @@ namespace S13S {
 					}
 				}
 			}
-		} while ('q' != getchar());
+		} while (true/*'q' != getchar()*/);
 	}
 #if 0
 	//从src中抽取连续n张牌到dst中

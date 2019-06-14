@@ -81,16 +81,33 @@ message CompareResult
 message PlayerItem
 {
 	required int32 chairId 		   = 1; //座椅ID
-	repeated ComparePlayer peers   = 2;//比牌对方
-	repeated CompareResult results = 3;//比牌结果
-	optional int32 allshoot        = 4;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
-	optional int32 deltascore	   = 5;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
+	optional int64 userId		   = 2; //玩家ID
+	optional string nickname 	   = 3; //昵称
+	optional int32 headId		   = 4; //头像ID
+	optional int32 status		   = 5; //玩家状态
+	optional int64 score		   = 6; //玩家积分
+	optional string	location	   = 7; //玩家位置
+	optional HandCards handCards   = 8; //手牌数据
+	optional EnumCards     enums   = 9; //枚举牌型
+	optional bytes cpy    		   = 10;//剩余牌
+	//optional GroupDunData group  = 11;//选择一组墩(含头墩/中墩/尾墩)
+	repeated ComparePlayer peers   = 11;//比牌对方
+	repeated CompareResult results = 12;//比牌结果
+	optional int32 allshoot        = 13;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
+	optional int32 fromchairId	   = 14;//若allshoot=-1被全垒打，记下全垒打桌椅ID
+	optional int32 deltascore	   = 15;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
 }
 ////////////////////////////////////////////////////////////////////////////////
 //游戏开始
 message CMD_S_GameStart
 {
 	required HandCards handCards  = 1; //手牌数据
+	optional int64 ceilScore      = 2; //基础积分
+	//repeated PlayerItem players = 3; //座椅玩家
+	repeated int32 playstatus     = 3; //玩家状态[GAME_PLAYER]
+	repeated int64 userscore      = 4; //玩家积分[GAME_PLAYER]
+	optional int32 wTimeLeft      = 5; //剩余时间
+	optional string roundId       = 6; //牌局标识
 };
 ////////////////////////////////////////////////////////////////////////////////
 //手动摆牌
