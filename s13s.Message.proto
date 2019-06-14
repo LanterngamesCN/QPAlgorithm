@@ -91,8 +91,8 @@ message PlayerItem
 	optional EnumCards     enums   = 9; //枚举牌型
 	optional bytes cpy    		   = 10;//剩余牌
 	//optional GroupDunData group  = 11;//选择一组墩(含头墩/中墩/尾墩)
-	repeated ComparePlayer peers   = 11;//比牌对方
-	repeated CompareResult results = 12;//比牌结果
+	repeated ComparePlayer peers   = 11;//比牌对方  peers[GAME_PLAYER-1]
+	repeated CompareResult results = 12;//比牌结果results[GAME_PLAYER-1]
 	optional int32 allshoot        = 13;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
 	optional int32 fromchairId	   = 14;//若allshoot=-1被全垒打，记下全垒打桌椅ID
 	optional int32 deltascore	   = 15;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
