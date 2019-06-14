@@ -4248,7 +4248,7 @@ namespace S13S {
 								//第一次点击手动摆牌按钮，获取初始所有枚举牌型，reqdata传空数据
 								break;
 							}
-							case 2:{
+							case 2: {
 								//第二次从13张手牌中随机抽5张放入尾墩
 								int j = RandomBetween(0, MAX_COUNT - 5);
 								reqdata.set_dt(S13S::DunLast);
@@ -5246,7 +5246,7 @@ namespace S13S {
 					if (true) {
 						{
 							//序列化std::string
-							//std::string data = rspdata.SerializeAsString();
+							//std::string data = compareCards[i].SerializeAsString();
 							//序列化bytes
 							int len = compareCards[i].ByteSize();//len
 							uint8_t *data = new uint8_t[len];
