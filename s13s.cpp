@@ -4209,10 +4209,10 @@ namespace S13S {
 					if (true) {
 						//手牌排序
 						S13S::CGameLogic::SortCards(&(handCards[i])[0], MAX_COUNT, true, true, true);
-						//printf("\n\n========================================================================\n");
-						//printf("--- *** chairID = [%d]\n", i);
+						printf("\n\n========================================================================\n");
+						printf("--- *** chairID = [%d]\n", i);
 						//一副手牌
-						//S13S::CGameLogic::PrintCardList(&(handCards[i])[0], MAX_COUNT);
+						S13S::CGameLogic::PrintCardList(&(handCards[i])[0], MAX_COUNT);
 						//手牌牌型分析
 						int c = S13S::CGameLogic::AnalyseHandCards(&(handCards[i])[0], MAX_COUNT, enum_group_sz, handInfos[i]);
 						//有特殊牌型时
@@ -4220,11 +4220,11 @@ namespace S13S {
 						//	goto restart;
 						//}
 						//查看所有枚举牌型
-						handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
+						//handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
 						//查看手牌枚举三墩牌型
 						handInfos[i].PrintEnumCards();
 						//查看重复牌型和散牌
-						handInfos[i].classify.PrintCardList();
+						//handInfos[i].classify.PrintCardList();
 						printf("--- *** c = %d %s\n\n\n\n", c, handInfos[i].StringSpecialTy().c_str());
 					}
 				}
@@ -4437,7 +4437,7 @@ namespace S13S {
 				std::vector<std::vector<int>> vec;
 				CFuncC fnC;
 				fnC.FuncC(c, 2, vec);
-				CFuncC::Print(vec);
+				//CFuncC::Print(vec);
 				for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 					it != vec.end(); ++it) {
 					assert(it->size() == 2);//两两比牌
@@ -5261,7 +5261,7 @@ namespace S13S {
 					}
 				}
 			}
-		} while (true/*'q' != getchar()*/);
+		} while ('q' != getchar());
 	}
 #if 0
 	//从src中抽取连续n张牌到dst中
