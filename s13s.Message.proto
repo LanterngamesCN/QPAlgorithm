@@ -59,7 +59,7 @@ message EnumCards
 message ComparePlayer
 {
 	required int32 chairId 		 = 1; //座椅ID
-	required GroupDunData group  = 2; //选择一组墩(含头墩/中墩/尾墩)
+	required GroupDunData group  = 2; //比牌对方选择一组墩(含头墩/中墩/尾墩)
 	required int32 deltascore    = 3; //比牌对方输赢得水总分 玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ message PlayerItem
 	optional HandCards handCards   = 8; //手牌数据
 	optional EnumCards     enums   = 9; //枚举牌型
 	optional bytes cpy    		   = 10;//剩余牌
-	//optional GroupDunData group  = 11;//选择一组墩(含头墩/中墩/尾墩)
+	optional GroupDunData group    = 11;//座椅玩家选择一组墩(含头墩/中墩/尾墩)
 }
 ////////////////////////////////////////////////////////////////////////////////
 //游戏开始

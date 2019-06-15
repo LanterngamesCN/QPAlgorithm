@@ -4424,17 +4424,41 @@ namespace S13S {
 						}
 					}
 				}
+				//玩家之间两两比牌，头敦与头敦比，中墩与中墩比，尾墩与尾墩比
+				s13s::CMD_S_CompareCards compareCards[GAME_PLAYER];
 				//所有玩家牌型都确认了，比牌
 				int c = 0;
 				int chairIDs[GAME_PLAYER] = { 0 };
 				for (int i = 0; i < GAME_PLAYER; ++i) {
 					if (true) {
+						//用于求两两组合
 						chairIDs[c++] = i;
+						//比牌玩家桌椅ID
+						compareCards[i].mutable_player()->set_chairid(i);
+						//获取座椅玩家确定的三墩牌型
+						S13S::CGameLogic::groupdun_t const *player_select = handInfos[i].GetSelected();
+						//桌椅玩家选择一组墩(含头墩/中墩/尾墩)
+						s13s::GroupDunData* player_group = compareCards[i].mutable_player()->mutable_group();
+						//从哪墩开始的
+						player_group->set_start(S13S::DunFirst);
+						//总体对应特殊牌型
+						player_group->set_specialty(player_select->specialTy);
+						//[0]头敦(3)/[1]中墩(5)/[2]尾墩(5)
+						for (int d = S13S::DunFirst; d <= S13S::DunLast; ++d) {
+							//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
+							s13s::DunData* player_dun_i = player_group->add_duns();
+							//标记0-头/1-中/2-尾
+							player_dun_i->set_id(d);
+							//墩对应普通牌型
+							player_dun_i->set_ty(player_select->duns[d].ty_);
+							//墩对应牌数c(3/5/5)
+							player_dun_i->set_c(player_select->duns[d].c);
+							//墩牌数据(头墩(3)/中墩(5)/尾墩(5))
+							player_dun_i->set_cards(player_select->duns[d].cards, player_select->duns[d].c);
+						}
 					}
 				}
 				assert(c >= MIN_GAME_PLAYER);
-				//玩家之间两两比牌，头敦与头敦比，中墩与中墩比，尾墩与尾墩比
-				s13s::CMD_S_CompareCards compareCards[GAME_PLAYER];
 				std::vector<std::vector<int>> vec;
 				CFuncC fnC;
 				fnC.FuncC(c, 2, vec);
@@ -4446,8 +4470,6 @@ namespace S13S {
 					int dst_chairid = chairIDs[(*it)[1]];//dst椅子ID
 					assert(src_chairid < GAME_PLAYER);
 					assert(dst_chairid < GAME_PLAYER);
-					compareCards[src_chairid].mutable_player()->set_chairid(src_chairid);
-					compareCards[dst_chairid].mutable_player()->set_chairid(dst_chairid);
 					//获取src确定的三墩牌型
 					S13S::CGameLogic::groupdun_t const *src = handInfos[src_chairid].GetSelected();
 					//获取dst确定的三墩牌型
