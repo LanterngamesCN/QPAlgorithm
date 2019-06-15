@@ -5249,7 +5249,7 @@ namespace S13S {
 							int sumscore = 0;
 							//遍历比牌对象
 							for (int j = 0; j < compareCards[i].peers_size(); ++j) {
-								s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+								//s13s::ComparePlayer const& peer = compareCards[i].peers(j);
 								s13s::CompareResult const& result = compareCards[i].results(j);
 								//累加指定墩输赢得水积分
 								sumscore += result.items(d).score();
