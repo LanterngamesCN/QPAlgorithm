@@ -5241,6 +5241,16 @@ namespace S13S {
 						compareCards[i].set_deltascore(deltascore);
 					}
 				}
+				//比牌对方输赢得水总分
+				for (int i = 0; i < GAME_PLAYER; ++i) {
+					if (true) {
+						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
+							s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+							const_cast<s13s::ComparePlayer&>(peer).set_deltascore(
+								compareCards[peer.chairid()].deltascore());
+						}
+					}
+				}
 				//json格式在线view工具：http://www.bejson.com/jsonviewernew/
 				//玩家之间两两比牌输赢得水总分明细，包括打枪/全垒打
 				for (int i = 0; i < GAME_PLAYER; ++i) {

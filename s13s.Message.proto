@@ -60,6 +60,7 @@ message ComparePlayer
 {
 	required int32 chairId 		 = 1; //座椅ID
 	required GroupDunData group  = 2; //选择一组墩(含头墩/中墩/尾墩)
+	required int32 deltascore    = 3; //玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
 }
 ////////////////////////////////////////////////////////////////////////////////
 //单墩比输赢
@@ -133,9 +134,11 @@ message CMD_C_MakesureDunHandTy
 message CMD_S_CompareCards
 {
 	required PlayerItem player     = 1;//座椅玩家
-	repeated ComparePlayer peers   = 2;//比牌对方  peers[GAME_PLAYER-1]
-	repeated CompareResult results = 3;//比牌结果results[GAME_PLAYER-1]
-	optional int32 allshoot        = 4;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
-	optional int32 fromchairId	   = 5;//若allshoot=-1被全垒打，记下全垒打桌椅ID
-	optional int32 deltascore	   = 6;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
+	repeated int32 itemscores      = 2;//座椅玩家与其余玩家各墩比总输赢
+	repeated ComparePlayer peers   = 3;//比牌对方  peers[GAME_PLAYER-1]
+	repeated CompareResult results = 4;//比牌结果results[GAME_PLAYER-1]
+	optional int32 allshoot        = 5;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
+	optional int32 fromchairId	   = 6;//若allshoot=-1被全垒打，记下全垒打桌椅ID
+	optional int32 deltascore	   = 7;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
+	optional int32 wTimeLeft       = 8;//剩余时间
 }
