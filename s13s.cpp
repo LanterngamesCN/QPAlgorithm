@@ -5164,6 +5164,7 @@ namespace S13S {
 						if (shootc == compareCards[i].peers_size() && compareCards[i].peers_size() > 1) {
 							//全垒打，玩家三墩全部胜过其它玩家，且至少打2枪，中枪者付给打枪者4倍的水
 							compareCards[i].set_allshoot(1);//-1被全垒打/0无全垒打/1全垒打
+							//其它比牌对象都是被全垒打
 							for (int k = 0; k < GAME_PLAYER; ++k) {
 								if (true) {
 									if (k != i) {
