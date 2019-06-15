@@ -5241,6 +5241,24 @@ namespace S13S {
 						compareCards[i].set_deltascore(deltascore);
 					}
 				}
+				//座椅玩家与其余玩家按墩比输赢分，不含打枪/全垒打
+				for (int i = 0; i < GAME_PLAYER; ++i) {
+					if (true) {
+						//遍历各墩(头墩/中墩/尾墩)
+						for (int d = S13S::DunFirst; d <= S13S::DunLast; ++d) {
+							int sumscore = 0;
+							//遍历比牌对象
+							for (int j = 0; j < compareCards[i].peers_size(); ++j) {
+								s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+								s13s::CompareResult const& result = compareCards[i].results(j);
+								//累加指定墩输赢得水积分
+								sumscore += result.items(d).score();
+							}
+							//座椅玩家指定墩输赢得水积分
+							compareCards[i].add_itemscores(sumscore);
+						}
+					}
+				}
 				//比牌对方输赢得水总分
 				for (int i = 0; i < GAME_PLAYER; ++i) {
 					if (true) {
