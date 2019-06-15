@@ -1,50 +1,61 @@
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":-1,"deltascore":-12,"fromchairId":1,"peers":[{"chairId":3,"group":{"duns":[{"c":3,"cards":"\u0019<=","id":0,"ty":2},{"c":5,"cards":"12\u00133(","id":1,"ty":3},{"c":5,"cards":"C\u0014%EF","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":2,"group":{"duns":[{"c":3,"cards":"\u001A,!","id":0,"ty":2},{"c":5,"cards":"G\u0017\u00126\u0018","id":1,"ty":3},{"c":5,"cards":"AHIJM","id":2,"ty":7}],"specialTy":0,"start":0}},{"chairId":1,"group":{"duns":[{"c":3,"cards":":*\u001D","id":0,"ty":3},{"c":5,"cards":"&\u00169)7","id":1,"ty":4},{"c":5,"cards":"B\"K;+","id":2,"ty":8}],"specialTy":0,"start":0}}],"player":{"chairId":0},"results":[{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":3,"score":1,"ty":5,"winLost":1}],"score":1,"shoot":0},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":7,"score":-1,"ty":5,"winLost":-1}],"score":-1,"shoot":0},{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":4,"score":-1,"ty":4,"winLost":-1},{"peerTy":8,"score":-1,"ty":5,"winLost":-1}],"score":-3,"shoot":-1}]}
+{"allshoot":-1,"deltascore":-14,"fromchairId":3,"itemscores":[{"itemscores":-3},{"itemscores":-3},{"itemscores":1}],"peers":[{"chairId":3,"deltascore":36,"group":{"duns":[{"c":3,"cards":"H\u0018!","id":0,"ty":3},{"c":5,"cards":"9)\u0017J<","id":1,"ty":3},{"c":5,"cards":"C#M-\u001D","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":2,"deltascore":-10,"group":{"duns":[{"c":3,"cards":"1\u0012\u001B","id":0,"ty":2},{"c":5,"cards":"2G8\u0019*","id":1,"ty":2},{"c":5,"cards":"B\u00133%&","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":1,"deltascore":-12,"group":{"duns":[{"c":3,"cards":"A,=","id":0,"ty":2},{"c":5,"cards":"$\u0015E67","id":1,"ty":3},{"c":5,"cards":"(:;K\u001C","id":2,"ty":3}],"specialTy":0,"start":0}}],"player":{"chairId":0},"results":[{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":8,"score":-1,"ty":4,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1}],"score":-1,"shoot":0},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1}],"score":-1,"shoot":0}]}
 }
 
 
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":1,"deltascore":36,"peers":[{"chairId":3,"group":{"duns":[{"c":3,"cards":"\u0019<=","id":0,"ty":2},{"c":5,"cards":"12\u00133(","id":1,"ty":3},{"c":5,"cards":"C\u0014%EF","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":2,"group":{"duns":[{"c":3,"cards":"\u001A,!","id":0,"ty":2},{"c":5,"cards":"G\u0017\u00126\u0018","id":1,"ty":3},{"c":5,"cards":"AHIJM","id":2,"ty":7}],"specialTy":0,"start":0}},{"chairId":0,"group":{"duns":[{"c":3,"cards":"\u001B-\u0011","id":0,"ty":2},{"c":5,"cards":"5\u0015L\u001C8","id":1,"ty":4},{"c":5,"cards":"D4$#'","id":2,"ty":5}],"specialTy":0,"start":0}}],"player":{"chairId":1},"results":[{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":3,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":7,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":4,"score":1,"ty":4,"winLost":1},{"peerTy":5,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1}]}
+{"allshoot":-1,"deltascore":-12,"fromchairId":3,"itemscores":[{"itemscores":-1},{"itemscores":1},{"itemscores":-3}],"peers":[{"chairId":3,"deltascore":36,"group":{"duns":[{"c":3,"cards":"H\u0018!","id":0,"ty":3},{"c":5,"cards":"9)\u0017J<","id":1,"ty":3},{"c":5,"cards":"C#M-\u001D","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":2,"deltascore":-10,"group":{"duns":[{"c":3,"cards":"1\u0012\u001B","id":0,"ty":2},{"c":5,"cards":"2G8\u0019*","id":1,"ty":2},{"c":5,"cards":"B\u00133%&","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":0,"deltascore":-14,"group":{"duns":[{"c":3,"cards":"\u00145'","id":0,"ty":2},{"c":5,"cards":"I\u001A+L\u0011","id":1,"ty":2},{"c":5,"cards":"D4F\u0016\"","id":2,"ty":4}],"specialTy":0,"start":0}}],"player":{"chairId":1},"results":[{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":3,"winLost":-1},{"peerTy":8,"score":-1,"ty":3,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":-1,"ty":3,"winLost":-1}],"score":-1,"shoot":0},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1}],"score":1,"shoot":0}]}
 }
 
 
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":-1,"deltascore":-12,"fromchairId":1,"peers":[{"chairId":3,"group":{"duns":[{"c":3,"cards":"\u0019<=","id":0,"ty":2},{"c":5,"cards":"12\u00133(","id":1,"ty":3},{"c":5,"cards":"C\u0014%EF","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":1,"group":{"duns":[{"c":3,"cards":":*\u001D","id":0,"ty":3},{"c":5,"cards":"&\u00169)7","id":1,"ty":4},{"c":5,"cards":"B\"K;+","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":0,"group":{"duns":[{"c":3,"cards":"\u001B-\u0011","id":0,"ty":2},{"c":5,"cards":"5\u0015L\u001C8","id":1,"ty":4},{"c":5,"cards":"D4$#'","id":2,"ty":5}],"specialTy":0,"start":0}}],"player":{"chairId":2},"results":[{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":3,"winLost":-1},{"peerTy":3,"score":1,"ty":7,"winLost":1}],"score":-1,"shoot":0},{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":8,"score":-1,"ty":7,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":5,"score":1,"ty":7,"winLost":1}],"score":1,"shoot":0}]}
+{"allshoot":-1,"deltascore":-10,"fromchairId":3,"itemscores":[{"itemscores":1},{"itemscores":-1},{"itemscores":-1}],"peers":[{"chairId":3,"deltascore":36,"group":{"duns":[{"c":3,"cards":"H\u0018!","id":0,"ty":3},{"c":5,"cards":"9)\u0017J<","id":1,"ty":3},{"c":5,"cards":"C#M-\u001D","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":1,"deltascore":-12,"group":{"duns":[{"c":3,"cards":"A,=","id":0,"ty":2},{"c":5,"cards":"$\u0015E67","id":1,"ty":3},{"c":5,"cards":"(:;K\u001C","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":0,"deltascore":-14,"group":{"duns":[{"c":3,"cards":"\u00145'","id":0,"ty":2},{"c":5,"cards":"I\u001A+L\u0011","id":1,"ty":2},{"c":5,"cards":"D4F\u0016\"","id":2,"ty":4}],"specialTy":0,"start":0}}],"player":{"chairId":2},"results":[{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":8,"score":-1,"ty":3,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":3,"winLost":1}],"score":1,"shoot":0},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1}],"score":1,"shoot":0}]}
 }
 
 
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":-1,"deltascore":-12,"fromchairId":1,"peers":[{"chairId":2,"group":{"duns":[{"c":3,"cards":"\u001A,!","id":0,"ty":2},{"c":5,"cards":"G\u0017\u00126\u0018","id":1,"ty":3},{"c":5,"cards":"AHIJM","id":2,"ty":7}],"specialTy":0,"start":0}},{"chairId":1,"group":{"duns":[{"c":3,"cards":":*\u001D","id":0,"ty":3},{"c":5,"cards":"&\u00169)7","id":1,"ty":4},{"c":5,"cards":"B\"K;+","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":0,"group":{"duns":[{"c":3,"cards":"\u001B-\u0011","id":0,"ty":2},{"c":5,"cards":"5\u0015L\u001C8","id":1,"ty":4},{"c":5,"cards":"D4$#'","id":2,"ty":5}],"specialTy":0,"start":0}}],"player":{"chairId":3},"results":[{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":3,"score":1,"ty":3,"winLost":1},{"peerTy":7,"score":-1,"ty":3,"winLost":-1}],"score":1,"shoot":0},{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":8,"score":-1,"ty":3,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":5,"score":-1,"ty":3,"winLost":-1}],"score":-1,"shoot":0}]}
+{"allshoot":1,"deltascore":36,"itemscores":[{"itemscores":3},{"itemscores":3},{"itemscores":3}],"peers":[{"chairId":2,"deltascore":-10,"group":{"duns":[{"c":3,"cards":"1\u0012\u001B","id":0,"ty":2},{"c":5,"cards":"2G8\u0019*","id":1,"ty":2},{"c":5,"cards":"B\u00133%&","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":1,"deltascore":-12,"group":{"duns":[{"c":3,"cards":"A,=","id":0,"ty":2},{"c":5,"cards":"$\u0015E67","id":1,"ty":3},{"c":5,"cards":"(:;K\u001C","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":0,"deltascore":-14,"group":{"duns":[{"c":3,"cards":"\u00145'","id":0,"ty":2},{"c":5,"cards":"I\u001A+L\u0011","id":1,"ty":2},{"c":5,"cards":"D4F\u0016\"","id":2,"ty":4}],"specialTy":0,"start":0}}],"player":{"chairId":3},"results":[{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":4,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1}]}
 }
 
 json格式在线view工具：http://www.bejson.com/jsonviewernew/
 {
   "s13s.CMD_S_CompareCards": {
-    "allshoot": -1,
-    "deltascore": -12,
-    "fromchairId": 1,
+    "allshoot": 1,
+    "deltascore": 36,
+    "itemscores": [
+      {
+        "itemscores": 3
+      },
+      {
+        "itemscores": 3
+      },
+      {
+        "itemscores": 3
+      }
+    ],
     "peers": [
       {
         "chairId": 2,
+        "deltascore": -10,
         "group": {
           "duns": [
             {
               "c": 3,
-              "cards": "\u001A,!",
+              "cards": "1\u0012\u001B",
               "id": 0,
               "ty": 2
             },
             {
               "c": 5,
-              "cards": "G\u0017\u00126\u0018",
+              "cards": "2G8\u0019*",
               "id": 1,
-              "ty": 3
+              "ty": 2
             },
             {
               "c": 5,
-              "cards": "AHIJM",
+              "cards": "B\u00133%&",
               "id": 2,
-              "ty": 7
+              "ty": 3
             }
           ],
           "specialTy": 0,
@@ -53,25 +64,26 @@ json格式在线view工具：http://www.bejson.com/jsonviewernew/
       },
       {
         "chairId": 1,
+        "deltascore": -12,
         "group": {
           "duns": [
             {
               "c": 3,
-              "cards": ":*\u001D",
+              "cards": "A,=",
               "id": 0,
+              "ty": 2
+            },
+            {
+              "c": 5,
+              "cards": "$\u0015E67",
+              "id": 1,
               "ty": 3
             },
             {
               "c": 5,
-              "cards": "&\u00169)7",
-              "id": 1,
-              "ty": 4
-            },
-            {
-              "c": 5,
-              "cards": "B\"K;+",
+              "cards": "(:;K\u001C",
               "id": 2,
-              "ty": 8
+              "ty": 3
             }
           ],
           "specialTy": 0,
@@ -80,25 +92,26 @@ json格式在线view工具：http://www.bejson.com/jsonviewernew/
       },
       {
         "chairId": 0,
+        "deltascore": -14,
         "group": {
           "duns": [
             {
               "c": 3,
-              "cards": "\u001B-\u0011",
+              "cards": "\u00145'",
               "id": 0,
               "ty": 2
             },
             {
               "c": 5,
-              "cards": "5\u0015L\u001C8",
+              "cards": "I\u001A+L\u0011",
               "id": 1,
-              "ty": 4
+              "ty": 2
             },
             {
               "c": 5,
-              "cards": "D4$#'",
+              "cards": "D4F\u0016\"",
               "id": 2,
-              "ty": 5
+              "ty": 4
             }
           ],
           "specialTy": 0,
@@ -115,72 +128,72 @@ json格式在线view工具：http://www.bejson.com/jsonviewernew/
           {
             "peerTy": 2,
             "score": 1,
-            "ty": 2,
+            "ty": 3,
             "winLost": 1
           },
           {
-            "peerTy": 3,
+            "peerTy": 2,
             "score": 1,
             "ty": 3,
             "winLost": 1
           },
           {
-            "peerTy": 7,
-            "score": -1,
-            "ty": 3,
-            "winLost": -1
-          }
-        ],
-        "score": 1,
-        "shoot": 0
-      },
-      {
-        "items": [
-          {
             "peerTy": 3,
-            "score": -1,
-            "ty": 2,
-            "winLost": -1
-          },
-          {
-            "peerTy": 4,
-            "score": -1,
-            "ty": 3,
-            "winLost": -1
-          },
-          {
-            "peerTy": 8,
-            "score": -1,
-            "ty": 3,
-            "winLost": -1
+            "score": 1,
+            "ty": 8,
+            "winLost": 1
           }
         ],
-        "score": -3,
-        "shoot": -1
+        "score": 3,
+        "shoot": 1
       },
       {
         "items": [
           {
             "peerTy": 2,
             "score": 1,
-            "ty": 2,
+            "ty": 3,
+            "winLost": 1
+          },
+          {
+            "peerTy": 3,
+            "score": 1,
+            "ty": 3,
+            "winLost": 1
+          },
+          {
+            "peerTy": 3,
+            "score": 1,
+            "ty": 8,
+            "winLost": 1
+          }
+        ],
+        "score": 3,
+        "shoot": 1
+      },
+      {
+        "items": [
+          {
+            "peerTy": 2,
+            "score": 1,
+            "ty": 3,
+            "winLost": 1
+          },
+          {
+            "peerTy": 2,
+            "score": 1,
+            "ty": 3,
             "winLost": 1
           },
           {
             "peerTy": 4,
-            "score": -1,
-            "ty": 3,
-            "winLost": -1
-          },
-          {
-            "peerTy": 5,
-            "score": -1,
-            "ty": 3,
-            "winLost": -1
+            "score": 1,
+            "ty": 8,
+            "winLost": 1
           }
         ],
-        "score": -1,
-        "shoot": 0
+        "score": 3,
+        "shoot": 1
       }
     ]
   }

@@ -1,28 +1,28 @@
 ========================================================================
 --- *** chairID = [0]
-♦A ♣3 ♣4 ♥4 ♠4 ♦5 ♥5 ♣7 ♥8 ♦J ♦Q ♠Q ♣K 
+♦A ♣2 ♦4 ♥4 ♠4 ♥5 ♦6 ♠6 ♣7 ♠9 ♦10 ♣J ♠Q 
 
 --- *** --------------------------------------------------
 --- *** 第[3]组
---- *** 第[1]墩 - 乌龙[Tysp]：♦J ♣K ♦A 
---- *** 第[2]墩 - 两对[Ty22]：♥5 ♦5 ♠Q ♦Q ♥8 
---- *** 第[3]墩 - 三条[Ty30]：♠4 ♥4 ♣4 ♣3 ♣7 
+--- *** 第[1]墩 - 乌龙[Tysp]：♦4 ♥5 ♣7 
+--- *** 第[2]墩 - 乌龙[Tysp]：♠9 ♦10 ♣J ♠Q ♦A 
+--- *** 第[3]墩 - 两对[Ty22]：♠4 ♥4 ♠6 ♦6 ♣2 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[2]组
---- *** 第[1]墩 - 乌龙[Tysp]：♦J ♣K ♦A 
---- *** 第[2]墩 - 对子[Ty20]：♥5 ♦5 ♣3 ♣7 ♥8 
---- *** 第[3]墩 - 葫芦[Ty32]：♠4 ♥4 ♣4 ♠Q ♦Q 
+--- *** 第[1]墩 - 乌龙[Tysp]：♣J ♠Q ♦A 
+--- *** 第[2]墩 - 对子[Ty20]：♠6 ♦6 ♣7 ♠9 ♦10 
+--- *** 第[3]墩 - 三条[Ty30]：♠4 ♥4 ♦4 ♣2 ♥5 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[1]组
---- *** 第[1]墩 - 乌龙[Tysp]：♦J ♣K ♦A 
---- *** 第[2]墩 - 对子[Ty20]：♠Q ♦Q ♣3 ♣7 ♥8 
---- *** 第[3]墩 - 葫芦[Ty32]：♠4 ♥4 ♣4 ♥5 ♦5 
+--- *** 第[1]墩 - 乌龙[Tysp]：♣2 ♥5 ♣7 
+--- *** 第[2]墩 - 乌龙[Tysp]：♠9 ♦10 ♣J ♠Q ♦A 
+--- *** 第[3]墩 - 葫芦[Ty32]：♠4 ♥4 ♦4 ♠6 ♦6 
 --- *** --------------------------------------------------
 
 --- *** c = 3 
@@ -33,29 +33,29 @@
 
 ========================================================================
 --- *** chairID = [1]
-♣2 ♠2 ♦6 ♣6 ♥7 ♣9 ♥9 ♣10 ♥10 ♣J ♥J ♠J ♦K 
+♠A ♣4 ♦5 ♠5 ♥6 ♥7 ♣8 ♥10 ♥J ♠J ♦Q ♣Q ♥K 
 
 --- *** --------------------------------------------------
 --- *** 第[3]组
---- *** 第[1]墩 - 对子[Ty20]：♥10 ♣10 ♦K 
---- *** 第[2]墩 - 两对[Ty22]：♣6 ♦6 ♥9 ♣9 ♥7 
---- *** 第[3]墩 - 葫芦[Ty32]：♠2 ♣2 ♠J ♥J ♣J 
+--- *** 第[1]墩 - 乌龙[Tysp]：♦5 ♥J ♦Q 
+--- *** 第[2]墩 - 顺子[Ty123]：♣4 ♠5 ♥6 ♥7 ♣8 
+--- *** 第[3]墩 - 顺子[Ty123]：♥10 ♠J ♣Q ♥K ♠A 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[2]组
---- *** 第[1]墩 - 对子[Ty20]：♥9 ♣9 ♦K 
---- *** 第[2]墩 - 两对[Ty22]：♣6 ♦6 ♥10 ♣10 ♥7 
---- *** 第[3]墩 - 葫芦[Ty32]：♠2 ♣2 ♠J ♥J ♣J 
+--- *** 第[1]墩 - 对子[Ty20]：♠5 ♦5 ♠A 
+--- *** 第[2]墩 - 对子[Ty20]：♣Q ♦Q ♣4 ♣8 ♠J 
+--- *** 第[3]墩 - 同花[Tysc]：♥6 ♥7 ♥10 ♥J ♥K 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[1]组
---- *** 第[1]墩 - 对子[Ty20]：♣6 ♦6 ♦K 
---- *** 第[2]墩 - 两对[Ty22]：♥9 ♣9 ♥10 ♣10 ♥7 
---- *** 第[3]墩 - 葫芦[Ty32]：♠2 ♣2 ♠J ♥J ♣J 
+--- *** 第[1]墩 - 乌龙[Tysp]：♣8 ♠J ♠A 
+--- *** 第[2]墩 - 两对[Ty22]：♠5 ♦5 ♣Q ♦Q ♣4 
+--- *** 第[3]墩 - 同花[Tysc]：♥6 ♥7 ♥10 ♥J ♥K 
 --- *** --------------------------------------------------
 
 --- *** c = 3 
@@ -66,29 +66,29 @@
 
 ========================================================================
 --- *** chairID = [2]
-♣A ♠A ♦2 ♥6 ♦7 ♠7 ♦8 ♠8 ♠9 ♦10 ♠10 ♣Q ♠K 
+♥A ♦2 ♥2 ♠2 ♦3 ♥3 ♣5 ♣6 ♠7 ♥8 ♦9 ♣10 ♦J 
 
 --- *** --------------------------------------------------
 --- *** 第[3]组
---- *** 第[1]墩 - 乌龙[Tysp]：♦2 ♣Q ♣A 
---- *** 第[2]墩 - 顺子[Ty123]：♥6 ♦7 ♦8 ♠9 ♦10 
---- *** 第[3]墩 - 同花[Tysc]：♠A ♠7 ♠8 ♠10 ♠K 
+--- *** 第[1]墩 - 乌龙[Tysp]：♣10 ♦J ♥A 
+--- *** 第[2]墩 - 顺子[Ty123]：♣5 ♣6 ♠7 ♥8 ♦9 
+--- *** 第[3]墩 - 葫芦[Ty32]：♠2 ♥2 ♦2 ♥3 ♦3 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[2]组
---- *** 第[1]墩 - 乌龙[Tysp]：♦10 ♣Q ♣A 
---- *** 第[2]墩 - 对子[Ty20]：♠8 ♦8 ♦2 ♥6 ♦7 
---- *** 第[3]墩 - 同花[Tysc]：♠A ♠7 ♠9 ♠10 ♠K 
+--- *** 第[1]墩 - 乌龙[Tysp]：♣5 ♦J ♥A 
+--- *** 第[2]墩 - 顺子[Ty123]：♣6 ♠7 ♥8 ♦9 ♣10 
+--- *** 第[3]墩 - 葫芦[Ty32]：♠2 ♥2 ♦2 ♥3 ♦3 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[1]组
---- *** 第[1]墩 - 乌龙[Tysp]：♦10 ♣Q ♣A 
---- *** 第[2]墩 - 对子[Ty20]：♠7 ♦7 ♦2 ♥6 ♦8 
---- *** 第[3]墩 - 同花[Tysc]：♠A ♠8 ♠9 ♠10 ♠K 
+--- *** 第[1]墩 - 乌龙[Tysp]：♣5 ♣6 ♥A 
+--- *** 第[2]墩 - 顺子[Ty123]：♠7 ♥8 ♦9 ♣10 ♦J 
+--- *** 第[3]墩 - 葫芦[Ty32]：♠2 ♥2 ♦2 ♥3 ♦3 
 --- *** --------------------------------------------------
 
 --- *** c = 3 
@@ -99,29 +99,29 @@
 
 ========================================================================
 --- *** chairID = [3]
-♥A ♥2 ♦3 ♥3 ♠3 ♦4 ♣5 ♠5 ♠6 ♣8 ♦9 ♥Q ♥K 
+♣A ♣3 ♠3 ♦7 ♦8 ♠8 ♣9 ♥9 ♠10 ♥Q ♦K ♣K ♠K 
 
 --- *** --------------------------------------------------
 --- *** 第[3]组
---- *** 第[1]墩 - 对子[Ty20]：♠3 ♦3 ♦9 
---- *** 第[2]墩 - 对子[Ty20]：♠5 ♣5 ♦4 ♠6 ♣8 
---- *** 第[3]墩 - 同花[Tysc]：♥A ♥2 ♥3 ♥Q ♥K 
+--- *** 第[1]墩 - 乌龙[Tysp]：♠10 ♥Q ♣A 
+--- *** 第[2]墩 - 对子[Ty20]：♠8 ♦8 ♦7 ♣9 ♥9 
+--- *** 第[3]墩 - 葫芦[Ty32]：♠3 ♣3 ♠K ♣K ♦K 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[2]组
---- *** 第[1]墩 - 乌龙[Tysp]：♠6 ♣8 ♦9 
---- *** 第[2]墩 - 两对[Ty22]：♠3 ♦3 ♠5 ♣5 ♦4 
---- *** 第[3]墩 - 同花[Tysc]：♥A ♥2 ♥3 ♥Q ♥K 
+--- *** 第[1]墩 - 对子[Ty20]：♠8 ♦8 ♣A 
+--- *** 第[2]墩 - 对子[Ty20]：♥9 ♣9 ♦7 ♠10 ♥Q 
+--- *** 第[3]墩 - 葫芦[Ty32]：♠3 ♣3 ♠K ♣K ♦K 
 --- *** --------------------------------------------------
 
 
 --- *** --------------------------------------------------
 --- *** 第[1]组
---- *** 第[1]墩 - 乌龙[Tysp]：♥2 ♦4 ♠6 
---- *** 第[2]墩 - 乌龙[Tysp]：♣8 ♦9 ♥Q ♥K ♥A 
---- *** 第[3]墩 - 葫芦[Ty32]：♠3 ♥3 ♦3 ♠5 ♣5 
+--- *** 第[1]墩 - 乌龙[Tysp]：♠10 ♥Q ♣A 
+--- *** 第[2]墩 - 两对[Ty22]：♠8 ♦8 ♥9 ♣9 ♦7 
+--- *** 第[3]墩 - 葫芦[Ty32]：♠3 ♣3 ♠K ♣K ♦K 
 --- *** --------------------------------------------------
 
 --- *** c = 3 
@@ -135,32 +135,32 @@ null
 
 
 --- *** s13s.CMD_S_ManualCards
-{"enums":{"v20":[{"v20":"L\u001C"},{"v20":"5\u0015"},{"v20":"D4"},{"v20":"D$"},{"v20":"4$"}],"v22":[{"v22":"5\u0015L\u001C"},{"v22":"D4L\u001C"},{"v22":"D$L\u001C"},{"v22":"4$L\u001C"},{"v22":"D45\u0015"},{"v22":"D$5\u0015"},{"v22":"4$5\u0015"}],"v30":[{"v30":"D4$"}],"v32":[{"v32":"D4$5\u0015"},{"v32":"D4$L\u001C"}]}}
+{"enums":{"v20":[{"v20":"F\u0016"},{"v20":"D4"},{"v20":"D\u0014"},{"v20":"4\u0014"}],"v22":[{"v22":"D4F\u0016"},{"v22":"D\u0014F\u0016"},{"v22":"4\u0014F\u0016"}],"v30":[{"v30":"D4\u0014"}],"v32":[{"v32":"D4\u0014F\u0016"}]}}
 
 
 
 --- *** s13s.CMD_C_ManualCards
-{"cards":"\u00155'8\u001B","dt":2}
+{"cards":"F'I\u001A+","dt":2}
 
 
 
 --- *** s13s.CMD_S_ManualCards
-{"cpy":"\u0011#$4D\u001CL-","dt":2,"enums":{"v20":[{"v20":"L\u001C"},{"v20":"D4"},{"v20":"D$"},{"v20":"4$"}],"v22":[{"v22":"D4L\u001C"},{"v22":"D$L\u001C"},{"v22":"4$L\u001C"}],"v30":[{"v30":"D4$"}],"v32":[{"v32":"D4$L\u001C"}]},"ty":3}
+{"cpy":"\u0011\"\u00144D5\u0016L","dt":2,"enums":{"v20":[{"v20":"D4"},{"v20":"D\u0014"},{"v20":"4\u0014"}],"v30":[{"v30":"D4\u0014"}]},"ty":2}
 
 
 
 --- *** s13s.CMD_C_ManualCards
-{"cards":"4D\u001CL-","dt":1}
+{"cards":"\u0011\"\u00144D","dt":1}
 
 
 
 --- *** s13s.CMD_S_ManualCards
-{"cpy":"\u0011#$","dt":1,"ty":4}
+{"cpy":"5\u0016L","dt":1,"ty":5}
 
 
 
 --- *** s13s.CMD_C_ManualCards
-{"cards":"\u0011#$","dt":0}
+{"cards":"5\u0016L","dt":0}
 
 
 
@@ -175,32 +175,112 @@ null
 
 
 --- *** s13s.CMD_S_ManualCards
-{"enums":{"v20":[{"v20":"K;"},{"v20":"K+"},{"v20":";+"},{"v20":":*"},{"v20":"9)"},{"v20":"&\u0016"},{"v20":"B\""}],"v22":[{"v22":":*K+"},{"v22":":*;+"},{"v22":":*K;"},{"v22":"9)K;"},{"v22":"9)K+"},{"v22":"9);+"},{"v22":"&\u0016K;"},{"v22":"&\u0016K+"},{"v22":"&\u0016;+"},{"v22":"B\"K;"},{"v22":"B\";+"},{"v22":"B\"K+"},{"v22":"9):*"},{"v22":"&\u0016:*"},{"v22":"B\":*"},{"v22":"&\u00169)"},{"v22":"B\"9)"},{"v22":"B\"&\u0016"}],"v30":[{"v30":"K;+"}],"v32":[{"v32":"B\"K;+"},{"v32":"&\u0016K;+"},{"v32":"9)K;+"},{"v32":":*K;+"}],"vsc":[{"vsc":"\"&)*+"}]}}
+{"enums":{"v123":[{"v123":":K,=A"},{"v123":":;,=A"},{"v123":":K\u001C=A"},{"v123":":;\u001C=A"},{"v123":"$E67("},{"v123":"$\u001567("}],"v20":[{"v20":",\u001C"},{"v20":"K;"},{"v20":"E\u0015"}],"v22":[{"v22":"K;,\u001C"},{"v22":"E\u0015,\u001C"},{"v22":"E\u0015K;"}],"vsc":[{"vsc":"67:;="}]}}
 
 
 
 --- *** s13s.CMD_C_ManualCards
-{"cards":":+;K\u001D","dt":2}
+{"cards":"(:;K\u001C","dt":2}
 
 
 
 --- *** s13s.CMD_S_ManualCards
-{"cpy":"\"B\u0016&7)9*","dt":2,"enums":{"v20":[{"v20":"9)"},{"v20":"&\u0016"},{"v20":"B\""}],"v22":[{"v22":"&\u00169)"},{"v22":"B\"9)"},{"v22":"B\"&\u0016"}]},"ty":5}
+{"cpy":"A$\u0015E67,=","dt":2,"enums":{"v20":[{"v20":"E\u0015"}]},"ty":3}
 
 
 
 --- *** s13s.CMD_C_ManualCards
-{"cards":"&7)9*","dt":1}
+{"cards":"$\u0015E67","dt":1}
 
 
 
 --- *** s13s.CMD_S_ManualCards
-{"cpy":"\"B\u0016","dt":1,"enums":{"v20":[{"v20":"B\""}]},"ty":3}
+{"cpy":"A,=","dt":1,"ty":3}
 
 
 
 --- *** s13s.CMD_C_ManualCards
-{"cards":"\"B\u0016","dt":0}
+{"cards":"A,=","dt":0}
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"cpy":"","dt":0,"ty":2}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+null
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"enums":{"v123":[{"v123":"G8\u0019*\u001B"},{"v123":"&G8\u0019*"},{"v123":"%&G8\u0019"}],"v20":[{"v20":"3\u0013"},{"v20":"B2"},{"v20":"B\u0012"},{"v20":"2\u0012"}],"v22":[{"v22":"B23\u0013"},{"v22":"B\u00123\u0013"},{"v22":"2\u00123\u0013"}],"v30":[{"v30":"B2\u0012"}],"v32":[{"v32":"B2\u00123\u0013"}]}}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+{"cards":"B\u00133%&","dt":2}
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"cpy":"1\u00122G8\u0019*\u001B","dt":2,"enums":{"v123":[{"v123":"G8\u0019*\u001B"}],"v20":[{"v20":"2\u0012"}]},"ty":3}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+{"cards":"2G8\u0019*","dt":1}
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"cpy":"1\u0012\u001B","dt":1,"ty":2}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+{"cards":"1\u0012\u001B","dt":0}
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"cpy":"","dt":0,"ty":2}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+null
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"enums":{"v20":[{"v20":"M-"},{"v20":"M\u001D"},{"v20":"-\u001D"},{"v20":"9)"},{"v20":"H\u0018"},{"v20":"C#"}],"v22":[{"v22":"9)M-"},{"v22":"9)M\u001D"},{"v22":"9)-\u001D"},{"v22":"H\u0018M-"},{"v22":"H\u0018M\u001D"},{"v22":"H\u0018-\u001D"},{"v22":"C#M-"},{"v22":"C#M\u001D"},{"v22":"C#-\u001D"},{"v22":"H\u00189)"},{"v22":"C#9)"},{"v22":"C#H\u0018"}],"v30":[{"v30":"M-\u001D"}],"v32":[{"v32":"C#M-\u001D"},{"v32":"H\u0018M-\u001D"},{"v32":"9)M-\u001D"}]}}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+{"cards":"!#C\u0017\u0018","dt":2}
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"cpy":"H)9J<\u001D-M","dt":2,"enums":{"v20":[{"v20":"M-"},{"v20":"M\u001D"},{"v20":"-\u001D"},{"v20":"9)"}],"v22":[{"v22":"9)M-"},{"v22":"9)M\u001D"},{"v22":"9)-\u001D"}],"v30":[{"v30":"M-\u001D"}],"v32":[{"v32":"9)M-\u001D"}]},"ty":3}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+{"cards":"J<\u001D-M","dt":1}
+
+
+
+--- *** s13s.CMD_S_ManualCards
+{"cpy":"H)9","dt":1,"enums":{"v20":[{"v20":"9)"}]},"ty":5}
+
+
+
+--- *** s13s.CMD_C_ManualCards
+{"cards":"H)9","dt":0}
 
 
 
@@ -209,98 +289,8 @@ null
 
 
 
---- *** s13s.CMD_C_ManualCards
-null
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"enums":{"v123":[{"v123":"6GHIJ"},{"v123":"6\u0017HIJ"},{"v123":"6G\u0018IJ"},{"v123":"6\u0017\u0018IJ"},{"v123":"6GHI\u001A"},{"v123":"6\u0017HI\u001A"},{"v123":"6G\u0018I\u001A"},{"v123":"6\u0017\u0018I\u001A"}],"v20":[{"v20":"A!"},{"v20":"J\u001A"},{"v20":"H\u0018"},{"v20":"G\u0017"}],"v22":[{"v22":"A!J\u001A"},{"v22":"A!H\u0018"},{"v22":"A!G\u0017"},{"v22":"H\u0018J\u001A"},{"v22":"G\u0017J\u001A"},{"v22":"G\u0017H\u0018"}],"vsc":[{"vsc":"AHIJM"},{"vsc":"AGIJM"},{"vsc":"AGHJM"},{"vsc":"AGHIM"},{"vsc":"AGHIJ"},{"vsc":"GHIJM"}]}}
-
-
-
---- *** s13s.CMD_C_ManualCards
-{"cards":"\u0017G\u0018HI","dt":2}
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"cpy":"!A\u00126\u001AJ,M","dt":2,"enums":{"v20":[{"v20":"A!"},{"v20":"J\u001A"}],"v22":[{"v22":"A!J\u001A"}]},"ty":4}
-
-
-
---- *** s13s.CMD_C_ManualCards
-{"cards":"!A\u00126\u001A","dt":1}
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"cpy":"J,M","dt":1,"ty":3}
-
-
-
---- *** s13s.CMD_C_ManualCards
-{"cards":"J,M","dt":0}
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"cpy":"","dt":0,"ty":2}
-
-
-
---- *** s13s.CMD_C_ManualCards
-null
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"enums":{"v123":[{"v123":"12C\u0014E"},{"v123":"123\u0014E"},{"v123":"12\u0013\u0014E"},{"v123":"12C\u0014%"},{"v123":"123\u0014%"},{"v123":"12\u0013\u0014%"},{"v123":"2C\u0014EF"},{"v123":"23\u0014EF"},{"v123":"2\u0013\u0014EF"},{"v123":"2C\u0014%F"},{"v123":"23\u0014%F"},{"v123":"2\u0013\u0014%F"}],"v20":[{"v20":"E%"},{"v20":"C3"},{"v20":"C\u0013"},{"v20":"3\u0013"}],"v22":[{"v22":"C3E%"},{"v22":"C\u0013E%"},{"v22":"3\u0013E%"}],"v30":[{"v30":"C3\u0013"}],"v32":[{"v32":"C3\u0013E%"}],"vsc":[{"vsc":"123<="}]}}
-
-
-
---- *** s13s.CMD_C_ManualCards
-{"cards":"C\u0014%EF","dt":2}
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"cpy":"12\u00133(\u0019<=","dt":2,"enums":{"v20":[{"v20":"3\u0013"}],"vsc":[{"vsc":"123<="}]},"ty":3}
-
-
-
---- *** s13s.CMD_C_ManualCards
-{"cards":"12\u00133(","dt":1}
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"cpy":"\u0019<=","dt":1,"ty":3}
-
-
-
---- *** s13s.CMD_C_ManualCards
-{"cards":"\u0019<=","dt":0}
-
-
-
---- *** s13s.CMD_S_ManualCards
-{"cpy":"","dt":0,"ty":2}
-
-
-
 --- *** s13s.CMD_C_MakesureDunHandTy
 {"groupindex":2}
-
-
-
---- *** s13s.CMD_C_MakesureDunHandTy
-{"groupindex":2}
-
-
-
---- *** s13s.CMD_C_MakesureDunHandTy
-{"groupindex":0}
 
 
 
@@ -308,24 +298,34 @@ null
 {"groupindex":-1}
 
 
+
+--- *** s13s.CMD_C_MakesureDunHandTy
+{"groupindex":-1}
+
+
+
+--- *** s13s.CMD_C_MakesureDunHandTy
+{"groupindex":1}
+
+
 //json格式在线view工具：http://www.bejson.com/jsonviewernew/
 //玩家之间两两比牌输赢得水总分明细，包括打枪/全垒打如下：
 
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":-1,"deltascore":-12,"fromchairId":1,"peers":[{"chairId":3,"group":{"duns":[{"c":3,"cards":"\u0019<=","id":0,"ty":2},{"c":5,"cards":"12\u00133(","id":1,"ty":3},{"c":5,"cards":"C\u0014%EF","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":2,"group":{"duns":[{"c":3,"cards":"\u001A,!","id":0,"ty":2},{"c":5,"cards":"G\u0017\u00126\u0018","id":1,"ty":3},{"c":5,"cards":"AHIJM","id":2,"ty":7}],"specialTy":0,"start":0}},{"chairId":1,"group":{"duns":[{"c":3,"cards":":*\u001D","id":0,"ty":3},{"c":5,"cards":"&\u00169)7","id":1,"ty":4},{"c":5,"cards":"B\"K;+","id":2,"ty":8}],"specialTy":0,"start":0}}],"player":{"chairId":0},"results":[{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":3,"score":1,"ty":5,"winLost":1}],"score":1,"shoot":0},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":7,"score":-1,"ty":5,"winLost":-1}],"score":-1,"shoot":0},{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":4,"score":-1,"ty":4,"winLost":-1},{"peerTy":8,"score":-1,"ty":5,"winLost":-1}],"score":-3,"shoot":-1}]}
+{"allshoot":-1,"deltascore":-14,"fromchairId":3,"itemscores":[{"itemscores":-3},{"itemscores":-3},{"itemscores":1}],"peers":[{"chairId":3,"deltascore":36,"group":{"duns":[{"c":3,"cards":"H\u0018!","id":0,"ty":3},{"c":5,"cards":"9)\u0017J<","id":1,"ty":3},{"c":5,"cards":"C#M-\u001D","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":2,"deltascore":-10,"group":{"duns":[{"c":3,"cards":"1\u0012\u001B","id":0,"ty":2},{"c":5,"cards":"2G8\u0019*","id":1,"ty":2},{"c":5,"cards":"B\u00133%&","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":1,"deltascore":-12,"group":{"duns":[{"c":3,"cards":"A,=","id":0,"ty":2},{"c":5,"cards":"$\u0015E67","id":1,"ty":3},{"c":5,"cards":"(:;K\u001C","id":2,"ty":3}],"specialTy":0,"start":0}}],"player":{"chairId":0},"results":[{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":8,"score":-1,"ty":4,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1}],"score":-1,"shoot":0},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":4,"winLost":1}],"score":-1,"shoot":0}]}
 }
 
 
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":1,"deltascore":36,"peers":[{"chairId":3,"group":{"duns":[{"c":3,"cards":"\u0019<=","id":0,"ty":2},{"c":5,"cards":"12\u00133(","id":1,"ty":3},{"c":5,"cards":"C\u0014%EF","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":2,"group":{"duns":[{"c":3,"cards":"\u001A,!","id":0,"ty":2},{"c":5,"cards":"G\u0017\u00126\u0018","id":1,"ty":3},{"c":5,"cards":"AHIJM","id":2,"ty":7}],"specialTy":0,"start":0}},{"chairId":0,"group":{"duns":[{"c":3,"cards":"\u001B-\u0011","id":0,"ty":2},{"c":5,"cards":"5\u0015L\u001C8","id":1,"ty":4},{"c":5,"cards":"D4$#'","id":2,"ty":5}],"specialTy":0,"start":0}}],"player":{"chairId":1},"results":[{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":3,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":4,"winLost":1},{"peerTy":7,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":4,"score":1,"ty":4,"winLost":1},{"peerTy":5,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1}]}
+{"allshoot":-1,"deltascore":-12,"fromchairId":3,"itemscores":[{"itemscores":-1},{"itemscores":1},{"itemscores":-3}],"peers":[{"chairId":3,"deltascore":36,"group":{"duns":[{"c":3,"cards":"H\u0018!","id":0,"ty":3},{"c":5,"cards":"9)\u0017J<","id":1,"ty":3},{"c":5,"cards":"C#M-\u001D","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":2,"deltascore":-10,"group":{"duns":[{"c":3,"cards":"1\u0012\u001B","id":0,"ty":2},{"c":5,"cards":"2G8\u0019*","id":1,"ty":2},{"c":5,"cards":"B\u00133%&","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":0,"deltascore":-14,"group":{"duns":[{"c":3,"cards":"\u00145'","id":0,"ty":2},{"c":5,"cards":"I\u001A+L\u0011","id":1,"ty":2},{"c":5,"cards":"D4F\u0016\"","id":2,"ty":4}],"specialTy":0,"start":0}}],"player":{"chairId":1},"results":[{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":3,"winLost":-1},{"peerTy":8,"score":-1,"ty":3,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":-1,"ty":3,"winLost":-1}],"score":-1,"shoot":0},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1}],"score":1,"shoot":0}]}
 }
 
 
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":-1,"deltascore":-12,"fromchairId":1,"peers":[{"chairId":3,"group":{"duns":[{"c":3,"cards":"\u0019<=","id":0,"ty":2},{"c":5,"cards":"12\u00133(","id":1,"ty":3},{"c":5,"cards":"C\u0014%EF","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":1,"group":{"duns":[{"c":3,"cards":":*\u001D","id":0,"ty":3},{"c":5,"cards":"&\u00169)7","id":1,"ty":4},{"c":5,"cards":"B\"K;+","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":0,"group":{"duns":[{"c":3,"cards":"\u001B-\u0011","id":0,"ty":2},{"c":5,"cards":"5\u0015L\u001C8","id":1,"ty":4},{"c":5,"cards":"D4$#'","id":2,"ty":5}],"specialTy":0,"start":0}}],"player":{"chairId":2},"results":[{"items":[{"peerTy":2,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":3,"winLost":-1},{"peerTy":3,"score":1,"ty":7,"winLost":1}],"score":-1,"shoot":0},{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":8,"score":-1,"ty":7,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":5,"score":1,"ty":7,"winLost":1}],"score":1,"shoot":0}]}
+{"allshoot":-1,"deltascore":-10,"fromchairId":3,"itemscores":[{"itemscores":1},{"itemscores":-1},{"itemscores":-1}],"peers":[{"chairId":3,"deltascore":36,"group":{"duns":[{"c":3,"cards":"H\u0018!","id":0,"ty":3},{"c":5,"cards":"9)\u0017J<","id":1,"ty":3},{"c":5,"cards":"C#M-\u001D","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":1,"deltascore":-12,"group":{"duns":[{"c":3,"cards":"A,=","id":0,"ty":2},{"c":5,"cards":"$\u0015E67","id":1,"ty":3},{"c":5,"cards":"(:;K\u001C","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":0,"deltascore":-14,"group":{"duns":[{"c":3,"cards":"\u00145'","id":0,"ty":2},{"c":5,"cards":"I\u001A+L\u0011","id":1,"ty":2},{"c":5,"cards":"D4F\u0016\"","id":2,"ty":4}],"specialTy":0,"start":0}}],"player":{"chairId":2},"results":[{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":8,"score":-1,"ty":3,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":3,"score":1,"ty":3,"winLost":1}],"score":1,"shoot":0},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1}],"score":1,"shoot":0}]}
 }
 
 
 --- *** {"s13s.CMD_S_CompareCards":
-{"allshoot":-1,"deltascore":-12,"fromchairId":1,"peers":[{"chairId":2,"group":{"duns":[{"c":3,"cards":"\u001A,!","id":0,"ty":2},{"c":5,"cards":"G\u0017\u00126\u0018","id":1,"ty":3},{"c":5,"cards":"AHIJM","id":2,"ty":7}],"specialTy":0,"start":0}},{"chairId":1,"group":{"duns":[{"c":3,"cards":":*\u001D","id":0,"ty":3},{"c":5,"cards":"&\u00169)7","id":1,"ty":4},{"c":5,"cards":"B\"K;+","id":2,"ty":8}],"specialTy":0,"start":0}},{"chairId":0,"group":{"duns":[{"c":3,"cards":"\u001B-\u0011","id":0,"ty":2},{"c":5,"cards":"5\u0015L\u001C8","id":1,"ty":4},{"c":5,"cards":"D4$#'","id":2,"ty":5}],"specialTy":0,"start":0}}],"player":{"chairId":3},"results":[{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":3,"score":1,"ty":3,"winLost":1},{"peerTy":7,"score":-1,"ty":3,"winLost":-1}],"score":1,"shoot":0},{"items":[{"peerTy":3,"score":-1,"ty":2,"winLost":-1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":8,"score":-1,"ty":3,"winLost":-1}],"score":-3,"shoot":-1},{"items":[{"peerTy":2,"score":1,"ty":2,"winLost":1},{"peerTy":4,"score":-1,"ty":3,"winLost":-1},{"peerTy":5,"score":-1,"ty":3,"winLost":-1}],"score":-1,"shoot":0}]}
+{"allshoot":1,"deltascore":36,"itemscores":[{"itemscores":3},{"itemscores":3},{"itemscores":3}],"peers":[{"chairId":2,"deltascore":-10,"group":{"duns":[{"c":3,"cards":"1\u0012\u001B","id":0,"ty":2},{"c":5,"cards":"2G8\u0019*","id":1,"ty":2},{"c":5,"cards":"B\u00133%&","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":1,"deltascore":-12,"group":{"duns":[{"c":3,"cards":"A,=","id":0,"ty":2},{"c":5,"cards":"$\u0015E67","id":1,"ty":3},{"c":5,"cards":"(:;K\u001C","id":2,"ty":3}],"specialTy":0,"start":0}},{"chairId":0,"deltascore":-14,"group":{"duns":[{"c":3,"cards":"\u00145'","id":0,"ty":2},{"c":5,"cards":"I\u001A+L\u0011","id":1,"ty":2},{"c":5,"cards":"D4F\u0016\"","id":2,"ty":4}],"specialTy":0,"start":0}}],"player":{"chairId":3},"results":[{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":3,"winLost":1},{"peerTy":3,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1},{"items":[{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":2,"score":1,"ty":3,"winLost":1},{"peerTy":4,"score":1,"ty":8,"winLost":1}],"score":3,"shoot":1}]}
 }
