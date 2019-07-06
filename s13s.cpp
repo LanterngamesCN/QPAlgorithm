@@ -4916,7 +4916,7 @@ namespace S13S {
 							//牌型相同比大小
 							assert(src->duns[dt].GetC() == 3);
 							assert(dst->duns[dt].GetC() == 3);
-							bool bv = S13S::CGameLogic::CompareCards(
+							int bv = S13S::CGameLogic::CompareCards(
 								src->duns[dt].cards, dst->duns[dt].cards, dst->duns[dt].GetC(), false, dst->duns[dt].ty_);
 							if (bv > 0) {
 								winner = src_chairid; loser = dst_chairid;
@@ -5073,7 +5073,7 @@ namespace S13S {
 							//牌型相同比大小
 							assert(src->duns[dt].GetC() == 5);
 							assert(dst->duns[dt].GetC() == 5);
-							bool bv = S13S::CGameLogic::CompareCards(
+							int bv = S13S::CGameLogic::CompareCards(
 								src->duns[dt].cards, dst->duns[dt].cards, dst->duns[dt].GetC(), false, dst->duns[dt].ty_);
 							if (bv > 0) {
 								winner = src_chairid; loser = dst_chairid;
@@ -5312,7 +5312,7 @@ namespace S13S {
 							//牌型相同比大小
 							assert(src->duns[dt].GetC() == 5);
 							assert(dst->duns[dt].GetC() == 5);
-							bool bv = S13S::CGameLogic::CompareCards(
+							int bv = S13S::CGameLogic::CompareCards(
 								src->duns[dt].cards, dst->duns[dt].cards, dst->duns[dt].GetC(), false, dst->duns[dt].ty_);
 							if (bv > 0) {
 								winner = src_chairid; loser = dst_chairid;
