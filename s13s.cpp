@@ -3825,7 +3825,9 @@ namespace S13S {
 		//顺子之间比较
 		case Ty123:
 		//散牌之间比较
-		case Tysp: return CompareCardPointBy(src, srcLen, dst, dstLen, clr);
+		case Tysp:
+		//默认情况
+		case TyNil: return CompareCardPointBy(src, srcLen, dst, dstLen, clr);
 		//铁支之间比较
 		case Ty40: {
 			//一副牌的话四张肯定不一样，多副牌的话比完四张还要比单张
