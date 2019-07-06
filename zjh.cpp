@@ -500,7 +500,21 @@ namespace ZJH {
 		}
 		printf("\n");
 	}
-
+	
+	//手牌字符串
+	std::string CGameLogic::StringCards(uint8_t const* cards, int n) {
+		std::string strcards;
+		for (int i = 0; i < n; ++i) {
+			if (i == 0) {
+				strcards += StringCard(cards[i]);
+			}
+			else {
+				strcards += " " + StringCard(cards[i]);
+			}
+		}
+		return strcards;
+	}
+	
 	//拆分字符串"♦A ♦3 ♥3 ♥4 ♦5 ♣5 ♥5 ♥6 ♣7 ♥7 ♣9 ♣10 ♣J"
 	void CGameLogic::CardsBy(std::string const& strcards, std::vector<std::string>& vec) {
 		std::string str(strcards);
@@ -731,7 +745,7 @@ namespace ZJH {
 	}
 	
 	//玩家手牌类型
-	HandTy CGameLogic::GetHandCardsType(uint8_t *cards) {
+	HandTy CGameLogic::GetHandCardsType_private(uint8_t *cards) {
 		//手牌按牌点从大到小排序(AK...32)
 		SortCards(cards, MaxCount, false, false, false);
 		uint8_t p0 = GetCardPoint(cards[0]);
@@ -779,12 +793,24 @@ namespace ZJH {
 		//散牌(高牌/单张)：三张牌不组成任何类型的牌
 		return SanPai;
 	}
+	
+	//玩家手牌类型
+	HandTy CGameLogic::GetHandCardsType(uint8_t *cards, bool noTeshu235) {
+		HandTy ty = GetHandCardsType_private(cards);
+		//不考虑特殊牌型
+		if(noTeshu235) {
+			if (ty == TeShu235) {
+				ty = SanPai;
+			}
+		}
+		return ty;
+	}
 
 	//比较手牌大小 >0-cards1大 <0-cards2大
-	int CGameLogic::CompareHandCards(uint8_t *cards1, uint8_t *cards2)
+	int CGameLogic::CompareHandCards(uint8_t *cards1, uint8_t *cards2, bool noTeshu235)
 	{
-		HandTy t0 = GetHandCardsType(cards1);
-		HandTy t1 = GetHandCardsType(cards2);
+		HandTy t0 = GetHandCardsType(cards1, noTeshu235);
+		HandTy t1 = GetHandCardsType(cards2, noTeshu235);
 		if (t0 == t1) {
 			//牌型相同情况
 			if (t0 == TeShu235) {
@@ -828,7 +854,7 @@ namespace ZJH {
 				t0 = SanPai;
 			} else if (t1 == TeShu235) {
 				if (t0 == BaoZi) {
-					return t1 - t0;
+					return t0 - t1;
 				}
 				t1 = SanPai;
 			}
@@ -840,9 +866,101 @@ namespace ZJH {
 		}
 	}
 	
+	//是否含带A散牌
+	bool CGameLogic::HasCardA(uint8_t *cards) {
+		for (int i = 0; i < MAX_COUNT; ++i) {
+			if (A == GetCardValue(cards[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//比较手牌大小 >0-cards1大 <0-cards2大
 	bool CGameLogic::GreaterHandCards(boost::shared_ptr<uint8_t>& cards1, boost::shared_ptr<uint8_t>& cards2)
 	{
 		return CompareHandCards(boost::get_pointer(cards1), boost::get_pointer(cards2)) > 0;
+	}
+	
+	void CGameLogic::TestCards() {
+		CGameLogic g;
+		//初始化
+		g.InitCards();
+		//洗牌
+		g.ShuffleCards();
+		bool pause = false;
+		while (1) {
+			if (pause) {
+				pause = false;
+				if ('q' == getchar()) {
+					break;
+				}
+			}
+			//余牌不够则重新洗牌
+			if (g.Remaining() < 2*MAX_COUNT) {
+				g.ShuffleCards();
+			}
+			
+			uint8_t cards[2][MAX_COUNT] = { 0 };
+			HandTy ty[2] = { ZJH::SanPai };
+			
+			for (int i = 0; i < 2; ++i) {
+				//发牌
+				g.DealCards(MAX_COUNT, &(cards[i])[0]);
+				//手牌排序
+				CGameLogic::SortCards(&(cards[i])[0], MAX_COUNT, true, true, true);
+				//手牌牌型
+				ty[i] = CGameLogic::GetHandCardsType(&(cards[i])[0]);
+			}
+			
+			if (ty[0] != ZJH::SanPai && ty[1] != ZJH::SanPai) {
+			//if ((ty[0] == ZJH::TeShu235 && ty[1] == ZJH::BaoZi) ||
+			//	(ty[1] == ZJH::TeShu235 && ty[0] == ZJH::BaoZi)) {
+				std::string s1 = CGameLogic::StringCards(&(cards[0])[0], MAX_COUNT);
+				std::string s2 = CGameLogic::StringCards(&(cards[1])[0], MAX_COUNT);
+				std::string cc = CGameLogic::CompareHandCards(&(cards[0])[0], &(cards[1])[0]) > 0 ? ">" : "<";
+				printf("[%s]%s %s [%s]%s\n",
+					CGameLogic::StringHandTy(ty[0]).c_str(), s1.c_str(),
+					cc.c_str(),
+					CGameLogic::StringHandTy(ty[1]).c_str(), s2.c_str());
+				pause = true;
+			}
+		}
+	}
+	
+	//filename char const* 文件读取手牌 cardsList.ini
+	void CGameLogic::TestCards(char const* filename) {
+		std::vector<std::string> lines;
+		readFile(filename, lines, ";;");
+		//1->文件读取手牌 0->随机生成13张牌
+		int flag = atoi(lines[0].c_str());
+		//默认最多枚举多少组墩
+		int size = atoi(lines[1].c_str());
+		//1->文件读取手牌 0->随机生成13张牌
+		if (flag > 0) {
+			CGameLogic g;
+			uint8_t cards[2][MAX_COUNT] = { 0 };
+			HandTy ty[2] = { ZJH::SanPai };
+			//line[2]构造一副手牌3张
+			CGameLogic::MakeCardList(lines[2], &(cards[0])[0], MAX_COUNT);
+			CGameLogic::MakeCardList(lines[3], &(cards[1])[0], MAX_COUNT);
+			
+			for (int i = 0; i < 2; ++i) {
+				//手牌排序
+				CGameLogic::SortCards(&(cards[i])[0], MAX_COUNT, true, true, true);
+				//手牌牌型
+				ty[i] = CGameLogic::GetHandCardsType(&(cards[i])[0]);
+			}
+			std::string s1 = CGameLogic::StringCards(&(cards[0])[0], MAX_COUNT);
+			std::string s2 = CGameLogic::StringCards(&(cards[1])[0], MAX_COUNT);
+			std::string cc = CGameLogic::CompareHandCards(&(cards[0])[0], &(cards[1])[0]) > 0 ? ">" : "<";
+			printf("[%s]%s %s [%s]%s\n",
+				CGameLogic::StringHandTy(ty[0]).c_str(), s1.c_str(),
+				cc.c_str(),
+				CGameLogic::StringHandTy(ty[1]).c_str(), s2.c_str());
+		}
+		else {
+			TestCards();
+		}
 	}
 };

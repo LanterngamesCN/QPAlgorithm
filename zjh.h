@@ -45,13 +45,14 @@ namespace ZJH {
 	//手牌类型：从小到大
 	//散牌<对子<顺子<金花<同花顺<豹子；AAA<特殊235
 	enum HandTy {
-		SanPai,		//散牌(高牌/单张)：三张牌不组成任何类型的牌(AKJ最大，235最小)
-		DuiZi,		//对子：二张值相同的牌(AAK最大，223最小)
-		ShunZi,		//顺子：花色不同的顺子(QKA最大，A23最小)
-		JinHua,		//金花(同花)：花色相同，非顺子(AKJ最大，235最小)
-		ShunJin,	//顺金(同花顺)：花色相同的顺子(QKA最大，A23最小)
-		BaoZi,		//豹子(炸弹)：三张值相同的牌(AAA最大，222最小)
-		TeShu235,	//特殊：散牌中的235
+		SanPai		= 1,	//散牌(高牌/单张)：三张牌不组成任何类型的牌(AKJ最大，235最小)
+		DuiZi		= 2,	//对子：二张值相同的牌(AAK最大，223最小)
+		ShunZi		= 3,	//顺子：花色不同的顺子(QKA最大，A23最小)
+		JinHua		= 4,	//金花(同花)：花色相同，非顺子(AKJ最大，235最小)
+		ShunJin		= 5,	//顺金(同花顺)：花色相同的顺子(QKA最大，A23最小)
+		BaoZi		= 6,	//豹子(炸弹)：三张值相同的牌(AAA最大，222最小)
+		TeShu235	= 7,	//特殊：散牌中的235
+		TyMax,
 	};
 
 	//花色：黑>红>梅>方
@@ -117,6 +118,8 @@ namespace ZJH {
 		static std::string StringHandTy(HandTy ty);
 		//打印n张牌
 		static void PrintCardList(uint8_t const* cards, int n, bool hide = true);
+		//手牌字符串
+		static std::string StringCards(uint8_t const* cards, int n);
 	private:
 		//拆分字符串"♦A ♦3 ♥3 ♥4 ♦5 ♣5 ♥5 ♥6 ♣7 ♥7 ♣9 ♣10 ♣J"
 		static void CardsBy(std::string const& strcards, std::vector<std::string>& vec);
@@ -141,10 +144,19 @@ namespace ZJH {
 		//比较豹子大小
 		static int CompareBaoZi(uint8_t *cards1, uint8_t *cards2);
 	public:
+		static void TestCards();
+		//filename char const* 文件读取手牌 cardsList.ini
+		static void TestCards(char const* filename);
+	private:
 		//玩家手牌类型
-		static HandTy GetHandCardsType(uint8_t *cards);
+		static HandTy GetHandCardsType_private(uint8_t *cards);
+	public:
+		//玩家手牌类型
+		static HandTy GetHandCardsType(uint8_t *cards, bool noTeshu235 = true);
+		//是否含带A散牌
+		static bool HasCardA(uint8_t *cards);
 		//比较手牌大小 >0-cards1大 <0-cards2大
-		static int CompareHandCards(uint8_t *cards1, uint8_t *cards2);
+		static int CompareHandCards(uint8_t *cards1, uint8_t *cards2, bool noTeshu235 = true);
 		//比较手牌大小 >0-cards1大 <0-cards2大
 		static bool GreaterHandCards(boost::shared_ptr<uint8_t>& cards1, boost::shared_ptr<uint8_t>& cards2);
 	private:

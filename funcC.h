@@ -33,7 +33,7 @@ public:
 	int FuncC(int n, int k, std::vector<std::vector<int>>& vec);
 	//求组合C(n,1)*C(n,1)...*C(n,1)
 	//f(k)=C(n,1)
-	//Muti(k)=f(1)*f(2)...*f(k)
+	//Multi(k)=f(1)*f(2)...*f(k)
 	//n int 访问广度
 	//k int 访问深度
 	//深度优先遍历，由浅到深，广度遍历，由里向外
@@ -41,7 +41,7 @@ public:
 private:
 	//递归求组合C(n,k)
 	//f(k)=C(n,1)
-	//Muti(k)=f(1)*f(2)...*f(k)
+	//Multi(k)=f(1)*f(2)...*f(k)
 	//n int 访问广度
 	//k int 访问深度
 	//深度优先遍历，由浅到深，广度遍历，由里向外

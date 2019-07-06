@@ -7,7 +7,18 @@ enum SUBID
 	SUB_C_MANUALCARDS		= 1; // 手动摆牌 CMD_C_ManualCards
 	SUB_C_MAKESUREDUNHANDTY = 2; // 确定三墩牌型 CMD_C_MakesureDunHandTy
 	
-	SUB_S_COMPARECARDS      = 301;// 玩家之间两两比牌 CMD_S_CompareCards
+	
+	// 服务器命令结构
+	SUB_SC_GAMESCENE_FREE		= 201;				//空闲场景消息		   	// CMD_S_StatusFree
+	SUB_SC_GAMESCENE_PLAY		= 202;				//游戏中场景消息		// CMD_S_StatusPlay
+	//SUB_SC_GAMESCENE_COMPARE 	= 203;				//发送比牌场景     //CMD_S_StatusCompare
+	SUB_SC_GAMESCENE_END		= 203;				//游戏结束			// CMD_S_StatusEnd
+	
+	SUB_S_GAME_START			= 100;				//游戏开始			// CMD_S_GameStart
+	SUB_S_MANUALCARDS			= 101;				//手动摆牌 CMD_S_ManualCards		
+	//SUB_S_COMPARECARDS      	= 102;				//玩家之间两两比牌 CMD_S_CompareCards	
+	SUB_S_MAKESUREDUNHANDTY     = 103;				//理牌完成，确定三墩牌型 CMD_S_MakesureDunHandTy
+	SUB_S_GAME_END				= 105;				//游戏结束			// CMD_S_GameEnd
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,6 +105,7 @@ message PlayerItem
 	optional EnumCards     enums   = 9; //枚举牌型
 	optional bytes cpy    		   = 10;//剩余牌
 	optional GroupDunData group    = 11;//座椅玩家选择一组墩(含头墩/中墩/尾墩)
+	optional int32 selected        = 12;//是否理牌
 }
 ////////////////////////////////////////////////////////////////////////////////
 //游戏开始
@@ -122,6 +134,8 @@ message CMD_S_ManualCards
 	optional int32 dt        = 2; //客户端选择了哪一墩，标记0-头/1-中/2-尾
 	optional int32 ty        = 3; //墩对应牌型
 	optional bytes cpy       = 4; //剩余牌
+	optional int32 result  	 = 5; //0-成功 1-失败
+	optional string errmsg   = 6; //错误消息
 }
 ////////////////////////////////////////////////////////////////////////////////
 //确定牌型，所有玩家都确定牌型后比牌
@@ -130,10 +144,16 @@ message CMD_C_MakesureDunHandTy
 	required int32 groupindex = 1; //>=0从枚举的几组墩中选择一组，-1手动摆牌确认
 }
 ////////////////////////////////////////////////////////////////////////////////
+//理牌完成，确定三墩牌型
+message CMD_S_MakesureDunHandTy
+{
+	required int32 chairId = 1; //确定牌型玩家
+}
+////////////////////////////////////////////////////////////////////////////////
 //玩家之间两两比牌
 message CMD_S_CompareCards
 {
-	required PlayerItem player     = 1;//座椅玩家
+	required PlayerItem player     = 1;//座椅玩家   
 	repeated int32 itemscores      = 2;//座椅玩家与其余玩家按墩比输赢分，不含打枪/全垒打
 	repeated ComparePlayer peers   = 3;//比牌对方  peers[GAME_PLAYER-1]
 	repeated CompareResult results = 4;//比牌结果results[GAME_PLAYER-1]
@@ -142,3 +162,47 @@ message CMD_S_CompareCards
 	optional int32 deltascore	   = 7;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
 	optional int32 wTimeLeft       = 8;//剩余时间
 }
+////////////////////////////////////////////////////////////////////////////////
+//空闲状态
+message CMD_S_StatusFree
+{
+	required int64 ceilscore 	= 1; //基础积分
+	repeated PlayerItem players = 2; //座椅玩家
+};
+////////////////////////////////////////////////////////////////////////////////
+//游戏状态，玩家手牌/是否理牌/玩家比牌
+message CMD_S_StatusPlay
+{
+	required string roundId   	    = 1; //牌局编号
+	required int64 ceilscore 	    = 2; //基础积分
+	optional HandCards handCards    = 3; //手牌数据
+	repeated PlayerItem players     = 4; //座椅玩家
+	required int32 status           = 5; //游戏状态
+    required int32 wTimeLeft 	    = 6; //剩余时间
+    required int32 wTotalTime 	    = 7; //总的时间
+	//比牌游戏结束
+	optional CMD_S_CompareCards cmp = 8; //比牌数据
+	repeated GameEndScore scores    = 9; //玩家积分
+};
+////////////////////////////////////////////////////////////////////////////////
+//结束状态
+//message CMD_S_StatusEnd
+//{
+//	required int32 wTimeLeft = 1; //剩余时间
+//};
+////////////////////////////////////////////////////////////////////////////////
+//游戏结束，结算玩家积分
+message GameEndScore
+{
+	required int32 chairId	 = 1;  //座椅ID
+	required int32 score     = 2;  //输赢积分
+	required int64 userscore = 3;  //剩余积分
+}
+////////////////////////////////////////////////////////////////////////////////
+//游戏结束，广播消息
+message CMD_S_GameEnd
+{
+	required CMD_S_CompareCards cmp = 1; //比牌数据，各玩家对应各自的比牌数据
+	repeated GameEndScore    scores = 2; //玩家积分
+}
+

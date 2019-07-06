@@ -49,32 +49,32 @@ namespace S13S {
 	//手牌类型：从小到大
 	enum HandTy {
 		////// 普通牌型
-		TyNil,
-		TyAllBase,		//所有普通牌型
-		Tysp,			//散牌(乌龙)：一墩牌不组成任何牌型
-		Ty20,			//对子(一对)：除了两张值相同的牌外没有其它牌型
-		Ty22,			//两对：两个对子加上一张单牌
-		Ty30,			//三条：除了三张值相同的牌外没有其它牌型
-		Ty123,			//顺子：花色不同的连续五张牌(A2345仅小于10JQKA)
-		Tysc,			//同花：花色相同的五张牌，非顺子
-		Ty32,			//葫芦：一组三条加上一组对子
-		Ty40,			//铁支：除了四张值相同的牌外没有其它牌型
-		Ty123sc,		//同花顺：花色相同的连续五张牌(A2345仅小于10JQKA)
+		TyNil		  = 0,
+		Tysp          = 1,	//散牌(乌龙)：一墩牌不组成任何牌型
+		Ty20          = 2,	//对子(一对)：除了两张值相同的牌外没有其它牌型
+		Ty22          = 3,	//两对：两个对子加上一张单牌
+		Ty30          = 4,	//三条：除了三张值相同的牌外没有其它牌型
+		Ty123         = 5,	//顺子：花色不同的连续五张牌(A2345仅小于10JQKA)
+		Tysc          = 6,	//同花：花色相同的五张牌，非顺子
+		Ty32          = 7,	//葫芦：一组三条加上一组对子
+		Ty40          = 8,	//铁支：除了四张值相同的牌外没有其它牌型
+		Ty123sc       = 9,	//同花顺：花色相同的连续五张牌(A2345仅小于10JQKA)
+		TyAllBase     = 10,	//所有普通牌型
 		////// 特殊牌型
-		TyThreesc,		//三同花：三墩均是同一花色的牌型
-		TyThree123,		//三顺子：三墩均是顺子的牌型
-		TySix20,		//六对半：六个对子加上一张单张的牌型
-		TyFive2030,		//五对三条(五对冲三)：五个对子加上一个三条
-		TyFour30,		//四套三条(四套冲三)：四个三条加上一张单张的牌型
-		TyTwo3220,		//双怪冲三：二对葫芦加上一个对子加上一张单张的牌型
-		TyAllOneColor,	//凑一色：全是红牌(方块/红心)或黑牌(黑桃/梅花)的牌型
-		TyAllSmall,		//全小：全是2至8的牌型
-		TyAllBig,		//全大：全是8至A的牌型
-		TyThree40,		//三分天下(三套炸弹)：三副炸弹(四张值相同)加上一张单张的牌型
-		TyThree123sc,	//三同花顺：三墩均是同花顺的牌型
-		Ty12Royal,		//十二皇族：十三张全是J，Q，K，A的牌型
-		TyOneDragon,	//一条龙(十三水)：A到K的牌型，非同花，A2345678910JQK
-		TyZZQDragon,	//至尊青龙：同花A到K的牌型，A2345678910JQK
+		TyThreesc     = 11,	//三同花：三墩均是同一花色的牌型
+		TyThree123    = 12,	//三顺子：三墩均是顺子的牌型
+		TySix20       = 13,	//六对半：六个对子加上一张单张的牌型
+		TyFive2030    = 14,	//五对三条(五对冲三)：五个对子加上一个三条
+		TyFour30      = 15,	//四套三条(四套冲三)：四个三条加上一张单张的牌型
+		TyTwo3220     = 16,	//双怪冲三：二对葫芦加上一个对子加上一张单张的牌型
+		TyAllOneColor = 17,	//凑一色：全是红牌(方块/红心)或黑牌(黑桃/梅花)的牌型
+		TyAllSmall    = 18,	//全小：全是2至8的牌型
+		TyAllBig      = 19,	//全大：全是8至A的牌型
+		TyThree40     = 20,	//三分天下(三套炸弹)：三副炸弹(四张值相同)加上一张单张的牌型
+		TyThree123sc  = 21,	//三同花顺：三墩均是同花顺的牌型
+		Ty12Royal     = 22,	//十二皇族：十三张全是J，Q，K，A的牌型
+		TyOneDragon   = 23,	//一条龙(十三水)：A到K的牌型，非同花，A2345678910JQK
+		TyZZQDragon   = 24,	//至尊青龙：同花A到K的牌型，A2345678910JQK
 	};
 
 	//花色：黑>红>梅>方
@@ -114,6 +114,7 @@ namespace S13S {
 	//手牌占位条码mark大小 14
 	//牌值对应占位->A,2,,,K,0 牌点对应占位->0,2,,,K,A
 	int const MaxSZ = K + 1;
+	//枚举兄弟节点数目
 	int const MaxEnumSZ = 1500;
 
 	//游戏逻辑类
@@ -160,6 +161,8 @@ namespace S13S {
 		static std::string StringCard(uint8_t card);
 		//牌型字符串
 		static std::string StringHandTy(HandTy ty);
+		//手牌字符串
+		static std::string StringCards(uint8_t const* cards, int n);
 		//打印n张牌
 		static void PrintCardList(uint8_t const* cards, int n, bool hide = true);
 		//获取牌有效列数
@@ -174,7 +177,7 @@ namespace S13S {
 	private:
 		//拆分字符串"♦A ♦3 ♥3 ♥4 ♦5 ♣5 ♥5 ♥6 ♣7 ♥7 ♣9 ♣10 ♣J"
 		static void CardsBy(std::string const& strcards, std::vector<std::string>& vec);
-		//字串构造牌"♦A"->0x01
+		//字串构造牌"♦A"->0x11
 		static uint8_t MakeCardBy(std::string const& name);
 		//生成n张牌<-"♦A ♦3 ♥3 ♥4 ♦5 ♣5 ♥5 ♥6 ♣7 ♥7 ♣9 ♣10 ♣J"
 		static void MakeCardList(std::vector<std::string> const& vec, uint8_t *cards, int size);
@@ -248,7 +251,7 @@ namespace S13S {
 			std::vector<CardData> v22;
 			//所有对子(一对)
 			std::vector<CardData> v20;
-			//散牌/乌龙(头敦中指向Ty123sc/Ty123/Tysc中的一个)
+			//散牌/乌龙(头墩中指向Ty123sc/Ty123/Tysc中的一个)
 			std::vector<CardData> const* vsp;
 		public:
 			//标识头/中/尾墩
@@ -323,7 +326,7 @@ namespace S13S {
 			HandTy ty_;
 			//墩对应牌数c(3/5/5)
 			uint8_t c;
-			//墩牌数据(头敦3/中墩5/尾墩5)
+			//墩牌数据(头墩3/中墩5/尾墩5)
 			uint8_t cards[5];
 		};
 		//////////////////////////////////////////////////////////////
@@ -363,7 +366,7 @@ namespace S13S {
 				}
 				duns[(int)(dt)].assign(dt, ty, src, len);
 			}
-			int needC(DunTy dt) {
+			int needC(DunTy dt) const {
 				return duns[(int)(dt)].needC();
 			}
 			void append(DunTy dt, uint8_t const* src, int len) {
@@ -380,7 +383,7 @@ namespace S13S {
 			DunTy start;
 			//总体对应特殊牌型
 			HandTy specialTy;
-			//[0]头敦(3)/[1]中墩(5)/[2]尾墩(5)
+			//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
 			dundata_t duns[DunMax];
 		};
 		//////////////////////////////////////////////////////////////
@@ -413,10 +416,16 @@ namespace S13S {
 			//确定手牌牌型
 			void CalcHandCardsType(uint8_t const* src, int len);
 		public:
-			//手动选牌组墩，给指定墩(头/中/尾墩)选择一组牌(头敦3/中墩5/尾墩5)
+			//判断手动摆牌是否倒水
 			//dt DunTy 指定为哪墩
 			//src uint8_t const* 选择的一组牌(5张或3张)
-			//len int 3/5张，头敦3张/中墩5张/尾墩5张
+			//len int 3/5张，头墩3张/中墩5张/尾墩5张
+			//ty HandTy 指定墩牌型
+			bool IsInverted(DunTy dt, uint8_t const* src, int len, HandTy ty);
+			//手动选牌组墩，给指定墩(头/中/尾墩)选择一组牌(头墩3/中墩5/尾墩5)
+			//dt DunTy 指定为哪墩
+			//src uint8_t const* 选择的一组牌(5张或3张)
+			//len int 3/5张，头墩3张/中墩5张/尾墩5张
 			//ty HandTy 指定墩牌型
 			bool SelectAs(DunTy dt, uint8_t const* src, int len, HandTy ty);
 			//重置手动摆牌
@@ -442,6 +451,8 @@ namespace S13S {
 			void GetLeftCards(uint8_t const* src, int len, uint8_t *cpy, int& cpylen);
 			//返回手动摆牌组墩总牌数
 			inline int GetManualC() { return manual_group.GetC(); }
+			//是否进行过手动任意摆牌
+			inline bool HasManualGroup() { return manual_group_index != -1; }
 		public:
 			//玩家座椅ID
 			int chairID;
@@ -453,7 +464,7 @@ namespace S13S {
 			EnumTree *rootEnumList;
 			//枚举几组最优墩，指向EnumTree::TraverseTreeNode成员
 			std::vector<groupdun_t> enum_groups;
-			//手动摆牌组墩[0]头敦(3)/[1]中墩(5)/[2]尾墩(5)
+			//手动摆牌组墩[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
 			groupdun_t manual_group;
 			//manual_group对应groups索引
 			int manual_group_index;
@@ -483,7 +494,7 @@ namespace S13S {
 		static void TestManualCards();
 		//确定牌型/比牌测试
 		//先让每个玩家确定手牌三墩牌型，手动摆牌或者从枚举几组最优解中任选一组作为手牌牌型与其他玩家比牌，
-		//再玩家之间两两比牌，头敦与头敦比，中墩与中墩比，尾墩与尾墩比，
+		//再玩家之间两两比牌，头墩与头墩比，中墩与中墩比，尾墩与尾墩比，
 		//并计算输赢积分(输赢多少水，统计打枪/全垒打)
 		static void TestCompareCards();
 	public:
@@ -503,7 +514,7 @@ namespace S13S {
 		//clr bool 是否比花色
 		//ty HandTy 比较的两单墩牌的普通牌型
 		static int CompareCards(uint8_t const* src, uint8_t const* dst, int n, bool clr, HandTy ty);
-		//按照尾墩5张/中墩5张/头敦3张依次抽取枚举普通牌型
+		//按照尾墩5张/中墩5张/头墩3张依次抽取枚举普通牌型
 		//src uint8_t const* 手牌余牌(13/8/3)，初始13张，按5/5/3依次抽，余牌依次为13/8/3
 		//n int 抽取n张(5/5/3) 第一次抽5张余8张，第二次抽5张余3张，第三次取余下3张抽完
 		//classify classify_t& 存放分类信息(所有重复四张/三张/二张/散牌/余牌)
@@ -517,6 +528,21 @@ namespace S13S {
 		static void GetLeftCards(uint8_t const* src, int len,
 			dundata_t const* duns, uint8_t *cpy, int& cpylen);
 	private:
+		//牌型相同的src与dst比大小，牌数相同
+		//src uint8_t const* srcLen张牌
+		//dst uint8_t const* dstLen张牌
+		//clr bool 是否比花色
+		//ty HandTy 比较的两单墩牌的普通牌型
+		static int CompareCards(
+			uint8_t const* src, int srcLen,
+			uint8_t const* dst, int dstLen, bool clr, HandTy ty);
+		//牌型相同按牌点从大到小顺序逐次比点
+		//src uint8_t const* srcLen张牌
+		//dst uint8_t const* dstLen张牌
+		//clr bool 是否比花色
+		static int CompareCardPointBy(
+			uint8_t const* src, int srcLen,
+			uint8_t const* dst, int dstLen, bool clr);
 		//按照尾墩5张/中墩5张/头墩3张依次抽取枚举普通牌型
 		//src uint8_t const* 手牌余牌(13/8/3)，初始13张，按5/5/3依次抽，余牌依次为13/8/3
 		//n int 抽取n张(5/5/3) 第一次抽5张余8张，第二次抽5张余3张，第三次取余下3张抽完
@@ -712,7 +738,7 @@ namespace S13S {
 	private:
 		//求组合C(n,1)*C(n,1)...*C(n,1)
 		//f(k)=C(n,1)
-		//Muti(k)=f(1)*f(2)...*f(k)
+		//Multi(k)=f(1)*f(2)...*f(k)
 		//n int 访问广度
 		//k int 访问深度
 		//深度优先遍历，由浅到深，广度遍历，由里向外
@@ -725,7 +751,7 @@ namespace S13S {
 			std::vector<std::vector<uint8_t>>& dst1);
 		//递归求组合C(n,1)*C(n,1)...*C(n,1)
 		//f(k)=C(n,1)
-		//Muti(k)=f(1)*f(2)...*f(k)
+		//Multi(k)=f(1)*f(2)...*f(k)
 		//n int 访问广度
 		//k int 访问深度
 		//深度优先遍历，由浅到深，广度遍历，由里向外
