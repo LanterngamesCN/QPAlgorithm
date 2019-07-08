@@ -2998,23 +2998,20 @@ namespace S13S {
 				if (specialTy_ != TyZZQDragon && specialTy_ != TyOneDragon && specialTy_ != Ty12Royal) {
 					if (tyRoot == Ty123sc && tyChild == Ty123sc && tyLeaf == Ty123sc) {
 						//三同花顺
-						specialTy_ = TyThree123sc;
-						group.specialTy = specialTy_;
+						specialTy_ = group.specialTy = TyThree123sc;
 					}
 					else if (tyRoot == Ty123 && tyChild == Ty123 && tyLeaf == Ty123) {
 						//如果不是同花顺
 						if (specialTy_ != TyThree123sc) {
 							//三顺子
-							specialTy_ = TyThree123;
-							group.specialTy = specialTy_;
+							specialTy_ = group.specialTy = TyThree123;
 						}
 					}
 					else if (tyRoot == Tysc && tyChild == Tysc && tyLeaf == Tysc) {
 						//如果不是同花顺且不是三顺子
 						if (specialTy_ != TyThree123sc && specialTy_ != TyThree123) {
 							//三同花
-							specialTy_ = TyThreesc;
-							group.specialTy = specialTy_;
+							specialTy_ = group.specialTy = TyThreesc;
 						}
 					}
 				}
@@ -3825,9 +3822,7 @@ namespace S13S {
 		//顺子之间比较
 		case Ty123:
 		//散牌之间比较
-		case Tysp:
-		//默认情况
-		case TyNil: return CompareCardPointBy(src, srcLen, dst, dstLen, clr);
+		case Tysp: return CompareCardPointBy(src, srcLen, dst, dstLen, clr);
 		//铁支之间比较
 		case Ty40: {
 			//一副牌的话四张肯定不一样，多副牌的话比完四张还要比单张
@@ -3857,6 +3852,7 @@ namespace S13S {
 				//四张大小相同，比较单张大小
 				return GetCardPoint(cpy_0[0]) - GetCardPoint(cpy_1[0]);
 			}
+			break;
 		}
 		//葫芦之间比较
 		case Ty32: {
@@ -3915,6 +3911,7 @@ namespace S13S {
 				//三张大小相同，比较散牌大小
 				return CompareCardPointBy(cpy_0, cpylen_0, cpy_1, cpylen_1, clr);
 			}
+			break;
 		}
 		//两对之间比较
 		case Ty22: {
@@ -3965,6 +3962,7 @@ namespace S13S {
 				//比较单张的大小
 				return GetCardPoint(cpy_0[0]) - GetCardPoint(cpy_1[0]);
 			}
+			break;
 		}
 		//对子之间比较
 		case Ty20: {
@@ -3994,9 +3992,13 @@ namespace S13S {
 				//对子大小相同，比较散牌大小
 				return CompareCardPointBy(cpy_0, cpylen_0, cpy_1, cpylen_1, clr);
 			}
+			break;
 		}
+		//默认情况
+		case TyNil:
+		default: return CompareCardPointBy(src, srcLen, dst, dstLen, clr);
 		}
-		assert(false);
+		//assert(false);
 		return 0;
 	}
 
@@ -4642,6 +4644,11 @@ namespace S13S {
 								//手动摆牌，头墩要么三条/对子/乌龙，同花顺/同花/顺子都要改成乌龙
 								if (dt == S13S::DunFirst && (ty == S13S::Ty123sc || ty == S13S::Tysc || ty == S13S::Ty123)) {
 									ty = S13S::Tysp;
+								}
+								//判断手动摆牌是否倒水
+								if (handInfos[i].IsInverted(dt, cards, len, ty)) {
+									handInfos[i].ResetManual();
+									continue;
 								}
 								//手动选牌组墩，给指定墩(头/中/尾墩)选择一组牌
 								if (!handInfos[i].SelectAs(dt, cards, len, ty)) {
