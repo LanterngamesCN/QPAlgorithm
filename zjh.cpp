@@ -867,10 +867,13 @@ namespace ZJH {
 	}
 	
 	//是否含带A散牌
-	bool CGameLogic::HasCardA(uint8_t *cards) {
+	bool CGameLogic::HasCardValue(uint8_t *cards, uint8_t cardValue, int count) {
+		int c = 0;
 		for (int i = 0; i < MAX_COUNT; ++i) {
-			if (A == GetCardValue(cards[i])) {
-				return true;
+			if (cardValue == GetCardValue(cards[i])) {
+				if (++c == count) {
+					return true;
+				}
 			}
 		}
 		return false;

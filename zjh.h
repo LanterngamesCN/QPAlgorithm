@@ -154,7 +154,7 @@ namespace ZJH {
 		//玩家手牌类型
 		static HandTy GetHandCardsType(uint8_t *cards, bool noTeshu235 = true);
 		//是否含带A散牌
-		static bool HasCardA(uint8_t *cards);
+		static bool HasCardValue(uint8_t *cards, uint8_t cardValue = A, int count = 1);
 		//比较手牌大小 >0-cards1大 <0-cards2大
 		static int CompareHandCards(uint8_t *cards1, uint8_t *cards2, bool noTeshu235 = true);
 		//比较手牌大小 >0-cards1大 <0-cards2大
