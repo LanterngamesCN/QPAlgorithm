@@ -123,7 +123,7 @@ namespace ZJH {
 	private:
 		//拆分字符串"♦A ♦3 ♥3 ♥4 ♦5 ♣5 ♥5 ♥6 ♣7 ♥7 ♣9 ♣10 ♣J"
 		static void CardsBy(std::string const& strcards, std::vector<std::string>& vec);
-		//字串构造牌"♦A"->0x01
+		//字串构造牌"♦A"->0x11
 		static uint8_t MakeCardBy(std::string const& name);
 		//生成n张牌<-"♦A ♦3 ♥3 ♥4 ♦5 ♣5 ♥5 ♥6 ♣7 ♥7 ♣9 ♣10 ♣J"
 		static void MakeCardList(std::vector<std::string> const& vec, uint8_t *cards, int size);

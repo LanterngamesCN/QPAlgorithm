@@ -2610,7 +2610,7 @@ namespace S13S {
 		
 		//至尊青龙/一条龙(十三水)/十二皇族
 		//hand.specialTy_ = CheckDragonRoyal(src, len);
-		HandTy specialTy_ = TyNil;
+		HandTy specialTy = TyNil;
 
 		//枚举尾墩/5张 //////
 		EnumCards(src, len, 5, hand.classify, *rootEnumList, DunLast);
@@ -2769,29 +2769,29 @@ namespace S13S {
 					//printf("--- *** --------------------------------------------------\n");
 					
 					//如果不是至尊青龙/一条龙(十三水)/十二皇族
-					//if (specialTy_ != TyZZQDragon && specialTy_ != TyOneDragon && specialTy_ != Ty12Royal) {
+					//if (specialTy != TyZZQDragon && specialTy != TyOneDragon && specialTy != Ty12Royal) {
 						if (tyRoot == Ty123sc && tyChild == Ty123sc && tyLeaf == Ty123sc) {
 							//三同花顺
-							specialTy_ = TyThree123sc;
+							specialTy = TyThree123sc;
 						}
 						else if (tyRoot == Ty123 && tyChild == Ty123 && tyLeaf == Ty123) {
-							//如果不是同花顺
-							if (specialTy_ != TyThree123sc) {
+							//如果不是三同花顺
+							if (specialTy != TyThree123sc) {
 								//三顺子
-								specialTy_ = TyThree123;
+								specialTy = TyThree123;
 							}
 						}
 						else if (tyRoot == Tysc && tyChild == Tysc && tyLeaf == Tysc) {
-							//如果不是同花顺且不是三顺子
-							if (specialTy_ != TyThree123sc && specialTy_ != TyThree123) {
+							//如果不是三同花顺且不是三顺子
+							if (specialTy != TyThree123sc && specialTy != TyThree123) {
 								//三同花
-								specialTy_ = TyThreesc;
+								specialTy = TyThreesc;
 							}
 						}
 					//}
 					//printf("--- *** %s\n", StringHandTy(tyLeaf).c_str());
 					//头墩非对子/非三张，整墩非三同花顺/非三顺子/非三同花，则修改头墩为乌龙
-					if (tyLeaf != Ty20 && tyLeaf != Ty30 && specialTy_ != TyThree123sc && specialTy_ != TyThree123 && specialTy_ != TyThreesc) {
+					if (tyLeaf != Ty20 && tyLeaf != Ty30 && specialTy != TyThree123sc && specialTy != TyThree123 && specialTy != TyThreesc) {
 						//头墩是3张同花顺/同花/顺子牌型，但是整墩构不成特殊牌型，当作散牌与余牌合并
 						//合并后再判断是否存在重复牌型，存在则跳过不处理
 						classify_t classify = { 0 };
@@ -2852,7 +2852,7 @@ namespace S13S {
 		EnumTree::CardData const *leaf = NULL, *child = NULL, *root = NULL;
 
 		//至尊青龙/一条龙(十三水)/十二皇族
-		specialTy_ = CheckDragonRoyal(src, len);
+		HandTy specialTy = CheckDragonRoyal(src, len);
 
 		//遍历枚举出来的每组牌型(头墩&中墩&尾墩加起来为一组) ////////////////////////////
 		for (std::vector<EnumTree::TraverseTreeNode>::iterator it = leafList.begin();
@@ -2995,23 +2995,26 @@ namespace S13S {
 					group.assign(DunLast, tyRoot, &root->front(), root->size());
 				}
 				//如果不是至尊青龙/一条龙(十三水)/十二皇族
-				if (specialTy_ != TyZZQDragon && specialTy_ != TyOneDragon && specialTy_ != Ty12Royal) {
+				if (specialTy != TyZZQDragon && specialTy != TyOneDragon && specialTy != Ty12Royal) {
 					if (tyRoot == Ty123sc && tyChild == Ty123sc && tyLeaf == Ty123sc) {
-						//三同花顺
-						specialTy_ = group.specialTy = TyThree123sc;
+						//如果不是三同花顺
+						if (specialTy != TyThree123sc) {
+							//三同花顺
+							specialTy = group.specialTy = TyThree123sc;
+						}
 					}
 					else if (tyRoot == Ty123 && tyChild == Ty123 && tyLeaf == Ty123) {
-						//如果不是同花顺
-						if (specialTy_ != TyThree123sc) {
+						//如果不是三同花顺且不是三顺子
+						if (specialTy != TyThree123sc && specialTy != TyThree123) {
 							//三顺子
-							specialTy_ = group.specialTy = TyThree123;
+							specialTy = group.specialTy = TyThree123;
 						}
 					}
 					else if (tyRoot == Tysc && tyChild == Tysc && tyLeaf == Tysc) {
-						//如果不是同花顺且不是三顺子
-						if (specialTy_ != TyThree123sc && specialTy_ != TyThree123) {
+						//如果不是三同花顺且不是三顺子且不是三同花
+						if (specialTy != TyThree123sc && specialTy != TyThree123 && specialTy != TyThreesc) {
 							//三同花
-							specialTy_ = group.specialTy = TyThreesc;
+							specialTy = group.specialTy = TyThreesc;
 						}
 					}
 				}
@@ -3056,49 +3059,230 @@ namespace S13S {
 						assert(offset == cpylen);
 					}
 				}
-				enum_groups.push_back(group);
+				//该组是特殊牌型(三同花顺/三顺子/三同花)
+				if (group.specialTy == TyThree123sc || group.specialTy == TyThree123 || group.specialTy == TyThreesc) {
+					//特殊牌型放在枚举几组最优解前面
+					spec_groups.push_back(group);
+				}
+				else {
+					//该组是普通三墩牌
+					enum_groups.push_back(group);
+				}
 				break;
 			}
 			}
 		}
-		//如果不是至尊青龙/一条龙(十三水)/十二皇族/三同花顺
-		if (specialTy_ != TyZZQDragon && specialTy_ != TyOneDragon &&
-			specialTy_ != Ty12Royal && specialTy_ != TyThree123sc) {
-			HandTy specialTy = TyNil;
+		//至尊青龙/一条龙(十三水)/十二皇族
+		if (specialTy == TyZZQDragon || specialTy == TyOneDragon || specialTy == Ty12Royal) {
+			CGameLogic::groupdun_t group;
+			group.specialTy = specialTy;
+			group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
+			group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
+			group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+			spec_groups.push_back(group);
+		}
+		//三同花顺
+		else if (specialTy == TyThree123sc) {
+			assert(spec_groups.size() == 1);
+		}
+		else {
 			if (classify.c4 == 3) {
 				//三分天下(三套炸弹)
-				specialTy_ = TyThree40;
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c4; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 4);
+						k += 4;
+					}
+					assert(classify.cpylen == 1);
+					memcpy(cards + k, classify.cpy, classify.cpylen);
+					k += classify.cpylen;
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TyThree40;
+					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
+					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
 			}
-			else if ((specialTy = CheckAllBig(src, len)) == TyAllBig) {
+			else if (CheckAllBig(src, len) == TyAllBig) {
 				//全大/牌值从小到大
-				specialTy_ = specialTy;
+				CGameLogic::groupdun_t group;
+				group.specialTy = TyAllBig;
+				group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
+				group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
+				group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+				//除去三顺子/三同花
+				if (spec_groups.size() > 0) {
+					assert(spec_groups.size() == 1);
+					spec_groups.pop_back();
+				}
+				spec_groups.push_back(group);
 			}
-			else if ((specialTy = CheckAllSmall(src, len)) == TyAllSmall) {
+			else if (CheckAllSmall(src, len) == TyAllSmall) {
 				//全小/牌值从小到大
-				specialTy_ = specialTy;
+				CGameLogic::groupdun_t group;
+				group.specialTy = TyAllSmall;
+				group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
+				group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
+				group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+				//除去三顺子/三同花
+				if (spec_groups.size() > 0) {
+					assert(spec_groups.size() == 1);
+					spec_groups.pop_back();
+				}
+				spec_groups.push_back(group);
 			}
-			else if ((specialTy = CheckAllOneColor(src, len)) == TyAllOneColor) {
+			else if (CheckAllOneColor(src, len) == TyAllOneColor) {
 				//凑一色：全是红牌(方块/红心)或黑牌(黑桃/梅花)
-				specialTy_ = specialTy;
+				CGameLogic::groupdun_t group;
+				group.specialTy = TyAllOneColor;
+				group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
+				group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
+				group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+				//除去三顺子/三同花
+				if (spec_groups.size() > 0) {
+					assert(spec_groups.size() == 1);
+					spec_groups.pop_back();
+				}
+				spec_groups.push_back(group);
 			}
 			else if (classify.c3 == 2 && classify.c2 == 3) {
 				//双怪冲三
-				specialTy_ = TyTwo3220;
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c3; ++i) {
+						memcpy(cards + k, &(classify.dst3[i])[0], 3);
+						k += 3;
+					}
+					for (int i = 0; i < classify.c2; ++i) {
+						memcpy(cards + k, &(classify.dst2[i])[0], 2);
+						k += 2;
+					}
+					assert(classify.cpylen == 1);
+					memcpy(cards + k, classify.cpy, classify.cpylen);
+					k += classify.cpylen;
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TyTwo3220;
+					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
+					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
 			}
 			else if (classify.c3 == 4) {
 				//四套三条(四套冲三)
-				specialTy_ = TyFour30;
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c3; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 3);
+						k += 3;
+					}
+					assert(classify.cpylen == 1);
+					memcpy(cards + k, classify.cpy, classify.cpylen);
+					k += classify.cpylen;
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TyFour30;
+					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
+					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
 			}
 			else if (classify.c2 == 5 && classify.c3 == 1) {
 				//五对三条(五对冲三)
-				specialTy_ = TyFive2030;
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c2; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 2);
+						k += 2;
+					}
+					for (int i = 0; i < classify.c3; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 3);
+						k += 3;
+					}
+					assert(classify.cpylen == 0);
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TyFive2030;
+					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
+					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
 			}
 			else if (classify.c2 == 6) {
 				//六对半
-				specialTy_ = TySix20;
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c2; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 2);
+						k += 2;
+					}
+					assert(classify.cpylen == 1);
+					memcpy(cards + k, classify.cpy, classify.cpylen);
+					k += classify.cpylen;
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TySix20;
+					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
+					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
 			}
 		}
 		assert(groups.size() == 0);
+		//特殊牌型
+		for (std::vector<groupdun_t>::const_iterator it = spec_groups.begin();
+			it != spec_groups.end(); ++it) {
+			groups.push_back(&*it);
+			break;
+		}
+		//枚举牌型(几组最优解)
 		for (std::vector<groupdun_t>::const_iterator it = enum_groups.begin();
 			it != enum_groups.end(); ++it) {
 			groups.push_back(&*it);
@@ -3572,11 +3756,12 @@ namespace S13S {
 	
 	void CGameLogic::handinfo_t::Reset() {
 		chairID = -1;
-		specialTy_ = TyNil;
+		//specialTy_ = TyNil;
 		manual_group_index = -1;
 		select_group_index = -1;
 		manual_group.Reset();
 		enum_groups.clear();
+		spec_groups.clear();
 		leafList.clear();
 		groups.clear();
 		if (rootEnumList) {
@@ -3633,7 +3818,12 @@ namespace S13S {
 	
 	//返回特殊牌型字符串
 	std::string CGameLogic::handinfo_t::StringSpecialTy() {
-		return StringSpecialTy(specialTy_);
+		HandTy specialTy = TyNil;
+		if (spec_groups.size() > 0) {
+			assert(spec_groups.size() == 1);
+			specialTy = spec_groups.front().specialTy;
+		}
+		return StringSpecialTy(specialTy);
 	}
 
 	//返回特殊牌型字符串
@@ -3832,7 +4022,10 @@ namespace S13S {
 			{
 				int const size4 = 3;
 				c4_0 = EnumRepeatCards(src, srcLen, 4, dst4_0, size4, cpy_0, cpylen_0);
-				assert(c4_0 > 0);
+				if (c4_0 != 1) {
+					S13S::CGameLogic::PrintCardList(src, srcLen);
+				}
+				assert(c4_0 == 1);
 			}
 			int c4_1 = 0, cpylen_1 = 0;
 			uint8_t dst4_1[1][4] = { 0 };
@@ -3840,7 +4033,10 @@ namespace S13S {
 			{
 				int const size4 = 3;
 				c4_1 = EnumRepeatCards(dst, dstLen, 4, dst4_1, size4, cpy_1, cpylen_1);
-				assert(c4_1 > 0);
+				if (c4_1 != 1) {
+					S13S::CGameLogic::PrintCardList(dst, dstLen);
+				}
+				assert(c4_1 == 1);
 			}
 			if (cpylen_0 && cpylen_1) {
 				uint8_t p0 = GetCardPoint(dst4_0[0][0]);
@@ -3863,6 +4059,9 @@ namespace S13S {
 			{
 				int const size3 = 4;
 				c3_0 = EnumRepeatCards(src, srcLen, 3, dst3_0, size3, cpy_0, cpylen_0);
+				if (c3_0 != 1) {
+					S13S::CGameLogic::PrintCardList(src, srcLen);
+				}
 				assert(c3_0 == 1);
 			}
 			int c3_1 = 0, cpylen_1 = 0;
@@ -3871,6 +4070,9 @@ namespace S13S {
 			{
 				int const size3 = 4;
 				c3_1 = EnumRepeatCards(dst, dstLen, 3, dst3_1, size3, cpy_1, cpylen_1);
+				if (c3_1 != 1) {
+					S13S::CGameLogic::PrintCardList(dst, dstLen);
+				}
 				assert(c3_1 == 1);
 			}
 			//先比较三张的大小，再比较对子大小
@@ -3891,6 +4093,9 @@ namespace S13S {
 			{
 				int const size3 = 4;
 				c3_0 = EnumRepeatCards(src, srcLen, 3, dst3_0, size3, cpy_0, cpylen_0);
+				if (c3_0 != 1) {
+					S13S::CGameLogic::PrintCardList(src, srcLen);
+				}
 				assert(c3_0 == 1);
 			}
 			int c3_1 = 0, cpylen_1 = 0;
@@ -3899,6 +4104,9 @@ namespace S13S {
 			{
 				int const size3 = 4;
 				c3_1 = EnumRepeatCards(dst, dstLen, 3, dst3_1, size3, cpy_1, cpylen_1);
+				if (c3_1 != 1) {
+					S13S::CGameLogic::PrintCardList(dst, dstLen);
+				}
 				assert(c3_1 == 1);
 			}
 			if (cpylen_0 && cpylen_1) {
@@ -3921,6 +4129,9 @@ namespace S13S {
 			{
 				int const size2 = 6;
 				c2_0 = EnumRepeatCards(src, srcLen, 2, dst2_0, size2, cpy_0, cpylen_0);
+				if (c2_0 != 2) {
+					S13S::CGameLogic::PrintCardList(src, srcLen);
+				}
 				assert(c2_0 == 2);
 			}
 			int c2_1 = 0, cpylen_1 = 0;
@@ -3929,6 +4140,9 @@ namespace S13S {
 			{
 				int const size2 = 6;
 				c2_1 = EnumRepeatCards(dst, dstLen, 2, dst2_1, size2, cpy_1, cpylen_1);
+				if (c2_1 != 2) {
+					S13S::CGameLogic::PrintCardList(dst, dstLen);
+				}
 				assert(c2_1 == 2);
 			}
 			//先比较最大的对子，再比较次大的对子，最后比较单张
@@ -3972,6 +4186,9 @@ namespace S13S {
 			{
 				int const size2 = 6;
 				c2_0 = EnumRepeatCards(src, srcLen, 2, dst2_0, size2, cpy_0, cpylen_0);
+				if (c2_0 != 1) {
+					S13S::CGameLogic::PrintCardList(src, srcLen);
+				}
 				assert(c2_0 == 1);
 			}
 			int c2_1 = 0, cpylen_1 = 0;
@@ -3980,6 +4197,9 @@ namespace S13S {
 			{
 				int const size2 = 6;
 				c2_1 = EnumRepeatCards(dst, dstLen, 2, dst2_1, size2, cpy_1, cpylen_1);
+				if (c2_1 != 1) {
+					S13S::CGameLogic::PrintCardList(dst, dstLen);
+				}
 				assert(c2_1 == 1);
 			}
 			if (cpylen_0 && cpylen_1) {
@@ -4226,7 +4446,7 @@ namespace S13S {
 						//一副13张手牌
 						handcards->set_cards(&(handCards[i])[0], MAX_COUNT);
 						//标记手牌特殊牌型
-						handcards->set_specialty(handInfos[i].specialTy_);
+						handcards->set_specialty(handInfos[i].SpecialTy());
 						int j = 0;
 						for (std::vector<S13S::CGameLogic::groupdun_t>::iterator it = handInfos[i].enum_groups.begin();
 							it != handInfos[i].enum_groups.end(); ++it) {

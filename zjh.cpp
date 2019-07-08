@@ -531,7 +531,7 @@ namespace ZJH {
 		}
 	}
 
-	//字串构造牌"♦A"->0x01
+	//字串构造牌"♦A"->0x11
 	uint8_t CGameLogic::MakeCardBy(std::string const& name) {
 		uint8_t color = 0, value = 0;
 		if (0 == strncmp(name.c_str(), "♠", 3)) {

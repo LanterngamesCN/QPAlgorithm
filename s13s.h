@@ -392,7 +392,7 @@ namespace S13S {
 			friend class CGameLogic;
 		public:
 			handinfo_t()
-				:rootEnumList(NULL), specialTy_(TyNil), chairID(-1),
+				:rootEnumList(NULL)/*, specialTy_(TyNil)*/, chairID(-1),
 				manual_group_index(-1),
 				select_group_index(-1), classify({ 0 }) {
 				Reset();
@@ -453,11 +453,15 @@ namespace S13S {
 			inline int GetManualC() { return manual_group.GetC(); }
 			//是否进行过手动任意摆牌
 			inline bool HasManualGroup() { return manual_group_index != -1; }
+			//返回手牌特殊牌型
+			inline HandTy SpecialTy() { return spec_groups.size() > 0 ? spec_groups.front().specialTy : TyNil; }
 		public:
 			//玩家座椅ID
 			int chairID;
 			//优先特殊牌型
-			HandTy specialTy_;
+			//HandTy specialTy_;
+			//特殊牌型牌墩
+			std::vector<groupdun_t> spec_groups;
 			//手牌重复牌型
 			classify_t classify;
 			//根节点：初始枚举所有牌型列表
@@ -470,7 +474,7 @@ namespace S13S {
 			int manual_group_index;
 			//当前选择groups中的第几组优先
 			int select_group_index;
-			//合并 enum_groups & manual_group
+			//合并 spec_groups & enum_groups & manual_group
 			std::vector<groupdun_t const*> groups;
 			//叶子节点列表
 			//枚举几组最优墩(头墩&中墩&尾墩加起来为一组)，由叶子节点向上往根节点遍历
