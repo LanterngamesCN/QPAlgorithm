@@ -3555,10 +3555,9 @@ namespace S13S {
 					}
 				}
 				//牌型相同比大小
-				int bv = S13S::CGameLogic::CompareCards(
+				else if (S13S::CGameLogic::CompareCards(
 					src, len,
-					dst->duns[DunSecond].cards, dst->duns[DunSecond].GetC(), false, ty);
-				if (bv > 0) {
+					dst->duns[DunSecond].cards, dst->duns[DunSecond].GetC(), false, ty) > 0) {
 					return true;
 				}
 			}
@@ -3571,10 +3570,9 @@ namespace S13S {
 					}
 				}
 				//牌型相同比大小
-				int bv = S13S::CGameLogic::CompareCards(
+				else if (S13S::CGameLogic::CompareCards(
 					src, len,
-					dst->duns[DunLast].cards, dst->duns[DunLast].GetC(), false, ty);
-				if (bv > 0) {
+					dst->duns[DunLast].cards, dst->duns[DunLast].GetC(), false, ty) > 0) {
 					return true;
 				}
 			}
@@ -3590,10 +3588,9 @@ namespace S13S {
 					}
 				}
 				//牌型相同比大小
-				int bv = S13S::CGameLogic::CompareCards(
+				else if (S13S::CGameLogic::CompareCards(
 					src, len,
-					dst->duns[DunFirst].cards, dst->duns[DunFirst].GetC(), false, ty);
-				if (bv < 0) {
+					dst->duns[DunFirst].cards, dst->duns[DunFirst].GetC(), false, ty) < 0) {
 					return true;
 				}
 			}
@@ -3606,10 +3603,9 @@ namespace S13S {
 					}
 				}
 				//牌型相同比大小
-				int bv = S13S::CGameLogic::CompareCards(
+				else if (S13S::CGameLogic::CompareCards(
 					src, len,
-					dst->duns[DunLast].cards, dst->duns[DunLast].GetC(), false, ty);
-				if (bv > 0) {
+					dst->duns[DunLast].cards, dst->duns[DunLast].GetC(), false, ty) > 0) {
 					return true;
 				}
 			}
@@ -3625,10 +3621,9 @@ namespace S13S {
 					}
 				}
 				//牌型相同比大小
-				int bv = S13S::CGameLogic::CompareCards(
+				else if (S13S::CGameLogic::CompareCards(
 					src, len,
-					dst->duns[DunFirst].cards, dst->duns[DunFirst].GetC(), false, ty);
-				if (bv < 0) {
+					dst->duns[DunFirst].cards, dst->duns[DunFirst].GetC(), false, ty) < 0) {
 					return true;
 				}
 			}
@@ -3641,10 +3636,9 @@ namespace S13S {
 					}
 				}
 				//牌型相同比大小
-				int bv = S13S::CGameLogic::CompareCards(
+				else if (S13S::CGameLogic::CompareCards(
 					src, len,
-					dst->duns[DunSecond].cards, dst->duns[DunSecond].GetC(), false, ty);
-				if (bv < 0) {
+					dst->duns[DunSecond].cards, dst->duns[DunSecond].GetC(), false, ty) < 0) {
 					return true;
 				}
 			}
@@ -3981,10 +3975,12 @@ namespace S13S {
 		uint8_t const* src, int srcLen,
 		uint8_t const* dst, int dstLen, bool clr) {
 		uint8_t psrc[MaxSZ] = { 0 }, pdst[MaxSZ] = { 0 };
+		assert(srcLen > 0);
+		assert(dstLen > 0);
 		memcpy(psrc, src, srcLen);
 		memcpy(pdst, dst, dstLen);
-		SortCards(psrc, srcLen, false, true, true);
-		SortCards(pdst, dstLen, false, true, true);
+		SortCards(psrc, srcLen, true, true, true);
+		SortCards(pdst, dstLen, true, true, true);
 		//牌型相同按顺序比点，先将src/dst按牌点升序排
 		int i = srcLen - 1, j = dstLen - 1;
 		while(i >= 0 && j >= 0) {

@@ -293,7 +293,7 @@ namespace S13S {
 				assert(len > 0);
 				assert(dt > DunNil && dt < DunMax);
 				assert(len <= ((dt == DunFirst) ? 3 : 5));
-				assert(dt_ == DunNil && ty_ == TyNil && c == 0);
+				assert(/*dt_ == DunNil &&*/ ty_ == Tysp && c == 0);
 				dt_ = dt; ty_ = ty; c = len;
 				memcpy(cards, src, len);
 			}
@@ -303,13 +303,14 @@ namespace S13S {
 				c = 0;
 				memset(cards, 0, sizeof(uint8_t) * 5);
 			}
-			int needC() {
+			int needC() const {
 				switch (dt_)
 				{
 				case DunFirst: return 3 - c;
 				case DunSecond:
 				case DunLast:  return 5 - c;
 				}
+				assert(false);
 				return 0;
 			}
 			void append(uint8_t const* src, int len) {
@@ -337,6 +338,7 @@ namespace S13S {
 				//memset(duns, 0, sizeof(dundata_t)*DunMax);
 				for (int i = DunFirst; i <= DunLast; ++i) {
 					duns[i].Reset();
+					duns[i].dt_ = DunTy(i);
 				}
 			}
 			groupdun_t(groupdun_t const& ref) {
@@ -357,6 +359,7 @@ namespace S13S {
 				//memset(duns, 0, sizeof(dundata_t)*DunMax);
 				for (int i = DunFirst; i <= DunLast; ++i) {
 					duns[i].Reset();
+					duns[i].dt_ = DunTy(i);
 				}
 			}
 			void assign(DunTy dt, HandTy ty, uint8_t const* src, int len) {
