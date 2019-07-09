@@ -3550,7 +3550,9 @@ namespace S13S {
 			if (dst->needC(DunSecond) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunSecond].ty_) {
-					return ty > dst->duns[DunSecond].ty_;
+					if (ty > dst->duns[DunSecond].ty_) {
+						return true;
+					}
 				}
 				//牌型相同比大小
 				int bv = S13S::CGameLogic::CompareCards(
@@ -3564,7 +3566,9 @@ namespace S13S {
 			if (dst->needC(DunLast) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunLast].ty_) {
-					return ty > dst->duns[DunLast].ty_;
+					if (ty > dst->duns[DunLast].ty_) {
+						return true;
+					}
 				}
 				//牌型相同比大小
 				int bv = S13S::CGameLogic::CompareCards(
@@ -3581,7 +3585,9 @@ namespace S13S {
 			if (dst->needC(DunFirst) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunFirst].ty_) {
-					return ty < dst->duns[DunFirst].ty_;
+					if (ty < dst->duns[DunFirst].ty_) {
+						return true;
+					}
 				}
 				//牌型相同比大小
 				int bv = S13S::CGameLogic::CompareCards(
@@ -3595,7 +3601,9 @@ namespace S13S {
 			if (dst->needC(DunLast) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunLast].ty_) {
-					return ty > dst->duns[DunLast].ty_;
+					if (ty > dst->duns[DunLast].ty_) {
+						return true;
+					}
 				}
 				//牌型相同比大小
 				int bv = S13S::CGameLogic::CompareCards(
@@ -3612,7 +3620,9 @@ namespace S13S {
 			if (dst->needC(DunFirst) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunFirst].ty_) {
-					return ty < dst->duns[DunFirst].ty_;
+					if (ty < dst->duns[DunFirst].ty_) {
+						return true;
+					}
 				}
 				//牌型相同比大小
 				int bv = S13S::CGameLogic::CompareCards(
@@ -3626,7 +3636,9 @@ namespace S13S {
 			if (dst->needC(DunSecond) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunSecond].ty_) {
-					return ty < dst->duns[DunSecond].ty_;
+					if (ty < dst->duns[DunSecond].ty_) {
+						return true;
+					}
 				}
 				//牌型相同比大小
 				int bv = S13S::CGameLogic::CompareCards(
