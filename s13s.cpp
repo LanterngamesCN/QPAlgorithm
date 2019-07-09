@@ -5051,7 +5051,7 @@ namespace S13S {
 						s13s::GroupDunData* player_group = compareCards[i].mutable_player()->mutable_group();
 						//从哪墩开始的
 						player_group->set_start(S13S::DunFirst);
-						//总体对应特殊牌型
+						//总体对应特殊牌型 ////////////
 						player_group->set_specialty(player_select->specialTy);
 						//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
 						for (int d = S13S::DunFirst; d <= S13S::DunLast; ++d) {
@@ -5094,7 +5094,7 @@ namespace S13S {
 							s13s::GroupDunData* src_peer_select = src_peer->mutable_group();
 							//从哪墩开始的
 							src_peer_select->set_start(S13S::DunFirst);
-							//总体对应特殊牌型
+							//总体对应特殊牌型 ////////////
 							src_peer_select->set_specialty(dst->specialTy);
 							//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
 							for (int i = S13S::DunFirst; i <= S13S::DunLast; ++i) {
@@ -5123,7 +5123,7 @@ namespace S13S {
 							s13s::GroupDunData* dst_peer_select = dst_peer->mutable_group();
 							//从哪墩开始的
 							dst_peer_select->set_start(S13S::DunFirst);
-							//总体对应特殊牌型
+							//总体对应特殊牌型 ////////////
 							dst_peer_select->set_specialty(src->specialTy);
 							//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
 							for (int i = S13S::DunFirst; i <= S13S::DunLast; ++i) {
@@ -6368,9 +6368,11 @@ namespace S13S {
 					if (true) {
 						//判断是否全垒打
 						int shootc = 0;
+						//当前比牌玩家
+						s13s::PlayerItem const& player = compareCards[i].player();
 						//遍历玩家所有比牌对象
 						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
-							//s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+							s13s::ComparePlayer const& peer = compareCards[i].peers(j);
 							s13s::CompareResult const& result = compareCards[i].results(j);
 							int winc = 0, lostc = 0, sumscore = 0;
 							assert(result.items_size() == 3);
@@ -6386,6 +6388,12 @@ namespace S13S {
 							}
 							//三墩不考虑打枪输赢得水总分 赢分+/和分0/输分-
 							const_cast<s13s::CompareResult&>(result).set_score(sumscore);
+							//特殊牌型不参与打枪
+							if (player.group().specialty() >= S13S::TyThreesc ||
+								peer.group().specialty() >= S13S::TyThreesc) {
+								const_cast<s13s::CompareResult&>(result).set_shoot(0);//-1被打枪/0不打枪/1打枪
+								continue;
+							}
 							if (winc == result.items_size()) {
 								//玩家三墩全部胜过比牌对象，则玩家对比牌对象打枪，中枪者付给打枪者2倍的水
 								const_cast<s13s::CompareResult&>(result).set_shoot(1);//-1被打枪/0不打枪/1打枪
@@ -6483,13 +6491,23 @@ namespace S13S {
 				//座椅玩家与其余玩家按墩比输赢分，不含打枪/全垒打
 				for (int i = 0; i < GAME_PLAYER; ++i) {
 					if (true) {
+						//当前比牌玩家
+						s13s::PlayerItem const& player = compareCards[i].player();
+						//特殊牌型不按墩比牌
+						if (player.group().specialty() >= S13S::TyThreesc) {
+							continue;
+						}
 						//遍历各墩(头墩/中墩/尾墩)
 						for (int d = S13S::DunFirst; d <= S13S::DunLast; ++d) {
 							int sumscore = 0;
 							//遍历比牌对象
 							for (int j = 0; j < compareCards[i].peers_size(); ++j) {
-								//s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+								s13s::ComparePlayer const& peer = compareCards[i].peers(j);
 								s13s::CompareResult const& result = compareCards[i].results(j);
+								//特殊牌型不按墩比牌
+								if (peer.group().specialty() >= S13S::TyThreesc) {
+									break;
+								}
 								//累加指定墩输赢得水积分
 								sumscore += result.items(d).score();
 							}
