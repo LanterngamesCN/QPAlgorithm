@@ -5117,6 +5117,613 @@ namespace S13S {
 						s13s::CompareResult* dst_result = compareCards[dst_chairid].add_results();
 					}
 					//////////////////////////////////////////////////////////////
+					//比较特殊牌型
+					if (src->specialTy >= TyThreesc || dst->specialTy >= TyThreesc) {
+						int winner = -1, loser = -1;
+						if (src->specialTy != dst->specialTy) {
+							//牌型不同比牌型
+							if (src->specialTy > dst->specialTy) {
+								winner = src_chairid; loser = dst_chairid;
+							}
+							else if (src->specialTy < dst->specialTy) {
+								winner = dst_chairid; loser = src_chairid;
+							}
+							else {
+								assert(false);
+							}
+						}
+						else {
+							//牌型相同，和了
+						}
+						if (winner == -1) {
+							//和了
+							winner = src_chairid; loser = dst_chairid;
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//src比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//src输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//和了
+									item->set_winlost(0);
+									//和分
+									item->set_score(0);
+									//和的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//dst比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//dst输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//和了
+									item->set_winlost(0);
+									//和分
+									item->set_score(0);
+									//和的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//至尊青龙获胜赢32水
+						else if(handInfos[winner].GetSelected()->specialTy == TyZZQDragon){
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(32);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-32);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//一条龙获胜赢30水
+						else if (handInfos[winner].GetSelected()->specialTy == TyOneDragon) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(30);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-30);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//十二皇族获胜赢24水
+						else if (handInfos[winner].GetSelected()->specialTy == Ty12Royal) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(24);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-24);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//三同花顺获胜赢20水
+						else if (handInfos[winner].GetSelected()->specialTy == TyThree123sc) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(20);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-20);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//三分天下获胜赢20水
+						else if (handInfos[winner].GetSelected()->specialTy == TyThree40) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(20);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-20);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//全大获胜赢10水
+						else if (handInfos[winner].GetSelected()->specialTy == TyAllBig) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(10);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-10);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//全小获胜赢10水
+						else if (handInfos[winner].GetSelected()->specialTy == TyAllSmall) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(10);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-10);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//凑一色获胜赢10水
+						else if (handInfos[winner].GetSelected()->specialTy == TyAllOneColor) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(10);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-10);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//双怪冲三获胜赢8水
+						else if (handInfos[winner].GetSelected()->specialTy == TyTwo3220) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(8);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-8);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//四套三条获胜赢6水
+						else if (handInfos[winner].GetSelected()->specialTy == TyFour30) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(6);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-6);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//五对三条获胜赢5水
+						else if (handInfos[winner].GetSelected()->specialTy == TyFive2030) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(5);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-5);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//六对半获胜赢4水
+						else if (handInfos[winner].GetSelected()->specialTy == TySix20) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(4);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-4);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//三顺子获胜赢4水
+						else if (handInfos[winner].GetSelected()->specialTy == TyThree123) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//赢家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(4);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-4);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						//三同花获胜赢3水
+						else if (handInfos[winner].GetSelected()->specialTy == TyThreesc) {
+							{
+								int index = compareCards[winner].results_size() - 1;
+								assert(index >= 0);
+								//赢家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
+								//头墩输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//赢了
+									item->set_winlost(1);
+									//赢分
+									item->set_score(3);
+									//赢的牌型
+									item->set_ty(handInfos[winner].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[loser].GetSelected()->specialTy);
+								}
+							}
+							{
+								int index = compareCards[loser].results_size() - 1;
+								assert(index >= 0);
+								//输家比牌结果 ////////////
+								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
+								//输家输赢信息
+								s13s::CompareItem* item = result->add_items();
+								{
+									//输了
+									item->set_winlost(-1);
+									//输分
+									item->set_score(-3);
+									//输的牌型
+									item->set_ty(handInfos[loser].GetSelected()->specialTy);
+									//对方牌型
+									item->set_peerty(handInfos[winner].GetSelected()->specialTy);
+								}
+							}
+						}
+						continue;
+					}
+					//////////////////////////////////////////////////////////////
 					//比较头墩
 					{
 						//单墩比牌，头墩要么三条/对子/乌龙，同花顺/同花/顺子都要改成乌龙
