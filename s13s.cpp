@@ -3279,8 +3279,8 @@ namespace S13S {
 		//特殊牌型
 		for (std::vector<groupdun_t>::const_iterator it = spec_groups.begin();
 			it != spec_groups.end(); ++it) {
+			assert(spec_groups.size() == 1);
 			groups.push_back(&*it);
-			break;
 		}
 		//枚举牌型(几组最优解)
 		for (std::vector<groupdun_t>::const_iterator it = enum_groups.begin();
@@ -4456,6 +4456,32 @@ namespace S13S {
 						//标记手牌特殊牌型
 						handcards->set_specialty(handInfos[i].SpecialTy());
 						int j = 0;
+						for (std::vector<S13S::CGameLogic::groupdun_t>::iterator it = handInfos[i].spec_groups.begin();
+							it != handInfos[i].spec_groups.end(); ++it) {
+							assert(handInfos[i].spec_groups.size() == 1);
+							//特殊牌型放在枚举几组最优解前面
+							s13s::GroupDunData* group = handcards->add_groups();
+							//从哪墩开始的
+							group->set_start(it->start);
+							//总体对应特殊牌型
+							group->set_specialty(it->specialTy);
+							//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
+							printf("第[%d]组\t=>>\t", j++ + 1);
+							for (int k = S13S::DunFirst; k <= S13S::DunLast; ++k) {
+								//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
+								s13s::DunData* dun_i = group->add_duns();
+								//标记0-头/1-中/2-尾
+								dun_i->set_id(k);
+								//墩对应普通牌型
+								dun_i->set_ty(it->duns[k].ty_);
+								//墩对应牌数c(3/5/5)
+								dun_i->set_c(it->duns[k].c);
+								//墩牌数据(头墩(3)/中墩(5)/尾墩(5))
+								dun_i->set_cards(it->duns[k].cards, it->duns[k].c);
+								printf("dun[%d] c:=%d\t", k, it->duns[k].c);
+							}
+							printf("\n\n");
+						}
 						for (std::vector<S13S::CGameLogic::groupdun_t>::iterator it = handInfos[i].enum_groups.begin();
 							it != handInfos[i].enum_groups.end(); ++it) {
 							//枚举几组最优墩
@@ -4526,7 +4552,7 @@ namespace S13S {
 							printf("\n--- *** %s\n", typeName.c_str());
 							printf("%s\n\n", jsonstr.c_str());
 						}
-						printf("--- *** chairID = [%d] c = %d %s\n\n\n\n", i, handInfos[i].enum_groups.size(), handInfos[i].StringSpecialTy().c_str());
+						printf("--- *** chairID = [%d] c = %d %s\n\n\n\n", i, handInfos[i].spec_groups.size() + handInfos[i].enum_groups.size(), handInfos[i].StringSpecialTy().c_str());
 					}
 				}
 			}
