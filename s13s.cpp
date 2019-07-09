@@ -3979,8 +3979,8 @@ namespace S13S {
 		assert(dstLen > 0);
 		memcpy(psrc, src, srcLen);
 		memcpy(pdst, dst, dstLen);
-		SortCards(psrc, srcLen, true, true, true);
-		SortCards(pdst, dstLen, true, true, true);
+		SortCards(psrc, srcLen, false, true, true);
+		SortCards(pdst, dstLen, false, true, true);
 		//牌型相同按顺序比点，先将src/dst按牌点升序排
 		int i = srcLen - 1, j = dstLen - 1;
 		while(i >= 0 && j >= 0) {
