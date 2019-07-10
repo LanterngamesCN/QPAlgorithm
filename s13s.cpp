@@ -2771,19 +2771,22 @@ namespace S13S {
 					//如果不是至尊青龙/一条龙(十三水)/十二皇族
 					//if (specialTy != TyZZQDragon && specialTy != TyOneDragon && specialTy != Ty12Royal) {
 						if (tyRoot == Ty123sc && tyChild == Ty123sc && tyLeaf == Ty123sc) {
-							//三同花顺
-							specialTy = TyThree123sc;
-						}
-						else if (tyRoot == Ty123 && tyChild == Ty123 && tyLeaf == Ty123) {
 							//如果不是三同花顺
 							if (specialTy != TyThree123sc) {
+								//三同花顺
+								specialTy = TyThree123sc;
+							}
+						}
+						else if (tyRoot == Ty123 && tyChild == Ty123 && tyLeaf == Ty123) {
+							//如果不是三同花顺且不是三顺子
+							if (specialTy != TyThree123sc && specialTy != TyThree123) {
 								//三顺子
 								specialTy = TyThree123;
 							}
 						}
 						else if (tyRoot == Tysc && tyChild == Tysc && tyLeaf == Tysc) {
-							//如果不是三同花顺且不是三顺子
-							if (specialTy != TyThree123sc && specialTy != TyThree123) {
+							//如果不是三同花顺且不是三顺子且不是三同花
+							if (specialTy != TyThree123sc && specialTy != TyThree123 && specialTy != TyThreesc) {
 								//三同花
 								specialTy = TyThreesc;
 							}
