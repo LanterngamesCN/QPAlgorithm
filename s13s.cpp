@@ -4678,6 +4678,8 @@ namespace S13S {
 							//客户端选择了几张牌
 							int len = reqdata.cards().size();
 							if (len > 0) {
+								S13S::CGameLogic::SortCards(cards, len, true, true, true);
+								//S13S::CGameLogic::PrintCardList(cards, len);
 								//对客户端选择的一组牌，进行单墩牌型判断
 								S13S::HandTy ty = S13S::CGameLogic::GetDunCardHandTy(dt, cards, len);
 								//手动摆牌，头墩要么三条/对子/乌龙，同花顺/同花/顺子都要改成乌龙
@@ -4896,6 +4898,8 @@ namespace S13S {
 							//客户端选择了几张牌
 							int len = reqdata.cards().size();
 							if (len > 0) {
+								S13S::CGameLogic::SortCards(cards, len, true, true, true);
+								//S13S::CGameLogic::PrintCardList(cards, len);
 								//对客户端选择的一组牌，进行单墩牌型判断
 								S13S::HandTy ty = S13S::CGameLogic::GetDunCardHandTy(dt, cards, len);
 								//手动摆牌，头墩要么三条/对子/乌龙，同花顺/同花/顺子都要改成乌龙
