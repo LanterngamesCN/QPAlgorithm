@@ -2840,12 +2840,13 @@ namespace S13S {
 					//}
 					//else {
 						std::map<uint64_t, bool>::iterator it = masks.find(maskChild);
-						assert(it == masks.end());
-						//叶子节点作为叶子节点，记录头墩，中墩和尾墩，由叶子节点向上查找父节点和根节点
-						leafList.push_back(EnumTree::TraverseTreeNode(leafEnumList, cursorLeaf));
-						masks[maskChild] = true;
-						masks[maskRoot] = true;
-						++c;
+						if (it == masks.end()) {
+							//叶子节点作为叶子节点，记录头墩，中墩和尾墩，由叶子节点向上查找父节点和根节点
+							leafList.push_back(EnumTree::TraverseTreeNode(leafEnumList, cursorLeaf));
+							masks[maskChild] = true;
+							masks[maskRoot] = true;
+							++c;
+						}
 					//}
 					//if (++c >= n) {
 					//	goto entry_root_iterator;
@@ -3160,6 +3161,11 @@ namespace S13S {
 				//该组是特殊牌型(三同花顺/三顺子/三同花)
 				if (group.specialTy == TyThree123sc || group.specialTy == TyThree123 || group.specialTy == TyThreesc) {
 					//特殊牌型放在枚举几组最优解前面
+#if 1
+					group.duns[DunFirst].ty_ = group.specialTy;
+					group.duns[DunSecond].ty_ = group.specialTy;
+					group.duns[DunLast].ty_ = group.specialTy;
+#endif
 					spec_groups.push_back(group);
 				}
 				else {
@@ -3215,9 +3221,9 @@ namespace S13S {
 		if (specialTy == TyZZQDragon || specialTy == TyOneDragon || specialTy == Ty12Royal) {
 			CGameLogic::groupdun_t group;
 			group.specialTy = specialTy;
-			group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
-			group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
-			group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+			group.assign(DunFirst, group.specialTy, src, group.needC(DunFirst));
+			group.assign(DunSecond, group.specialTy, src + group.GetC(), group.needC(DunSecond));
+			group.assign(DunLast, group.specialTy, src + group.GetC(), group.needC(DunLast));
 			spec_groups.push_back(group);
 		}
 		//三同花顺
@@ -3242,9 +3248,9 @@ namespace S13S {
 				{
 					CGameLogic::groupdun_t group;
 					group.specialTy = TyThree40;
-					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
-					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
-					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
 					//除去三顺子/三同花
 					if (spec_groups.size() > 0) {
 						assert(spec_groups.size() == 1);
@@ -3257,9 +3263,9 @@ namespace S13S {
 				//全大/牌值从小到大
 				CGameLogic::groupdun_t group;
 				group.specialTy = TyAllBig;
-				group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
-				group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
-				group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+				group.assign(DunFirst, group.specialTy, src, group.needC(DunFirst));
+				group.assign(DunSecond, group.specialTy, src + group.GetC(), group.needC(DunSecond));
+				group.assign(DunLast, group.specialTy, src + group.GetC(), group.needC(DunLast));
 				//除去三顺子/三同花
 				if (spec_groups.size() > 0) {
 					assert(spec_groups.size() == 1);
@@ -3271,9 +3277,9 @@ namespace S13S {
 				//全小/牌值从小到大
 				CGameLogic::groupdun_t group;
 				group.specialTy = TyAllSmall;
-				group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
-				group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
-				group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+				group.assign(DunFirst, group.specialTy, src, group.needC(DunFirst));
+				group.assign(DunSecond, group.specialTy, src + group.GetC(), group.needC(DunSecond));
+				group.assign(DunLast, group.specialTy, src + group.GetC(), group.needC(DunLast));
 				//除去三顺子/三同花
 				if (spec_groups.size() > 0) {
 					assert(spec_groups.size() == 1);
@@ -3285,9 +3291,9 @@ namespace S13S {
 				//凑一色：全是红牌(方块/红心)或黑牌(黑桃/梅花)
 				CGameLogic::groupdun_t group;
 				group.specialTy = TyAllOneColor;
-				group.assign(DunFirst, Tysp, src, group.needC(DunFirst));
-				group.assign(DunSecond, Tysp, src + group.GetC(), group.needC(DunSecond));
-				group.assign(DunLast, Tysp, src + group.GetC(), group.needC(DunLast));
+				group.assign(DunFirst, group.specialTy, src, group.needC(DunFirst));
+				group.assign(DunSecond, group.specialTy, src + group.GetC(), group.needC(DunSecond));
+				group.assign(DunLast, group.specialTy, src + group.GetC(), group.needC(DunLast));
 				//除去三顺子/三同花
 				if (spec_groups.size() > 0) {
 					assert(spec_groups.size() == 1);
@@ -3316,9 +3322,9 @@ namespace S13S {
 				{
 					CGameLogic::groupdun_t group;
 					group.specialTy = TyTwo3220;
-					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
-					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
-					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
 					//除去三顺子/三同花
 					if (spec_groups.size() > 0) {
 						assert(spec_groups.size() == 1);
@@ -3344,9 +3350,9 @@ namespace S13S {
 				{
 					CGameLogic::groupdun_t group;
 					group.specialTy = TyFour30;
-					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
-					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
-					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
 					//除去三顺子/三同花
 					if (spec_groups.size() > 0) {
 						assert(spec_groups.size() == 1);
@@ -3374,9 +3380,9 @@ namespace S13S {
 				{
 					CGameLogic::groupdun_t group;
 					group.specialTy = TyFive2030;
-					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
-					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
-					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
 					//除去三顺子/三同花
 					if (spec_groups.size() > 0) {
 						assert(spec_groups.size() == 1);
@@ -3402,9 +3408,9 @@ namespace S13S {
 				{
 					CGameLogic::groupdun_t group;
 					group.specialTy = TySix20;
-					group.assign(DunFirst, Tysp, cards, group.needC(DunFirst));
-					group.assign(DunSecond, Tysp, cards + group.GetC(), group.needC(DunSecond));
-					group.assign(DunLast, Tysp, cards + group.GetC(), group.needC(DunLast));
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
 					//除去三顺子/三同花
 					if (spec_groups.size() > 0) {
 						assert(spec_groups.size() == 1);
@@ -4148,6 +4154,7 @@ namespace S13S {
 	//dst uint8_t const* dstLen张牌
 	//clr bool 是否比花色
 	//ty HandTy 比较的两单墩牌的普通牌型
+	//sp bool 是否比较散牌/单张
 	int CGameLogic::CompareCards(
 		uint8_t const* src, int srcLen,
 		uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp) {

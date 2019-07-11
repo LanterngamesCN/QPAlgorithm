@@ -540,6 +540,7 @@ namespace S13S {
 		//dst uint8_t const* dstLen张牌
 		//clr bool 是否比花色
 		//ty HandTy 比较的两单墩牌的普通牌型
+		//sp bool 是否比较散牌/单张
 		static int CompareCards(
 			uint8_t const* src, int srcLen,
 			uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp = true);
