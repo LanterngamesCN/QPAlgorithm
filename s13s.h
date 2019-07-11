@@ -542,7 +542,7 @@ namespace S13S {
 		//ty HandTy 比较的两单墩牌的普通牌型
 		static int CompareCards(
 			uint8_t const* src, int srcLen,
-			uint8_t const* dst, int dstLen, bool clr, HandTy ty);
+			uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp = true);
 		//牌型相同按牌点从大到小顺序逐次比点
 		//src uint8_t const* srcLen张牌
 		//dst uint8_t const* dstLen张牌
