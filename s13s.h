@@ -411,6 +411,10 @@ namespace S13S {
 			void Reset();
 			//打印全部枚举墩牌型
 			void PrintEnumCards(bool reverse = true);
+			//打印特殊牌型
+			void PrintSpecCards();
+			//打印牌型列表
+			static void PrintCardList(std::vector<groupdun_t>& groups, bool reverse = true);
 			//返回特殊牌型字符串
 			std::string StringSpecialTy();
 			//返回特殊牌型字符串

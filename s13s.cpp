@@ -3339,7 +3339,7 @@ namespace S13S {
 				{
 					int k = 0;
 					for (int i = 0; i < classify.c3; ++i) {
-						memcpy(cards + k, &(classify.dst4[i])[0], 3);
+						memcpy(cards + k, &(classify.dst3[i])[0], 3);
 						k += 3;
 					}
 					assert(classify.cpylen == 1);
@@ -3366,13 +3366,13 @@ namespace S13S {
 				uint8_t cards[MAX_COUNT] = { 0 };
 				{
 					int k = 0;
-					for (int i = 0; i < classify.c2; ++i) {
-						memcpy(cards + k, &(classify.dst4[i])[0], 2);
-						k += 2;
-					}
 					for (int i = 0; i < classify.c3; ++i) {
-						memcpy(cards + k, &(classify.dst4[i])[0], 3);
+						memcpy(cards + k, &(classify.dst3[i])[0], 3);
 						k += 3;
+					}
+					for (int i = 0; i < classify.c2; ++i) {
+						memcpy(cards + k, &(classify.dst2[i])[0], 2);
+						k += 2;
 					}
 					assert(classify.cpylen == 0);
 					assert(k == MAX_COUNT);
@@ -3397,7 +3397,7 @@ namespace S13S {
 				{
 					int k = 0;
 					for (int i = 0; i < classify.c2; ++i) {
-						memcpy(cards + k, &(classify.dst4[i])[0], 2);
+						memcpy(cards + k, &(classify.dst2[i])[0], 2);
 						k += 2;
 					}
 					assert(classify.cpylen == 1);
@@ -3834,13 +3834,24 @@ namespace S13S {
 	//groupindex int 若 <= -1 指向manual_group对应groups中索引
 	bool CGameLogic::handinfo_t::Select(int groupindex) {
 		if (groupindex >= 0) {
-			//枚举几组最优解必须存在
-			assert(enum_groups.size() > 0);
-			//不能超过枚举几组解范围
-			assert(groupindex < enum_groups.size());
-			//从枚举最优解中选择一组
-			//直接选择枚举中的一组进行比牌
-			select_group_index = groupindex;
+			if (spec_groups.size() > 0) {
+				assert(spec_groups.size() == 1);
+				//枚举几组最优解必须存在
+				assert(enum_groups.size() > 0);
+				//不能超过枚举几组解范围
+				assert(groupindex < spec_groups.size() + enum_groups.size());
+				//选择特殊牌型/枚举一组
+				select_group_index = groupindex;
+			}
+			else {
+				//枚举几组最优解必须存在
+				assert(enum_groups.size() > 0);
+				//不能超过枚举几组解范围
+				assert(groupindex < enum_groups.size());
+				//从枚举最优解中选择一组
+				//直接选择枚举中的一组进行比牌
+				select_group_index = groupindex;
+			}
 		}
 		else {
 			//没有进行过手动任意摆牌
@@ -3878,6 +3889,7 @@ namespace S13S {
 		assert(dt < DunMax);
 		switch (duns[dt].ty_)
 		{
+		//普通牌型
 		case Tysp:		PrintCardList("乌龙", dt, duns[dt].ty_);	break;//乌龙
 		case Ty20:		PrintCardList("对子", dt, duns[dt].ty_);	break;//对子
 		case Ty22:		PrintCardList("两对", dt, duns[dt].ty_);	break;//两对
@@ -3887,6 +3899,21 @@ namespace S13S {
 		case Ty32:		PrintCardList("葫芦", dt, duns[dt].ty_);	break;//葫芦
 		case Ty40:		PrintCardList("铁支", dt, duns[dt].ty_);	break;//铁支
 		case Ty123sc:	PrintCardList("同花顺", dt, duns[dt].ty_); break;//同花顺
+		//特殊牌型
+		case TyThreesc:		PrintCardList("三同花", dt, duns[dt].ty_); break;//三同花
+		case TyThree123:	PrintCardList("三顺子", dt, duns[dt].ty_); break;//三顺子
+		case TySix20:		PrintCardList("六对半", dt, duns[dt].ty_); break;//六对半
+		case TyFive2030:	PrintCardList("五对三条", dt, duns[dt].ty_); break;//五对三条
+		case TyFour30:		PrintCardList("四套三条", dt, duns[dt].ty_); break;//四套三条
+		case TyTwo3220:		PrintCardList("双怪冲三", dt, duns[dt].ty_); break;//双怪冲三
+		case TyAllOneColor:	PrintCardList("凑一色", dt, duns[dt].ty_); break;//凑一色
+		case TyAllSmall:	PrintCardList("全小", dt, duns[dt].ty_); break;//全小
+		case TyAllBig:		PrintCardList("全大", dt, duns[dt].ty_); break;//全大
+		case TyThree40:		PrintCardList("三分天下", dt, duns[dt].ty_); break;//三分天下
+		case TyThree123sc:	PrintCardList("三同花顺", dt, duns[dt].ty_); break;//三同花顺
+		case Ty12Royal:		PrintCardList("十二皇族", dt, duns[dt].ty_); break;//十二皇族
+		case TyOneDragon:	PrintCardList("一条龙", dt, duns[dt].ty_); break;//一条龙
+		case TyZZQDragon:	PrintCardList("至尊青龙", dt, duns[dt].ty_); break;//至尊青龙
 		}
 	}
 
@@ -3924,11 +3951,21 @@ namespace S13S {
 	
 	//打印全部枚举墩牌型
 	void CGameLogic::handinfo_t::PrintEnumCards(bool reverse) {
+		CGameLogic::handinfo_t::PrintCardList(enum_groups, reverse);
+	}
+	
+	//打印特殊牌型
+	void CGameLogic::handinfo_t::PrintSpecCards() {
+		CGameLogic::handinfo_t::PrintCardList(spec_groups, false);
+	}
+	
+	//打印牌型列表
+	void CGameLogic::handinfo_t::PrintCardList(std::vector<groupdun_t>& rgroups, bool reverse) {
 		if(reverse) {
-			int i = enum_groups.size();
+			int i = rgroups.size();
 			//倒序从小到大输出
-			for (std::vector<groupdun_t>::reverse_iterator it = enum_groups.rbegin();
-				it != enum_groups.rend(); ++it) {
+			for (std::vector<groupdun_t>::reverse_iterator it = rgroups.rbegin();
+				it != rgroups.rend(); ++it) {
 				printf("\n--- *** --------------------------------------------------\n");
 				if (it->specialTy != TyNil) {
 					printf("--- *** 第[%d]组 %s\n", i--, StringSpecialTy(it->specialTy).c_str());
@@ -3944,8 +3981,8 @@ namespace S13S {
 		}
 		else {
 			int i = 0;
-			for (std::vector<groupdun_t>::iterator it = enum_groups.begin();
-				it != enum_groups.end(); ++it) {
+			for (std::vector<groupdun_t>::iterator it = rgroups.begin();
+				it != rgroups.end(); ++it) {
 				printf("\n--- *** --------------------------------------------------\n");
 				if (it->specialTy != TyNil) {
 					printf("--- *** 第[%d]组 %s\n", i++ + 1, StringSpecialTy(it->specialTy).c_str());
@@ -4414,6 +4451,8 @@ namespace S13S {
 			//if (pause) {
 				//查看所有枚举牌型
 				//hand.rootEnumList->PrintEnumCards(false, Ty123sc);
+				//查看手牌特殊牌型
+				hand.PrintSpecCards();
 				//查看手牌枚举三墩牌型
 				hand.PrintEnumCards();
 				//查看重复牌型和散牌
@@ -4431,7 +4470,7 @@ namespace S13S {
 		assert(lines.size() >= 2);
 		//1->文件读取手牌 0->随机生成13张牌
 		int flag = atoi(lines[0].c_str());
-		//默认最多枚举多少组墩
+		//默认最多枚举多少组墩，开元/德胜是3组
 		int size = atoi(lines[1].c_str());
 		//1->文件读取手牌 0->随机生成13张牌
 		if (flag > 0) {
@@ -4451,6 +4490,8 @@ namespace S13S {
 			int c = CGameLogic::AnalyseHandCards(cards, n, size, hand);
 			//查看所有枚举牌型
 			//hand.rootEnumList->PrintEnumCards(false, Ty40);
+			//查看手牌特殊牌型
+			hand.PrintSpecCards();
 			//查看手牌枚举三墩牌型
 			hand.PrintEnumCards(true);
 			//查看重复牌型和散牌
@@ -4516,6 +4557,8 @@ namespace S13S {
 						int c = S13S::CGameLogic::AnalyseHandCards(&(handCards[i])[0], MAX_COUNT, enum_group_sz, handInfos[i]);
 						//查看所有枚举牌型
 						handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
+						//查看手牌特殊牌型
+						handInfos[i].PrintSpecCards();
 						//查看手牌枚举三墩牌型
 						handInfos[i].PrintEnumCards();
 						//查看重复牌型和散牌
@@ -4572,6 +4615,8 @@ namespace S13S {
 						int c = S13S::CGameLogic::AnalyseHandCards(&(handCards[i])[0], MAX_COUNT, enum_group_sz, handInfos[i]);
 						//查看所有枚举牌型
 						//handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
+						//查看手牌特殊牌型
+						handInfos[i].PrintSpecCards();
 						//查看手牌枚举三墩牌型
 						handInfos[i].PrintEnumCards();
 						//查看重复牌型和散牌
@@ -4592,6 +4637,8 @@ namespace S13S {
 						handInfos[i].classify.PrintCardList();
 						//查看所有枚举牌型
 						handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
+						//查看手牌特殊牌型
+						handInfos[i].PrintSpecCards();
 						//查看手牌枚举三墩牌型
 						handInfos[i].PrintEnumCards();
 						//游戏开始，填充相关数据
@@ -4751,6 +4798,8 @@ namespace S13S {
 						int c = S13S::CGameLogic::AnalyseHandCards(&(handCards[i])[0], MAX_COUNT, enum_group_sz, handInfos[i]);
 						//查看所有枚举牌型
 						handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
+						//查看手牌特殊牌型
+						handInfos[i].PrintSpecCards();
 						//查看手牌枚举三墩牌型
 						handInfos[i].PrintEnumCards();
 						//查看重复牌型和散牌
@@ -4973,6 +5022,8 @@ namespace S13S {
 						//}
 						//查看所有枚举牌型
 						//handInfos[i].rootEnumList->PrintEnumCards(false, S13S::Ty123sc);
+						//查看手牌特殊牌型
+						handInfos[i].PrintSpecCards();
 						//查看手牌枚举三墩牌型
 						handInfos[i].PrintEnumCards();
 						//查看重复牌型和散牌
