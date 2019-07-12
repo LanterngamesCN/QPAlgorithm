@@ -3166,6 +3166,11 @@ namespace S13S {
 					group.duns[DunSecond].ty_ = group.specialTy;
 					group.duns[DunLast].ty_ = group.specialTy;
 #endif
+					//如果是三顺子，除去三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
 					spec_groups.push_back(group);
 				}
 				else {
@@ -3224,6 +3229,7 @@ namespace S13S {
 			group.assign(DunFirst, group.specialTy, src, group.needC(DunFirst));
 			group.assign(DunSecond, group.specialTy, src + group.GetC(), group.needC(DunSecond));
 			group.assign(DunLast, group.specialTy, src + group.GetC(), group.needC(DunLast));
+			assert(spec_groups.size() == 0);
 			spec_groups.push_back(group);
 		}
 		//三同花顺
