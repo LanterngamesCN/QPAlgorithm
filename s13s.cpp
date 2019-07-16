@@ -5382,7 +5382,7 @@ namespace S13S {
 								//src比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//src输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//和了
 									item->set_winlost(0);
@@ -5400,7 +5400,7 @@ namespace S13S {
 								//dst比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//dst输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//和了
 									item->set_winlost(0);
@@ -5421,7 +5421,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5439,7 +5439,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5460,7 +5460,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5478,7 +5478,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5499,7 +5499,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5517,7 +5517,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5538,7 +5538,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5556,7 +5556,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5577,7 +5577,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5595,7 +5595,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5616,7 +5616,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5634,7 +5634,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5655,7 +5655,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5673,7 +5673,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5694,7 +5694,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5712,7 +5712,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5733,7 +5733,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5751,7 +5751,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5772,7 +5772,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5790,7 +5790,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5811,7 +5811,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5829,7 +5829,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5850,7 +5850,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5868,7 +5868,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5889,7 +5889,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//赢家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5907,7 +5907,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -5928,7 +5928,7 @@ namespace S13S {
 								//赢家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[winner].mutable_results(index);
 								//头墩输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//赢了
 									item->set_winlost(1);
@@ -5946,7 +5946,7 @@ namespace S13S {
 								//输家比牌结果 ////////////
 								s13s::CompareResult* result = compareCards[loser].mutable_results(index);
 								//输家输赢信息
-								s13s::CompareItem* item = result->add_items();
+								s13s::CompareItem* item = result->mutable_specitem();
 								{
 									//输了
 									item->set_winlost(-1);
@@ -6587,9 +6587,10 @@ namespace S13S {
 							s13s::ComparePlayer const& peer = compareCards[i].peers(j);
 							s13s::CompareResult const& result = compareCards[i].results(j);
 							int winc = 0, lostc = 0, sumscore = 0;
+							//自己特殊牌型或对方特殊牌型
 							assert(result.items_size() == (
 								player.group().specialty() >= S13S::TyThreesc ||
-								peer.group().specialty() >= S13S::TyThreesc) ? 1 : 3);
+								peer.group().specialty() >= S13S::TyThreesc) ? 0 : 3);
 							//玩家与当前比牌对象比头/中/尾三墩输赢得水总分，不考虑打枪
 							for (int d = 0; d < result.items_size(); ++d) {
 								if (result.items(d).winlost() == 1) {
@@ -6602,7 +6603,7 @@ namespace S13S {
 							}
 							//三墩不考虑打枪输赢得水总分 赢分+/和分0/输分-
 							const_cast<s13s::CompareResult&>(result).set_score(sumscore);
-							//特殊牌型不参与打枪
+							//自己特殊牌型或对方特殊牌型不计算打枪
 							if (player.group().specialty() >= S13S::TyThreesc ||
 								peer.group().specialty() >= S13S::TyThreesc) {
 								const_cast<s13s::CompareResult&>(result).set_shoot(0);//-1被打枪/0不打枪/1打枪
@@ -6642,7 +6643,7 @@ namespace S13S {
 				//计算包括打枪/全垒打在内输赢得水总分
 				for (int i = 0; i < GAME_PLAYER; ++i) {
 					if (true) {
-						//玩家输赢得水总分
+						//玩家输赢得水总分，不含特殊牌型输赢分
 						int deltascore = 0;
 						//遍历玩家所有比牌对象
 						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
@@ -6698,35 +6699,125 @@ namespace S13S {
 								deltascore += result.score();
 							}
 						}
-						//玩家输赢得水总分
+						//玩家输赢得水总分，不含特殊牌型输赢分
 						compareCards[i].set_deltascore(deltascore);
 					}
 				}
-				//座椅玩家与其余玩家按墩比输赢分，不含打枪/全垒打
+				//座椅玩家与其余玩家按墩比输赢分
+				//不含打枪/全垒打与打枪/全垒打分开计算
+				//计算特殊牌型输赢分
+				//统计含打枪/全垒打/特殊牌型输赢得水总分
 				for (int i = 0; i < GAME_PLAYER; ++i) {
 					if (true) {
+						//三墩打枪/全垒打输赢算水
+						int allshootscore = 0;
 						//当前比牌玩家
 						s13s::PlayerItem const& player = compareCards[i].player();
-						//特殊牌型不按墩比牌
-						if (player.group().specialty() >= S13S::TyThreesc) {
-							continue;
-						}
 						//遍历各墩(头墩/中墩/尾墩)
 						for (int d = S13S::DunFirst; d <= S13S::DunLast; ++d) {
+							//按墩比输赢分
 							int sumscore = 0;
-							//遍历比牌对象
-							for (int j = 0; j < compareCards[i].peers_size(); ++j) {
-								s13s::ComparePlayer const& peer = compareCards[i].peers(j);
-								s13s::CompareResult const& result = compareCards[i].results(j);
-								//特殊牌型不按墩比牌
-								if (peer.group().specialty() >= S13S::TyThreesc) {
-									break;
+							//按墩计算打枪/全垒打输赢分
+							int sumshootscore = 0;
+							//按墩比输赢分，含打枪/全垒打
+							{
+								//自己特殊牌型，不按墩比牌，输赢水数在specitem中
+								if (player.group().specialty() >= S13S::TyThreesc) {
 								}
-								//累加指定墩输赢得水积分
-								sumscore += result.items(d).score();
+								else {
+									//遍历比牌对象
+									for (int j = 0; j < compareCards[i].peers_size(); ++j) {
+										s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+										s13s::CompareResult const& result = compareCards[i].results(j);
+										//对方特殊牌型，不按墩比牌，输赢水数在specitem中
+										if (peer.group().specialty() >= S13S::TyThreesc) {
+											continue;
+										}
+										//累加指定墩输赢得水积分，不含打枪/全垒打
+										sumscore += result.items(d).score();
+										//1打枪(对当前比牌对象打枪)
+										if (result.shoot() == 1) {
+											//1全垒打
+											if (compareCards[i].allshoot() == 1) {
+												//-1被全垒打/0无全垒打/1全垒打
+												sumshootscore += 3/*4*/ * result.items(d).score();
+											}
+											else {
+												//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+												if (compareCards[i].allshoot() == -1) {
+												}
+												else {
+												}
+												//-1被打枪/0不打枪/1打枪
+												sumshootscore += 1/*2*/ * result.items(d).score();
+											}
+										}
+										//-1被打枪(被当前比牌对象打枪)
+										else if (result.shoot() == -1) {
+											//-1被全垒打
+											if (compareCards[i].allshoot() == -1) {
+												//被当前比牌对象全垒打
+												if (peer.chairid() == compareCards[i].fromchairid()) {
+													//-1被全垒打/0无全垒打/1全垒打
+													sumshootscore += 3/*4*/ * result.items(d).score();
+												}
+												//被另外比牌对象全垒打
+												else {
+													//-1被打枪/0不打枪/1打枪
+													sumshootscore += 1/*2*/ * result.items(d).score();
+												}
+											}
+											else {
+												//-1被打枪/0不打枪/1打枪
+												sumshootscore += 1/*2*/ * result.items(d).score();
+											}
+										}
+										//0不打枪(与当前比牌对象互不打枪)
+										else {
+											//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+											if (compareCards[i].allshoot() == -1) {
+											}
+											else {
+												//一定不是全垒打，-1被打枪/0不打枪/1打枪
+												assert(compareCards[i].allshoot() == 0);
+											}
+											assert(result.shoot() == 0);
+											//sumshootscore += 0/*1*/ * result.items(d).score();
+										}
+									}
+								}
 							}
-							//座椅玩家指定墩输赢得水积分
+							//座椅玩家输赢得水积分(头/中/尾/特殊)
 							compareCards[i].add_itemscores(sumscore);
+							//按墩计算打枪/全垒打输赢分
+							compareCards[i].add_itemscorepure(sumshootscore);
+							//三墩打枪/全垒打输赢算水
+							allshootscore += sumshootscore;
+						}
+						{
+							//特殊牌型输赢算水(无打枪/全垒打)
+							int sumspecscore = 0;
+							{
+								//遍历比牌对象
+								for (int j = 0; j < compareCards[i].peers_size(); ++j) {
+									s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+									s13s::CompareResult const& result = compareCards[i].results(j);
+									//自己普通牌型，对方特殊牌型
+									//自己特殊牌型，对方普通牌型
+									//自己特殊牌型，对方特殊牌型
+									if (result.has_specitem()) {
+										//累加特殊比牌算水
+										sumspecscore += result.specitem().score();
+									}
+								}
+							}
+							//座椅玩家输赢得水积分(头/中/尾/特殊)
+							compareCards[i].add_itemscores(sumspecscore);
+							//三墩打枪/全垒打输赢算水 + 特殊牌型输赢算水(无打枪/全垒打)
+							compareCards[i].add_itemscorepure(allshootscore + sumspecscore);
+							//玩家输赢得水总分，含打枪/全垒打，含特殊牌型输赢分
+							int32_t deltascore = compareCards[i].deltascore();
+							compareCards[i].set_deltascore(deltascore + sumspecscore);
 						}
 					}
 				}
@@ -6735,8 +6826,8 @@ namespace S13S {
 					if (true) {
 						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
 							s13s::ComparePlayer const& peer = compareCards[i].peers(j);
-							const_cast<s13s::ComparePlayer&>(peer).set_deltascore(
-								compareCards[peer.chairid()].deltascore());
+							int32_t deltascore = compareCards[peer.chairid()].deltascore();
+							const_cast<s13s::ComparePlayer&>(peer).set_deltascore(deltascore);
 						}
 					}
 				}

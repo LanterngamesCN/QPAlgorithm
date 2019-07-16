@@ -9,16 +9,16 @@ enum SUBID
 	
 	
 	// 服务器命令结构
-	SUB_SC_GAMESCENE_FREE		= 201;				//空闲场景消息		   	// CMD_S_StatusFree
-	SUB_SC_GAMESCENE_PLAY		= 202;				//游戏中场景消息		// CMD_S_StatusPlay
-	//SUB_SC_GAMESCENE_COMPARE 	= 203;				//发送比牌场景     //CMD_S_StatusCompare
-	SUB_SC_GAMESCENE_END		= 203;				//游戏结束			// CMD_S_StatusEnd
+	SUB_SC_GAMESCENE_FREE		= 201;				//空闲场景消息		CMD_S_StatusFree
+	SUB_SC_GAMESCENE_PLAY		= 202;				//游戏中场景消息	CMD_S_StatusPlay
+	//SUB_SC_GAMESCENE_COMPARE 	= 203;				//发送比牌场景		CMD_S_StatusCompare
+	SUB_SC_GAMESCENE_END		= 203;				//游戏结束			CMD_S_StatusEnd
 	
-	SUB_S_GAME_START			= 100;				//游戏开始			// CMD_S_GameStart
-	SUB_S_MANUALCARDS			= 101;				//手动摆牌 CMD_S_ManualCards		
-	//SUB_S_COMPARECARDS      	= 102;				//玩家之间两两比牌 CMD_S_CompareCards	
-	SUB_S_MAKESUREDUNHANDTY     = 103;				//理牌完成，确定三墩牌型 CMD_S_MakesureDunHandTy
-	SUB_S_GAME_END				= 105;				//游戏结束			// CMD_S_GameEnd
+	SUB_S_GAME_START			= 100;				//游戏开始			CMD_S_GameStart
+	SUB_S_MANUALCARDS			= 101;				//手动摆牌			CMD_S_ManualCards		
+	//SUB_S_COMPARECARDS      	= 102;				//玩家之间两两比牌	CMD_S_CompareCards	
+	SUB_S_MAKESUREDUNHANDTY     = 103;				//理牌完成，确定三墩牌型	CMD_S_MakesureDunHandTy
+	SUB_S_GAME_END				= 105;				//游戏结束			CMD_S_GameEnd
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,9 +86,10 @@ message CompareItem
 //三墩比输赢
 message CompareResult
 {
-	repeated CompareItem items = 1; //items[DunMax]
-	optional int32       shoot = 2; //-1被打枪/0不打枪/1打枪
-	optional int32       score = 3; //三墩不考虑打枪总输赢 赢分+/和分0/输分-
+	repeated CompareItem items    = 1; //items[DunMax] 头/中/尾 不考虑打枪
+	optional CompareItem specitem = 2; //特殊牌型比较整墩 无打枪/全垒打
+	optional int32       shoot    = 3; //-1被打枪/0不打枪/1打枪
+	optional int32       score    = 4; //三墩不考虑打枪总输赢 赢分+/和分0/输分-
 }
 ////////////////////////////////////////////////////////////////////////////////
 //桌椅玩家
@@ -153,14 +154,15 @@ message CMD_S_MakesureDunHandTy
 //玩家之间两两比牌
 message CMD_S_CompareCards
 {
-	required PlayerItem player     = 1;//座椅玩家   
-	repeated int32 itemscores      = 2;//座椅玩家与其余玩家按墩比输赢分，不含打枪/全垒打
-	repeated ComparePlayer peers   = 3;//比牌对方  peers[GAME_PLAYER-1]
-	repeated CompareResult results = 4;//比牌结果results[GAME_PLAYER-1]
-	optional int32 allshoot        = 5;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
-	optional int32 fromchairId	   = 6;//若allshoot=-1被全垒打，记下全垒打桌椅ID
-	optional int32 deltascore	   = 7;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
-	optional int32 wTimeLeft       = 8;//剩余时间
+	required PlayerItem player     = 1;//座椅玩家
+	repeated int32 itemscores      = 2;//座椅玩家与其余玩家按墩比输赢分items[DunMax+1] 头/中/尾/特殊，不含打枪/全垒打
+	repeated int32 itemscorePure   = 3;//座椅玩家与其余玩家按墩比输赢分items[DunMax+1] 头/中/尾/特殊，含打枪/全垒打
+	repeated ComparePlayer peers   = 4;//比牌对方  peers[GAME_PLAYER-1]
+	repeated CompareResult results = 5;//比牌结果results[GAME_PLAYER-1]
+	optional int32 allshoot        = 6;//是否全垒打 -1被全垒打/0无全垒打/1全垒打
+	optional int32 fromchairId	   = 7;//若allshoot=-1被全垒打，记下全垒打桌椅ID
+	optional int32 deltascore	   = 8;//玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
+	optional int32 wTimeLeft       = 9;//剩余时间
 }
 ////////////////////////////////////////////////////////////////////////////////
 //空闲状态
