@@ -2410,6 +2410,28 @@ namespace S13S {
 		return dst.size();
 	}
 	
+	//铁支之间比大小
+	static bool As40byPointG(const uint8_t(*const a)[4], const uint8_t(*const b)[4]) {
+		uint8_t p0 = CGameLogic::GetCardPoint(a[0][0]);
+		uint8_t p1 = CGameLogic::GetCardPoint(b[0][0]);
+		return p0 > p1;
+	}
+	//铁支之间比大小
+	static bool As40byPointL(const uint8_t(*const a)[4], const uint8_t(*const b)[4]) {
+		uint8_t p0 = CGameLogic::GetCardPoint(a[0][0]);
+		uint8_t p1 = CGameLogic::GetCardPoint(b[0][0]);
+		return p0 < p1;
+	}
+	//铁支之间比大小
+	static void SortCardsByPoint_src40(uint8_t(**const psrc)[4], int n, bool ascend) {
+		if (ascend) {
+			std::sort(psrc, psrc + n, As40byPointL);
+		}
+		else {
+			std::sort(psrc, psrc + n, As40byPointG);
+		}
+	}
+
 	//按照尾墩5张/中墩5张/头墩3张依次抽取枚举普通牌型
 	//src uint8_t const* 手牌余牌(13/8/3)，初始13张，按5/5/3依次抽，余牌依次为13/8/3
 	//n int 抽取n张(5/5/3) 第一次抽5张余8张，第二次抽5张余3张，第三次取余下3张抽完
@@ -2475,11 +2497,26 @@ namespace S13S {
 		if (n >= 4) {
 			//所有铁支(四张值相同的牌)
 			v40.clear();
-			for (int i = c4 - 1; i >= 0; --i) {
-				//std::vector<uint8_t> v(&(*&dst4[i])[0], &(*&dst4[i])[0] + 4);
-				std::vector<uint8_t> v(&(dst4[i])[0], &(dst4[i])[0] + 4);
-				v40.push_back(v);
+			{
+				typedef uint8_t(*Ptr)[4];
+				Ptr pdst[MaxSZ] = { 0 };
+				int c = 0;
+				for (int i = 0; i < c4; ++i) {
+					assert(c < MaxSZ);
+					pdst[c++] = &dst4[i];
+				}
+				//psrc组与组之间按牌值降序排列(从大到小)
+				SortCardsByPoint_src40(pdst, c4, false);
+				for (int i = 0; i < c4; ++i) {
+					std::vector<uint8_t> v(&(*pdst[i])[0], &(*pdst[i])[0] + 4);
+					v40.push_back(v);
+				}
 			}
+			//for (int i = c4 - 1; i >= 0; --i) {
+			//	//std::vector<uint8_t> v(&(*&dst4[i])[0], &(*&dst4[i])[0] + 4);
+			//	std::vector<uint8_t> v(&(dst4[i])[0], &(dst4[i])[0] + 4);
+			//	v40.push_back(v);
+			//}
 		}
 	}
 
@@ -2816,12 +2853,12 @@ namespace S13S {
 					//PrintCardList(&leaf->front(), leaf->size());
 					//leafEnumList->PrintCursorEnumCards();
 
-					//printf("--- *** --------------------------------------------------\n");
-					//leafEnumList->PrintCursorEnumCards();
-					//childEnumList->PrintCursorEnumCards();
-					//rootEnumList->PrintCursorEnumCards();
-					//printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy3, cpylen3).c_str());
-					//printf("--- *** --------------------------------------------------\n");
+					printf("--- *** --------------------------------------------------\n");
+					leafEnumList->PrintCursorEnumCards();
+					childEnumList->PrintCursorEnumCards();
+					rootEnumList->PrintCursorEnumCards();
+					printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy3, cpylen3).c_str());
+					printf("--- *** --------------------------------------------------\n");
 					
 					//if (false) {
 					//	if (false) {
@@ -3572,9 +3609,17 @@ namespace S13S {
 			//printf("--- *** 删除子节点\n");
 		}
 	}
+	
+	static std::string StringDunTy(DunTy ty) {
+		switch (ty) {
+		case DunFirst: return "头墩";
+		case DunSecond: return "中墩";
+		case DunLast: return "尾墩";
+		}
+	}
 
 	//打印枚举牌型
-	void CGameLogic::EnumTree::PrintEnumCards(bool reverse, HandTy ty) {
+	void CGameLogic::EnumTree::PrintEnumCards(bool reverse/* = false*/, HandTy ty/* = TyAllBase*/) {
 		switch (ty)
 		{
 		case Tysp:		PrintEnumCards("乌龙", ty,*vsp, reverse);		break;//乌龙
@@ -3599,7 +3644,8 @@ namespace S13S {
 	//打印枚举牌型
 	void CGameLogic::EnumTree::PrintEnumCards(std::string const& name, HandTy ty, std::vector<std::vector<uint8_t>> const& src, bool reverse) {
 		if (src.size() > 0) {
-			printf("--- *** 第[%d]墩 - %s[%s]\n", dt_ + 1, name.c_str(), StringHandTy(ty).c_str());
+			printf("--- *** ------------------------- 枚举%s %s[%s] 数量[%d]\n",
+				StringDunTy(dt_).c_str(), name.c_str(), StringHandTy(ty).c_str(), src.size());
 			if (reverse) {
 				for (std::vector<std::vector<uint8_t>>::const_reverse_iterator it = src.rbegin();
 					it != src.rend(); ++it) {
@@ -4456,7 +4502,7 @@ namespace S13S {
 			//	hand.classify.c2 >= 3);
 			//if (pause) {
 				//查看所有枚举牌型
-				//hand.rootEnumList->PrintEnumCards(false, Ty123sc);
+				hand.rootEnumList->PrintEnumCards(false, TyAllBase);
 				//查看手牌特殊牌型
 				hand.PrintSpecCards();
 				//查看手牌枚举三墩牌型
@@ -4495,7 +4541,7 @@ namespace S13S {
 			//手牌牌型分析
 			int c = CGameLogic::AnalyseHandCards(cards, n, size, hand);
 			//查看所有枚举牌型
-			//hand.rootEnumList->PrintEnumCards(false, Ty40);
+			hand.rootEnumList->PrintEnumCards(false, TyAllBase);
 			//查看手牌特殊牌型
 			hand.PrintSpecCards();
 			//查看手牌枚举三墩牌型

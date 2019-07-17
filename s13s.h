@@ -467,7 +467,7 @@ namespace S13S {
 			int chairID;
 			//优先特殊牌型
 			//HandTy specialTy_;
-			//特殊牌型牌墩
+			//特殊牌型牌墩 size == 1
 			std::vector<groupdun_t> spec_groups;
 			//手牌重复牌型
 			classify_t classify;
