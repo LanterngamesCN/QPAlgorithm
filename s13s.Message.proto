@@ -72,6 +72,7 @@ message ComparePlayer
 	required int32 chairId 		 = 1; //座椅ID
 	required GroupDunData group  = 2; //比牌对方选择一组墩(含头墩/中墩/尾墩)
 	required int32 deltascore    = 3; //比牌对方输赢得水总分 玩家两两比牌总输赢 赢分+/和分0/输分- 包括打枪/全垒打
+	repeated int32 shootIds      = 4; //被打枪的座椅ID列表
 }
 ////////////////////////////////////////////////////////////////////////////////
 //单墩比输赢

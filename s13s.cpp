@@ -58,7 +58,7 @@ namespace S13S {
 	//debug打印
 	void CGameLogic::DebugListCards() {
 		//手牌按花色升序(方块到黑桃)，同花色按牌值从小到大排序
-		SortCardsColor(cardsData_, MaxCardTotal, true, true, true);
+		//SortCardsColor(cardsData_, MaxCardTotal, true, true, true);
 		for (int i = 0; i < MaxCardTotal; ++i) {
 			printf("%02X %s\n", cardsData_[i], StringCard(cardsData_[i]).c_str());
 		}
@@ -4249,11 +4249,11 @@ namespace S13S {
 		uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp) {
 		switch (ty) {
 		//同花顺之间比较
-		case Ty123sc:
+		case Ty123sc: return sp ? CompareCardPointBy(src, srcLen, dst, dstLen, clr) : 0;
 		//同花之间比较
-		case Tysc:
+		case Tysc: return sp ? CompareCardPointBy(src, srcLen, dst, dstLen, clr) : 0;
 		//顺子之间比较
-		case Ty123:
+		case Ty123: return sp ? CompareCardPointBy(src, srcLen, dst, dstLen, clr) : 0;
 		//散牌之间比较
 		case Tysp: return sp ? CompareCardPointBy(src, srcLen, dst, dstLen, clr) : 0;
 		//铁支之间比较
@@ -6621,6 +6621,8 @@ namespace S13S {
 						}
 					}
 				}
+				//玩家对其它玩家打枪
+				std::map<uint8_t, std::vector<uint8_t>> shootIds;
 				//统计判断打枪/全垒打
 				for (int i = 0; i < GAME_PLAYER; ++i) {
 					if (true) {
@@ -6660,6 +6662,8 @@ namespace S13S {
 								const_cast<s13s::CompareResult&>(result).set_shoot(1);//-1被打枪/0不打枪/1打枪
 								//统计当前玩家打枪次数
 								++shootc;
+								//玩家对比牌对象打枪
+								shootIds[i].push_back(peer.chairid());
 							}
 							else if (lostc == result.items_size()) {
 								//比牌对象三墩全部胜过玩家，则比牌对象对玩家打枪，中枪者付给打枪者2倍的水
@@ -6680,6 +6684,29 @@ namespace S13S {
 										compareCards[k].set_allshoot(-1);
 										//allshoot=-1被全垒打，记下全垒打桌椅ID
 										compareCards[k].set_fromchairid(i);
+									}
+								}
+							}
+						}
+					}
+				}
+				//其它玩家之间打枪
+				for (int i = 0; i < GAME_PLAYER; ++i) {
+					if (true) {
+						//当前比牌玩家
+						s13s::PlayerItem const& player = compareCards[i].player();
+						//遍历玩家所有比牌对象
+						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
+							s13s::ComparePlayer const& peer = compareCards[i].peers(j);
+							//s13s::CompareResult const& result = compareCards[i].results(j);
+							std::map<uint8_t, std::vector<uint8_t>>::const_iterator it = shootIds.find(peer.chairid());
+							if (it != shootIds.end()) {
+								for (std::vector<uint8_t>::const_iterator ir = it->second.begin();
+									ir != it->second.end(); ++ir) {
+									//排除当前玩家
+									if (*ir != i) {
+										assert(player.chairid() == i);
+										const_cast<s13s::ComparePlayer&>(peer).add_shootids(*ir);
 									}
 								}
 							}
