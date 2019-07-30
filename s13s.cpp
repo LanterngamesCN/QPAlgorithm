@@ -3280,7 +3280,7 @@ namespace S13S {
 						continue;
 					}
 				}
-#endif
+#else
 				//如果头敦为空
 				if (group.duns[DunFirst].GetC() == 0) {
 					CGameLogic::EnumCards(cpy, cpylen, 3, classify, enumList, DunFirst);
@@ -3295,6 +3295,7 @@ namespace S13S {
 						goto restart;
 					}
 				}
+#endif
 				//补充尾墩
 				{
 					int c = group.needC(DunLast);
