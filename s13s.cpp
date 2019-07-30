@@ -3021,17 +3021,17 @@ namespace S13S {
 						offset += c;
 					}
 				}
-				//补充中墩
-				{
-					assert(offset < cpylen);
-					group.assign(DunSecond, Tysp, &cpy[offset], 5);
-					offset += 5;
-				}
 				//补充头墩
 				{
 					assert(offset < cpylen);
 					group.assign(DunFirst, Tysp, &cpy[offset], 3);
 					offset += 3;
+				}
+				//补充中墩
+				{
+					assert(offset < cpylen);
+					group.assign(DunSecond, Tysp, &cpy[offset], 5);
+					offset += 5;
 					assert(offset == cpylen);
 				}
 				bool existRepeated = false;
