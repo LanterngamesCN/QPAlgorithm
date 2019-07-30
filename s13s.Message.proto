@@ -6,7 +6,7 @@ enum SUBID
 	//客户端命令结构
 	SUB_C_MANUALCARDS		= 1; // 手动摆牌 CMD_C_ManualCards
 	SUB_C_MAKESUREDUNHANDTY = 2; // 确定三墩牌型 CMD_C_MakesureDunHandTy
-	
+	SUB_C_CANCELCARDS		= 3; // 手动摆牌取消哪一墩的牌 CMD_C_CancelCards
 	
 	// 服务器命令结构
 	SUB_SC_GAMESCENE_FREE		= 201;				//空闲场景消息		CMD_S_StatusFree
@@ -19,6 +19,8 @@ enum SUBID
 	//SUB_S_COMPARECARDS      	= 102;				//玩家之间两两比牌	CMD_S_CompareCards	
 	SUB_S_MAKESUREDUNHANDTY     = 103;				//理牌完成，确定三墩牌型	CMD_S_MakesureDunHandTy
 	SUB_S_GAME_END				= 105;				//游戏结束			CMD_S_GameEnd
+	SUB_S_CANCELCARDS			= 106; 				//手动摆牌取消哪一墩的牌 CMD_S_CancelCards
+	SUB_S_ANDROID_CARD			= 113;				//机器人牌			CMD_S_AndroidCard
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +142,22 @@ message CMD_S_ManualCards
 	optional string errmsg   = 6; //错误消息
 }
 ////////////////////////////////////////////////////////////////////////////////
+//手动摆牌取消哪一墩的牌(头3张/中5张/尾5张)
+message CMD_C_CancelCards
+{
+	required int32 dt = 1; //客户端选择了哪一墩
+}
+////////////////////////////////////////////////////////////////////////////////
+//手动摆牌取消哪一墩的牌
+message CMD_S_CancelCards
+{
+	optional EnumCards enums = 1; //枚举牌型
+	optional int32 dt        = 2; //客户端选择了哪一墩
+	optional bytes cpy       = 3; //剩余牌
+	optional int32 result  	 = 4; //0-成功 1-失败
+	optional string errmsg   = 5; //错误消息
+}
+////////////////////////////////////////////////////////////////////////////////
 //确定牌型，所有玩家都确定牌型后比牌
 message CMD_C_MakesureDunHandTy
 {
@@ -208,4 +226,17 @@ message CMD_S_GameEnd
 	required CMD_S_CompareCards cmp = 1; //比牌数据，各玩家对应各自的比牌数据
 	repeated GameEndScore    scores = 2; //玩家积分
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//给机器人发送真实玩家数据
+message AndroidPlayer
+{
+	required HandCards handCards  = 1; //手牌数据
+	required int32 chairId = 2;//座椅ID
+}
+////////////////////////////////////////////////////////////////////////////////
+//机器人扑克
+message CMD_S_AndroidCard
+{
+	optional string roundId        = 1; //牌局标识
+	repeated AndroidPlayer players = 2; //其它玩家信息
+};

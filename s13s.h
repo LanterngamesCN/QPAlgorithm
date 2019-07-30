@@ -26,6 +26,7 @@
 #define MIN_GAME_PLAYER S13S::MinPlayer		//至少2人局
 #define MAX_COUNT		S13S::MaxCount		//每人13张牌
 #define MAX_ROUND       S13S::MaxRound		//最大局数
+#define MAX_ENUMSZ 		20
 
 //十三水
 namespace S13S {
@@ -298,7 +299,7 @@ namespace S13S {
 				memcpy(cards, src, len);
 			}
 			void Reset() {
-				dt_ = DunNil;
+				//dt_ = DunNil;
 				ty_ = TyNil;
 				c = 0;
 				memset(cards, 0, sizeof(uint8_t) * 5);
@@ -437,6 +438,8 @@ namespace S13S {
 			bool SelectAs(DunTy dt, uint8_t const* src, int len, HandTy ty);
 			//重置手动摆牌
 			void ResetManual();
+			//手动摆牌清空重置指定墩的牌
+			bool ResetManual(DunTy dt);
 			//手牌确定三墩牌型
 			//groupindex int 若 >=0 从enum_groups中选择一组，对应groups中索引
 			//groupindex int 若 <= -1 指向manual_group对应groups中索引
@@ -519,12 +522,6 @@ namespace S13S {
 		//dt DunTy 指定为第几墩
 		//src uint8_t const* 一墩5张或3张的牌
 		static HandTy GetDunCardHandTy(DunTy dt, uint8_t const* src, int len);
-		//牌型相同的src与dst比大小，牌数相同
-		//src uint8_t const* 单墩牌(3/5张)
-		//dst uint8_t const* 单墩牌(3/5张)
-		//clr bool 是否比花色
-		//ty HandTy 比较的两单墩牌的普通牌型
-		static int CompareCards(uint8_t const* src, uint8_t const* dst, int n, bool clr, HandTy ty);
 		//按照尾墩5张/中墩5张/头墩3张依次抽取枚举普通牌型
 		//src uint8_t const* 手牌余牌(13/8/3)，初始13张，按5/5/3依次抽，余牌依次为13/8/3
 		//n int 抽取n张(5/5/3) 第一次抽5张余8张，第二次抽5张余3张，第三次取余下3张抽完
@@ -538,8 +535,24 @@ namespace S13S {
 		//cpy uint8_t *cpy 组墩后剩余牌 cpylen int& 余牌数量
 		static void GetLeftCards(uint8_t const* src, int len,
 			dundata_t const* duns, uint8_t *cpy, int& cpylen);
-	private:
+	public:
+		//任意牌型的src与dst两墩之间比大小
+		//src uint8_t const* srcLen张牌
+		//srcTy HandTy src牌型
+		//dst uint8_t const* dstLen张牌
+		//dstTy HandTy dst牌型
+		//clr bool 是否比花色
+		//sp bool 是否比较散牌/单张
+		static int CompareCards(
+			uint8_t const* src, int srcLen, HandTy srcTy,
+			uint8_t const* dst, int dstLen, HandTy dstTy, bool clr, bool sp = true);
 		//牌型相同的src与dst比大小，牌数相同
+		//src uint8_t const* 单墩牌(3/5张)
+		//dst uint8_t const* 单墩牌(3/5张)
+		//clr bool 是否比花色
+		//ty HandTy 比较的两单墩牌的普通牌型
+		static int CompareCards(uint8_t const* src, uint8_t const* dst, int n, bool clr, HandTy ty);
+		//牌型相同的src与dst两墩之间比大小
 		//src uint8_t const* srcLen张牌
 		//dst uint8_t const* dstLen张牌
 		//clr bool 是否比花色
@@ -555,6 +568,7 @@ namespace S13S {
 		static int CompareCardPointBy(
 			uint8_t const* src, int srcLen,
 			uint8_t const* dst, int dstLen, bool clr);
+	private:
 		//按照尾墩5张/中墩5张/头墩3张依次抽取枚举普通牌型
 		//src uint8_t const* 手牌余牌(13/8/3)，初始13张，按5/5/3依次抽，余牌依次为13/8/3
 		//n int 抽取n张(5/5/3) 第一次抽5张余8张，第二次抽5张余3张，第三次取余下3张抽完
@@ -651,7 +665,7 @@ namespace S13S {
 		//dst1 std::vector<std::vector<uint8_t>>& 存放所有同花顺
 		//dst2 std::vector<std::vector<uint8_t>>& 存放所有顺子
 		static void EnumConsecCardsByColor(
-			uint8_t(**const psrc)[4],
+			uint8_t(**const psrc)[4], int const psrclen,
 			std::vector<std::vector<short>> const& ctx,
 			std::vector<std::vector<uint8_t>> const& src,
 			std::vector<bool> const& clr,
