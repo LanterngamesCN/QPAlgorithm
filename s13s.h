@@ -17,6 +17,9 @@
 #include <boost/get_pointer.hpp>
 #include <boost/shared_ptr.hpp>
 
+//内存泄漏检测
+#define _MEMORY_LEAK_DETECK_
+
 #ifndef isZero
 #define isZero(a)        ((a>-0.000001) && (a<0.000001))
 #endif//isZero
@@ -206,6 +209,9 @@ namespace S13S {
 				Reset();
 				parent_ = NULL;
 				parentcursor_ = -1;
+#ifdef _MEMORY_LEAK_DETECK_
+				MemoryCount_ = 0;
+#endif
 			}
 			~EnumTree() {
 				Reset();
@@ -265,6 +271,11 @@ namespace S13S {
 			int parentcursor_;
 			//pair<枚举项牌型，对应余牌枚举子项列表>，多叉树结构
 			TreeNode tree[MaxEnumSZ];
+		public:
+			//内存泄漏检测
+#ifdef _MEMORY_LEAK_DETECK_
+			long MemoryCount_;
+#endif
 		};
 	public:
 		//////////////////////////////////////////////////////////////

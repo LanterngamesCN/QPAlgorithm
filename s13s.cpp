@@ -2739,7 +2739,9 @@ namespace S13S {
 		EnumTree *& rootEnumList = hand.rootEnumList;
 		assert(rootEnumList != NULL);
 		hand.Reset();
-		
+#ifdef _MEMORY_LEAK_DETECK_
+		printf("\n--- *** hand[%d]init MemoryCount = %d\n", hand.chairID, hand.rootEnumList->MemoryCount_);
+#endif
 		//枚举尾墩/5张 //////
 		EnumCards(src, len, 5, hand.classify, *rootEnumList, DunLast);
 	entry_root_iterator:
@@ -2763,6 +2765,9 @@ namespace S13S {
 			EnumTree*& childEnumList = rootEnumList->GetCursorChild(cursorRoot);
 			assert(childEnumList == NULL);
 			childEnumList = new EnumTree();
+#ifdef _MEMORY_LEAK_DETECK_
+			++hand.rootEnumList->MemoryCount_;
+#endif
 			//指向父节点/对应父节点游标位置
 			childEnumList->parent_ = rootEnumList;
 			childEnumList->parentcursor_ = cursorRoot;
@@ -2833,6 +2838,9 @@ namespace S13S {
 				EnumTree*& leafEnumList = childEnumList->GetCursorChild(cursorChild);
 				assert(leafEnumList == NULL);
 				leafEnumList = new EnumTree();
+#ifdef _MEMORY_LEAK_DETECK_
+				++hand.rootEnumList->MemoryCount_;
+#endif
 				//指向父节点/对应父节点游标位置
 				leafEnumList->parent_ = childEnumList;
 				leafEnumList->parentcursor_ = cursorChild;
@@ -2941,6 +2949,9 @@ namespace S13S {
 				}
 			}
 		}
+#ifdef _MEMORY_LEAK_DETECK_
+		printf("--- *** hand[%d]malloc MemoryCount = %d\n", hand.chairID, hand.rootEnumList->MemoryCount_);
+#endif
 		hand.CalcHandCardsType(src, len);
 		return c;
 	}
@@ -3679,6 +3690,9 @@ namespace S13S {
 			assert(spec_groups.size() == 1);
 			groups.push_back(&*it);
 		}
+		if (enum_groups.size() == 0) {
+			CGameLogic::PrintCardList(src, len);
+		}
 		//枚举最优解牌型排序
 		assert(enum_groups.size() > 0);
 		//枚举牌型(几组最优解)
@@ -3812,11 +3826,17 @@ namespace S13S {
 				}
 				delete leafEnumList;//删除叶子节点
 				leafEnumList = NULL;
+#ifdef _MEMORY_LEAK_DETECK_
+				--MemoryCount_;
+#endif
 				//printf("--- *** 删除叶子节点\n");
 			}
 			//删除子节点
 			delete childEnumList;
 			childEnumList = NULL;
+#ifdef _MEMORY_LEAK_DETECK_
+			--MemoryCount_;
+#endif
 			//printf("--- *** 删除子节点\n");
 		}
 	}
@@ -4212,7 +4232,7 @@ namespace S13S {
 	}
 	
 	void CGameLogic::handinfo_t::Reset() {
-		chairID = -1;
+		//chairID = -1;
 		//specialTy_ = TyNil;
 		manual_group_index = -1;
 		select_group_index = -1;
@@ -4224,6 +4244,10 @@ namespace S13S {
 		if (rootEnumList) {
 			rootEnumList->Release();
 			rootEnumList->Reset();
+#ifdef _MEMORY_LEAK_DETECK_
+			printf("--- *** hand[%d]free MemoryCount = %d\n\n", chairID, rootEnumList->MemoryCount_);
+			sleep(10);
+#endif
 		}
 		memset(&classify, 0, sizeof(classify_t));
 	}
@@ -4721,7 +4745,7 @@ namespace S13S {
 		bool pause = false;
 		while (1) {
 			//if (pause) {
-				getchar();
+			//	getchar();
 			//}
 			//余牌不够则重新洗牌
 			if (g.Remaining() < 13) {
@@ -4732,9 +4756,9 @@ namespace S13S {
 			g.DealCards(MAX_COUNT, cards);
 			//手牌排序
 			CGameLogic::SortCards(cards, MAX_COUNT, true, true, true);
-			printf("=================================================\n\n");
+			//printf("=================================================\n\n");
 			//一副手牌
-			CGameLogic::PrintCardList(cards, MAX_COUNT);
+			//CGameLogic::PrintCardList(cards, MAX_COUNT);
  			//手牌牌型分析
 			int c = CGameLogic::AnalyseHandCards(cards, MAX_COUNT, size, hand);
 			//有特殊牌型时
@@ -4747,14 +4771,14 @@ namespace S13S {
 			//	hand.classify.c2 >= 3);
 			//if (pause) {
 				//查看所有枚举牌型
-				hand.rootEnumList->PrintEnumCards(false, TyAllBase);
+				//hand.rootEnumList->PrintEnumCards(false, TyAllBase);
 				//查看手牌特殊牌型
 				//hand.PrintSpecCards();
 				//查看手牌枚举三墩牌型
-				hand.PrintEnumCards();
+				//hand.PrintEnumCards();
 				//查看重复牌型和散牌
-				hand.classify.PrintCardList();
-				printf("--- *** c = %d %s\n\n\n\n", c, hand.StringSpecialTy().c_str());
+				//hand.classify.PrintCardList();
+				//printf("--- *** c = %d %s\n\n\n\n", c, hand.StringSpecialTy().c_str());
 			//}
 		}
 	}
