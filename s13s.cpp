@@ -3259,8 +3259,22 @@ namespace S13S {
 				CGameLogic::SortCards(cpy, cpylen, false, true, true);
 				//printf("---------\n");
 				//CGameLogic::PrintCardList(cpy, cpylen, true);
-#if 0
+				if (group.duns[DunFirst].GetC() == 0) {
+					//如果头敦为空
+					CGameLogic::EnumCards(cpy, cpylen, 3, classify, enumList, DunFirst);
+					if (enumList.v30.size() > 0) {
+						tyLeaf = Ty30;//三条
+						leaf = &enumList.v30[0];
+						goto restart;
+					}
+					else if (enumList.v20.size() > 0) {
+						tyLeaf = Ty20;//对子
+						leaf = &enumList.v20[0];
+						goto restart;
+					}
+				}
 				{
+					//如果余牌含有重复牌型则跳过
 					typedef uint8_t(*Ptr)[4];
 					Ptr psrc[6] = { 0 };
 					int c = 0, c4 = 0, c3 = 0, c2 = 0, cpylen1 = 0;
@@ -3277,25 +3291,11 @@ namespace S13S {
 					//返回去重后的余牌/散牌cpy
 					c = RemoveRepeatCards(cpy, cpylen, psrc, dst4, c4, dst3, c3, dst2, c2, cpy1, cpylen1);
 					if (c4 > 0 || c3 > 0 || c2 > 0) {
+						//还有重复牌的话则跳过
+						//assert(false);
 						continue;
 					}
 				}
-#else
-				//如果头敦为空
-				if (group.duns[DunFirst].GetC() == 0) {
-					CGameLogic::EnumCards(cpy, cpylen, 3, classify, enumList, DunFirst);
-					if (enumList.v30.size() > 0) {
-						tyLeaf = Ty30;//三条
-						leaf = &enumList.v30[0];
-						goto restart;
-					}
-					else if (enumList.v20.size() > 0) {
-						tyLeaf = Ty20;//对子
-						leaf = &enumList.v20[0];
-						goto restart;
-					}
-				}
-#endif
 				//补充尾墩
 				{
 					int c = group.needC(DunLast);

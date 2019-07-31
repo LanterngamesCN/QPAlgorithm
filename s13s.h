@@ -26,7 +26,7 @@
 #define MIN_GAME_PLAYER S13S::MinPlayer		//至少2人局
 #define MAX_COUNT		S13S::MaxCount		//每人13张牌
 #define MAX_ROUND       S13S::MaxRound		//最大局数
-#define MAX_ENUMSZ 		20
+#define MAX_ENUMSZ 		10
 
 //十三水
 namespace S13S {
