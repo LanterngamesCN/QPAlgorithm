@@ -18,7 +18,7 @@
 #include <boost/shared_ptr.hpp>
 
 //内存泄漏检测
-#define _MEMORY_LEAK_DETECK_
+//#define _MEMORY_LEAK_DETECK_
 
 #ifndef isZero
 #define isZero(a)        ((a>-0.000001) && (a<0.000001))
@@ -274,7 +274,7 @@ namespace S13S {
 		public:
 			//内存泄漏检测
 #ifdef _MEMORY_LEAK_DETECK_
-			long MemoryCount_;
+			unsigned long MemoryCount_;
 #endif
 		};
 	public:

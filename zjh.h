@@ -23,6 +23,7 @@
 
 #define MAX_CARD_TOTAL	ZJH::MaxCardTotal	//牌总个数
 #define GAME_PLAYER		ZJH::MaxPlayer		//最多5人局
+#define MIN_GAME_PLAYER	ZJH::MinPlayer		//至少2人局
 #define MAX_COUNT		ZJH::MaxCount		//每人3张牌
 #define MAX_ROUND       ZJH::MaxRound		//最大局数
 
@@ -39,6 +40,7 @@ namespace ZJH {
 	
 	const int MaxCardTotal	= 52;	//牌总个数
 	const int MaxPlayer		= 5;	//最多5人局
+	const int MinPlayer		= 2;	//至少2人局
 	const int MaxCount		= 3;	//每人3张牌
 	const int MaxRound		= 1;	//最大局数
 	

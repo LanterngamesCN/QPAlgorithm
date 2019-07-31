@@ -79,7 +79,7 @@ namespace QZPJ {
 	//debug打印
 	void CGameLogic::DebugListCards() {
 		for (int i = 0; i < MaxCardTotal; ++i) {
-			printf("%02X %s %d\n", cardsData_[i], StringCardTypeByCard(cardsData_[i]).c_str(), GetCardValue(cardsData_[i]));
+			printf("%02X %s %d\n", cardsData_[i], StringHandTyByCard(cardsData_[i]).c_str(), GetCardValue(cardsData_[i]));
 		}
 	}
 
@@ -149,7 +149,7 @@ namespace QZPJ {
 	}
 
 	//卡牌类型字符串 0x66->"TIAN"
-	std::string CGameLogic::StringCardTypeByCard(uint8_t card) {
+	std::string CGameLogic::StringHandTyByCard(uint8_t card) {
 		std::string cardtype = "CNIL";
 		switch (card)
 		{
@@ -224,7 +224,7 @@ namespace QZPJ {
 	}
 
 	//TIAN->"TIAN"
-	std::string CGameLogic::StringCardType(CardType cardType)
+	std::string CGameLogic::StringHandTy(CardType cardType)
 	{
 		return s_cardInfo_tbl[cardType].name;
 	}

@@ -2799,12 +2799,7 @@ namespace S13S {
 						//根节点为叶子节点，记录尾墩
 						leafList.push_back(EnumTree::TraverseTreeNode(rootEnumList, cursorRoot));
 						masks[maskRoot] = true;
-// 						if (++c >= n) {
-// 							goto entry_root_iterator;
-// 						}
 						++c;
-						//重新从根节点开始迭代游标 //////
-						//goto entry_root_iterator;
 					}
 					break;
 				}
@@ -2869,12 +2864,7 @@ namespace S13S {
 							leafList.push_back(EnumTree::TraverseTreeNode(childEnumList, cursorChild));
 							masks[maskChild] = true;
 							masks[maskRoot] = true;
-// 							if (++c >= n) {
-// 								goto entry_root_iterator;
-// 							}
 							++c;
-							//重新从根节点开始迭代游标 //////
-							//goto entry_root_iterator;
 						}
 						break;
 					}
@@ -3803,41 +3793,40 @@ namespace S13S {
 		
 		rootEnumList->ResetCursor();
 		while (true) {
-			//返回下一个游标
+			//返回根节点下一个游标 //////
 			if (!rootEnumList->GetNextCursor(cursorRoot)) {
 				break;
 			}
 			//子节点
 			EnumTree*& childEnumList = rootEnumList->GetCursorChild(cursorRoot);
-			if (!childEnumList) {
-				break;
-			}
-			childEnumList->ResetCursor();
-			while (true) {
-				//返回下一个游标
-				if (!childEnumList->GetNextCursor(cursorChild)) {
-					break;
+			//如果非空
+			if (childEnumList) {
+				childEnumList->ResetCursor();
+				while (true) {
+					//返回子节点下一个游标 //////
+					if (!childEnumList->GetNextCursor(cursorChild)) {
+						break;
+					}
+					//叶子节点
+					EnumTree*& leafEnumList = childEnumList->GetCursorChild(cursorChild);
+					//如果非空
+					if (leafEnumList) {
+						delete leafEnumList;//删除叶子节点
+						leafEnumList = NULL;
+						//printf("--- *** 删除叶子节点\n");
+#ifdef _MEMORY_LEAK_DETECK_
+						--MemoryCount_;
+#endif
+					}
 				}
-
-				//叶子节点
-				EnumTree*& leafEnumList = childEnumList->GetCursorChild(cursorChild);
-				if (!leafEnumList) {
-					break;
-				}
-				delete leafEnumList;//删除叶子节点
-				leafEnumList = NULL;
+				//删除子节点
+				delete childEnumList;
+				childEnumList = NULL;
+				//printf("--- *** 删除子节点\n");
 #ifdef _MEMORY_LEAK_DETECK_
 				--MemoryCount_;
 #endif
-				//printf("--- *** 删除叶子节点\n");
 			}
-			//删除子节点
-			delete childEnumList;
-			childEnumList = NULL;
-#ifdef _MEMORY_LEAK_DETECK_
-			--MemoryCount_;
-#endif
-			//printf("--- *** 删除子节点\n");
 		}
 	}
 	
@@ -4246,7 +4235,6 @@ namespace S13S {
 			rootEnumList->Reset();
 #ifdef _MEMORY_LEAK_DETECK_
 			printf("--- *** hand[%d]free MemoryCount = %d\n\n", chairID, rootEnumList->MemoryCount_);
-			sleep(10);
 #endif
 		}
 		memset(&classify, 0, sizeof(classify_t));

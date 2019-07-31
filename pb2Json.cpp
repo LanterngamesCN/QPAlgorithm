@@ -154,7 +154,7 @@ namespace PB2JSON {
 			switch (field->type()) {
 			case ProtobufFieldDescriptor::TYPE_MESSAGE: {
 				ProtobufMessage const& tMsg = reflection->GetMessage(src, field);
-				if (0 != tMsg.ByteSize()) {
+				if (0 != tMsg.ByteSizeLong()) {
 					PbMsg2Json(tMsg, dst[field->name()]);
 				}
 				break;
@@ -306,7 +306,7 @@ namespace PB2JSON {
 			switch (field->type()) {
 			case ProtobufFieldDescriptor::TYPE_MESSAGE: {
 				ProtobufMessage const& tMsg = reflection->GetRepeatedMessage(message, field, i);
-				if (0 != tMsg.ByteSize()) {
+				if (0 != tMsg.ByteSizeLong()) {
 					PbMsg2Json(tMsg, tJson);
 				}
 				break;

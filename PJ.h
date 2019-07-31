@@ -132,12 +132,12 @@ namespace QZPJ {
 		//0x66->PAITIAN
 		static CardType CardTypeByCard(uint8_t card);
 		//卡牌类型字符串 0x66->"TIAN"
-		static std::string StringCardTypeByCard(uint8_t card);
+		static std::string StringHandTyByCard(uint8_t card);
 	public:
 		//对牌类型字符串
 		static std::string StringPairType(PairType pairType);
 		//TIAN->"TIAN"
-		static std::string StringCardType(CardType cardType);
+		static std::string StringHandTy(CardType cardType);
 		//TIAN->0x66
 		static uint8_t CardByCardType(CardType cardType);
 		//单牌比较 0-相等 >0-card1大 <0-cards1小
