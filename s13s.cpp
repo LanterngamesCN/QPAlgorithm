@@ -2923,12 +2923,12 @@ namespace S13S {
 						//PrintCardList(&leaf->front(), leaf->size());
 						//leafEnumList->PrintCursorEnumCards();
 						
-						printf("--- *** --------------------------------------------------\n");
-						leafEnumList->PrintCursorEnumCards();
-						childEnumList->PrintCursorEnumCards();
-						rootEnumList->PrintCursorEnumCards();
-						printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy3, cpylen3).c_str());
-						printf("--- *** --------------------------------------------------\n");
+						//printf("--- *** --------------------------------------------------\n");
+						//leafEnumList->PrintCursorEnumCards();
+						//childEnumList->PrintCursorEnumCards();
+						//rootEnumList->PrintCursorEnumCards();
+						//printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy3, cpylen3).c_str());
+						//printf("--- *** --------------------------------------------------\n");
 
 						//叶子节点作为叶子节点，记录头墩，中墩和尾墩，由叶子节点向上查找父节点和根节点
 						leafList.push_back(EnumTree::TraverseTreeNode(leafEnumList, cursorLeaf));
@@ -3246,6 +3246,8 @@ namespace S13S {
 				//printf("--- *** ---- start DunFirst\n");
 				//group.PrintCardList(DunSecond);
 				//group.PrintCardList(DunLast);
+				//叶子节点是否重新组牌过
+				bool restartLeaf = false;
 			restart:
 				//若叶子节点为对子或者三条，则放入头墩，否则当作散牌与余牌合并处理
 				if (tyLeaf == Ty20 || tyLeaf == Ty30) {
@@ -3265,15 +3267,18 @@ namespace S13S {
 					if (enumList.v30.size() > 0) {
 						tyLeaf = Ty30;//三条
 						leaf = &enumList.v30[0];
+						restartLeaf = true;
 						goto restart;
 					}
 					else if (enumList.v20.size() > 0) {
 						tyLeaf = Ty20;//对子
 						leaf = &enumList.v20[0];
+						restartLeaf = true;
 						goto restart;
 					}
 				}
-				{
+				//若叶子节点重新组牌过
+				if(restartLeaf) {
 					//如果余牌含有重复牌型则跳过
 					typedef uint8_t(*Ptr)[4];
 					Ptr psrc[6] = { 0 };
@@ -3511,6 +3516,37 @@ namespace S13S {
 					spec_groups.push_back(group);
 				}
 			}
+			//三个三条加上一套炸弹
+			else if (classify.c3 == 3 && classify.c4 == 1) {
+				//四套三条(四套冲三)
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c3; ++i) {
+						memcpy(cards + k, &(classify.dst3[i])[0], 3);
+						k += 3;
+					}
+					for (int i = 0; i < classify.c4; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 4);
+						k += 4;
+					}
+					assert(classify.cpylen == 0);
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TyFour30;
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
+			}
 			else if (classify.c2 == 5 && classify.c3 == 1) {
 				//五对三条(五对冲三)
 				uint8_t cards[MAX_COUNT] = { 0 };
@@ -3549,6 +3585,72 @@ namespace S13S {
 					for (int i = 0; i < classify.c2; ++i) {
 						memcpy(cards + k, &(classify.dst2[i])[0], 2);
 						k += 2;
+					}
+					assert(classify.cpylen == 1);
+					memcpy(cards + k, classify.cpy, classify.cpylen);
+					k += classify.cpylen;
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TySix20;
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
+			}
+			//四个对子加上一套炸弹加上一张单张
+			else if (classify.c2 == 4 && classify.c4 == 1) {
+				//六对半
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c2; ++i) {
+						memcpy(cards + k, &(classify.dst2[i])[0], 2);
+						k += 2;
+					}
+					for (int i = 0; i < classify.c4; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 4);
+						k += 4;
+					}
+					assert(classify.cpylen == 1);
+					memcpy(cards + k, classify.cpy, classify.cpylen);
+					k += classify.cpylen;
+					assert(k == MAX_COUNT);
+				}
+				{
+					CGameLogic::groupdun_t group;
+					group.specialTy = TySix20;
+					group.assign(DunFirst, group.specialTy, cards, group.needC(DunFirst));
+					group.assign(DunSecond, group.specialTy, cards + group.GetC(), group.needC(DunSecond));
+					group.assign(DunLast, group.specialTy, cards + group.GetC(), group.needC(DunLast));
+					//除去三顺子/三同花
+					if (spec_groups.size() > 0) {
+						assert(spec_groups.size() == 1);
+						spec_groups.pop_back();
+					}
+					spec_groups.push_back(group);
+				}
+			}
+			//两个对子加上两套炸弹加上一张单张
+			else if (classify.c2 == 2 && classify.c4 == 2) {
+				//六对半
+				uint8_t cards[MAX_COUNT] = { 0 };
+				{
+					int k = 0;
+					for (int i = 0; i < classify.c2; ++i) {
+						memcpy(cards + k, &(classify.dst2[i])[0], 2);
+						k += 2;
+					}
+					for (int i = 0; i < classify.c4; ++i) {
+						memcpy(cards + k, &(classify.dst4[i])[0], 4);
+						k += 4;
 					}
 					assert(classify.cpylen == 1);
 					memcpy(cards + k, classify.cpy, classify.cpylen);
