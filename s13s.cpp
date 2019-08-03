@@ -3566,7 +3566,7 @@ namespace S13S {
 						spec_groups.pop_back();
 					}
 					//当作普通牌型，头墩散牌
-					group.duns[DunFirst] = Tysp;
+					group.duns[DunFirst].ty_ = Tysp;
 					enum_groups_tmp.push_back(group);
 					//特殊牌型放在枚举几组最优解前面
 					group.duns[DunFirst].ty_ = group.specialTy;
