@@ -1395,6 +1395,7 @@ namespace S13S {
 		std::vector<std::vector<uint8_t>>& dst) {
 		//printf("--- *** 枚举所有同花\n");
 		CardColor color[4] = { Spade,Heart,Club,Diamond, };
+		//按黑/红/梅/方顺序依次遍历color[k]
 		for (int k = 0; k < 4; ++k) {
 			//用A2345678910JQK来占位 size = MaxSZ
 			uint8_t mark[MaxSZ] = { 0 };
@@ -1403,6 +1404,7 @@ namespace S13S {
 			//用去重后的余牌/散牌进行补位
 			FillCardsMarkLoc(mark, MaxSZ, cpy, cpylen, false);
 			//printf("\n\n");
+			//printf("--- *** >>> color[%s]\n", StringCardColor(color[k]).c_str());
 			//PrintCardList(mark, MaxSZ, false);
 			for (int i = 0; i < psrclen; ++i) {
 				//psrc第i组/牌数c ///
@@ -1410,7 +1412,7 @@ namespace S13S {
 				uint8_t j = get_card_colorcol(psrc[i][0], (int)c, color[k]);
 				if (j != 0xFF) {
 					//PrintCardList(psrc[i][0], c, false);
-					//printf("color[%s] ==>> j == %d\n", StringCardColor(color[k]).c_str(), j);
+					//printf("--- *** +++ color[%s] psrc[%d][%d]\n", StringCardColor(color[k]).c_str(), i, j);
 					assert(GetCardValue((*psrc[i])[0]) == GetCardValue((*psrc[i])[j]));
 					//mark[j]=>psrcctx[j]=>psrc[i],c
 					//uint8_t v = GetCardValue((*psrc[i])[0]);
@@ -1426,6 +1428,7 @@ namespace S13S {
 			//补位合并后枚举所有n张当前花色牌型(同花非顺子)，不保留同花顺(在别的地方枚举出来了)//////
 			//EnumSameColorCardsMarkLoc(mark, MaxSZ, n, color[k], NULL/*psrcctx*/, ctx, dst, false, _);
 			int c = 0;
+			//所有当前花色牌位于mark索引ctx
 			short psrcctx[MaxSZ] = { 0 };
 			for (int i = 0; i < MaxSZ; ++i) {				
 				if (color[k] == GetCardColor(mark[i])) {
@@ -1440,6 +1443,7 @@ namespace S13S {
  				//////从c个当前花色牌里面选取任意n个的组合数C(c,n) //////
  				int m = fnC.FuncC(c, n, vec);
 				//printf("--- *** C(%d,%d) = %d\n", c, n, m);
+				//CFuncC::Print(vec);
 				for (std::vector<std::vector<int>>::iterator it = vec.begin();
 					it != vec.end(); ++it) {
 					if (psrcctx[*it->begin()] - psrcctx[*it->rbegin()] + 1 == n) {
@@ -1452,6 +1456,22 @@ namespace S13S {
 							v.push_back(mark[psrcctx[*ir]]);
 						}
 						//_.push_back(v);
+						//PrintCardList(&v.front(), v.size());
+					}
+					//判断能否构成10JDKA牌型A...K
+					else if (GetCardValue(mark[psrcctx[*it->rbegin()]]) == A &&
+						     GetCardValue(mark[psrcctx[*it->begin()]]) == K &&
+						psrcctx[*it->begin()] - psrcctx[*(it->rbegin() + 1)] + 1 == n - 1) {
+						//同花顺10JDKA/QKA
+						std::vector<uint8_t> v;
+						for (std::vector<int>::const_reverse_iterator ir = it->rbegin();
+							ir != it->rend(); ++ir) {
+							assert(psrcctx[*ir] < MaxSZ &&
+								mark[psrcctx[*ir]] > 0);
+							v.push_back(mark[psrcctx[*ir]]);
+						}
+						//_.push_back(v);
+						//PrintCardList(&v.front(), v.size());
 					}
 					else {
 						//同花
@@ -2946,6 +2966,21 @@ namespace S13S {
 		return c;
 	}
 	
+	static bool GlobalCompareCardsByScore(CGameLogic::groupdun_t const* src, CGameLogic::groupdun_t const* dst) {
+		//printf("\n\n--- *** --------------------------------------------------\n");
+		//const_cast<CGameLogic::groupdun_t*&>(src)->PrintCardList(DunFirst);
+		//const_cast<CGameLogic::groupdun_t*&>(src)->PrintCardList(DunSecond);
+		//const_cast<CGameLogic::groupdun_t*&>(src)->PrintCardList(DunLast);
+		//printf("--- *** --------------------------------------------------\n");
+		//const_cast<CGameLogic::groupdun_t*&>(dst)->PrintCardList(DunFirst);
+		//const_cast<CGameLogic::groupdun_t*&>(dst)->PrintCardList(DunSecond);
+		//const_cast<CGameLogic::groupdun_t*&>(dst)->PrintCardList(DunLast);
+		//printf("--- *** --------------------------------------------------\n");
+		int bv = CGameLogic::CompareCardsByScore(src, dst);
+		//printf("--- *** *** *** *** *** 结果 %d\n\n", bv);
+		return bv > 0;
+	}
+	
 	//确定手牌牌型
 	void CGameLogic::handinfo_t::CalcHandCardsType(uint8_t const* src, int len) {
 		
@@ -2953,23 +2988,34 @@ namespace S13S {
 		int cursorLeaf = 0, cursorChild = 0, cursorRoot = 0;
 		HandTy tyLeaf = TyNil, tyChild = TyNil, tyRoot = TyNil;
 		EnumTree::CardData const *leaf = NULL, *child = NULL, *root = NULL;
-
+		
+		//临时保存枚举几组解
+		std::vector<groupdun_t> enum_groups_tmp;
+		
 		//至尊青龙/一条龙(十三水)/十二皇族
 		HandTy specialTy = CheckDragonRoyal(src, len);
+		//跳过遍历节点继续下一个节点
+		bool continueflag = false;
 
 		//遍历枚举出来的每组牌型(头墩&中墩&尾墩加起来为一组) ////////////////////////////
 		for (std::vector<EnumTree::TraverseTreeNode>::iterator it = leafList.begin();
 			it != leafList.end(); ++it) {
-			//枚举MAX_ENUMSZ组最优解
-			if (enum_groups.size() >= MAX_ENUMSZ) {
-				break;
+		continue_:
+			if (continueflag) {
+				continueflag = false;
+				continue;
 			}
+			//枚举MAX_ENUMSZ组最优解，深度不够，可能枚举不到特殊牌型
+			//if (enum_groups_tmp.size() >= MAX_ENUMSZ) {
+			//	break;
+			//}
 			//从叶子节点往根节点遍历 ////////////////////////////
 			EnumTree::TraverseTreeNode& leafTraverseNode = *it;
 			EnumTree*& nodeLeaf = leafTraverseNode.first;//
 			cursorLeaf = leafTraverseNode.second;//
 			switch (nodeLeaf->dt_)
 			{
+			//////////////////////////////////////////////////////////////
 			case DunLast: {
 				groupdun_t group;
 				//尾墩
@@ -2983,61 +3029,117 @@ namespace S13S {
 				assert(root->size() <= 5);
 				//classify_t classify = { 0 };
 				//EnumTree enumList;
+				//printf("\n--- *** ---- start DunLast\n");				
+				//group.PrintCardList(DunLast);
 				//组墩后剩余牌/散牌
 				uint8_t cpy[MaxSZ] = { 0 };
 				int cpylen = 0, offset = 0;
 				CGameLogic::GetLeftCards(src, len, group.duns, cpy, cpylen);
 				CGameLogic::SortCards(cpy, cpylen, false, true, true);
-				{
-					//如果余牌含有重复牌型则跳过
-					typedef uint8_t(*Ptr)[4];
-					Ptr psrc[6] = { 0 };
-					int c = 0, c4 = 0, c3 = 0, c2 = 0, cpylen1 = 0;
-					uint8_t cpy1[MaxSZ] = { 0 };
-					//所有重复四张牌型
-					int const size4 = 3;
-					uint8_t dst4[size4][4] = { 0 };
-					//所有重复三张牌型
-					int const size3 = 4;
-					uint8_t dst3[size3][4] = { 0 };
-					//所有重复二张牌型
-					int const size2 = 6;
-					uint8_t dst2[size2][4] = { 0 };
-					//返回去重后的余牌/散牌cpy
-					c = RemoveRepeatCards(cpy, cpylen, psrc, dst4, c4, dst3, c3, dst2, c2, cpy1, cpylen1);
-					if (c4 > 0 || c3 > 0 || c2 > 0) {
-						//printf("--- *** ---- start DunLast\n");
-						//group.PrintCardList(DunLast);
-						//CGameLogic::PrintCardList(cpy, cpylen, true);
-						//assert(false);
-						continue;
-					}
-				}
-				//补充尾墩
+				//printf("---------\n");
+				//CGameLogic::PrintCardList(cpy, cpylen, true);
+// 				{
+// 					//如果余牌含有重复牌型则跳过
+// 					typedef uint8_t(*Ptr)[4];
+// 					Ptr psrc[6] = { 0 };
+// 					int c = 0, c4 = 0, c3 = 0, c2 = 0, cpylen1 = 0;
+// 					uint8_t cpy1[MaxSZ] = { 0 };
+// 					//所有重复四张牌型
+// 					int const size4 = 3;
+// 					uint8_t dst4[size4][4] = { 0 };
+// 					//所有重复三张牌型
+// 					int const size3 = 4;
+// 					uint8_t dst3[size3][4] = { 0 };
+// 					//所有重复二张牌型
+// 					int const size2 = 6;
+// 					uint8_t dst2[size2][4] = { 0 };
+// 					//返回去重后的余牌/散牌cpy
+// 					c = RemoveRepeatCards(cpy, cpylen, psrc, dst4, c4, dst3, c3, dst2, c2, cpy1, cpylen1);
+// 					if (c4 > 0 || c3 > 0 || c2 > 0) {
+// 						//group.PrintCardList(DunLast);
+// 						//CGameLogic::PrintCardList(cpy, cpylen, true);
+// 						//assert(false);
+// 						break;
+// 					}
+// 				}
+				//补充尾墩(最小补牌)
 				{
 					int c = group.needC(DunLast);
 					if (c > 0) {
+						//跳过补牌后出现牌型变化情况
+						{
+							for (int i = 0; i < c; ++i) {
+								uint8_t r = cpy[offset + i];
+								for (int j = 0; j < group.duns[DunLast].GetC(); ++j) {
+									if (CGameLogic::GetCardValue(r) == CGameLogic::GetCardValue(group.duns[DunLast].cards[j])) {
+										continueflag = true;
+										goto continue_;
+									}
+								}
+							}
+						}
 						assert(offset < cpylen);
 						group.append(DunLast, &cpy[offset], c);
 						offset += c;
+						//补牌后判断单墩牌型是否变化
+						HandTy ty = GetDunCardHandTy(DunLast, group.duns[DunLast].cards, group.duns[DunLast].GetC());
+						if (ty != group.duns[DunLast].ty_) {
+							break;
+						}
+						//补牌后判断是否倒水
+						if (IsInverted(DunLast, group.duns[DunLast].cards, group.duns[DunLast].GetC(), group.duns[DunLast].ty_, &group)) {
+							break;
+						}
 					}
 				}
-				//补充头墩
+				//补充头墩(次大补牌)
 				{
 					assert(offset < cpylen);
 					group.assign(DunFirst, Tysp, &cpy[offset], 3);
 					offset += 3;
+					//补牌后判断单墩牌型是否变化
+					HandTy ty = GetDunCardHandTy(DunFirst, group.duns[DunFirst].cards, group.duns[DunFirst].GetC());
+					if (ty == Ty123sc || ty == Tysc || ty == Ty123) {
+						ty = Tysp;
+					}
+					if (ty != group.duns[DunFirst].ty_) {
+						break;
+					}
+					//补牌后判断是否倒水
+					if (IsInverted(DunFirst, group.duns[DunFirst].cards, group.duns[DunFirst].GetC(), group.duns[DunFirst].ty_, &group)) {
+						break;
+					}
 				}
-				//补充中墩
+				//补充中墩(最大补牌)
 				{
 					assert(offset < cpylen);
 					group.assign(DunSecond, Tysp, &cpy[offset], 5);
 					offset += 5;
 					assert(offset == cpylen);
+					//补牌后判断单墩牌型是否变化
+					HandTy ty = GetDunCardHandTy(DunSecond, group.duns[DunSecond].cards, group.duns[DunSecond].GetC());
+					if (ty != group.duns[DunSecond].ty_) {
+						break;
+					}
+					//补牌后判断是否倒水
+					if (IsInverted(DunSecond, group.duns[DunSecond].cards, group.duns[DunSecond].GetC(), group.duns[DunSecond].ty_, &group)) {
+						break;
+					}
 				}
+				//头墩最大单张与中墩次大单张交换
+				{
+					for (int i = 0; i < group.duns[DunFirst].GetC(); ++i) {
+						assert((group.duns[DunFirst].GetC() - 1 - i) >= 0);
+						std::swap(group.duns[DunFirst].cards[group.duns[DunFirst].GetC() - 1 - i],
+							group.duns[DunSecond].cards[group.duns[DunSecond].GetC() - 2 - i]);
+					}
+				}
+				//group.PrintCardList(DunFirst);
+				//group.PrintCardList(DunSecond);
+				//group.PrintCardList(DunLast);
 				bool existRepeated = false;
-				for (std::vector<groupdun_t>::iterator it = enum_groups.begin();
-					it != enum_groups.end(); ++it) {
+				for (std::vector<groupdun_t>::iterator it = enum_groups_tmp.begin();
+					it != enum_groups_tmp.end(); ++it) {
 					if (CGameLogic::CompareCards(
 						it->duns[DunLast].cards, it->duns[DunLast].c, it->duns[DunLast].ty_,
 						group.duns[DunLast].cards, group.duns[DunLast].c, group.duns[DunLast].ty_, false, true) == 0 &&
@@ -3051,11 +3153,12 @@ namespace S13S {
 						break;
 					}
 				}
-				if (!existRepeated && enum_groups.size() < MAX_ENUMSZ) {
-					enum_groups.push_back(group);
+				if (!existRepeated && enum_groups_tmp.size() < MAX_ENUMSZ) {
+					enum_groups_tmp.push_back(group);
 				}
 				break;
 			}
+			//////////////////////////////////////////////////////////////
 			case DunSecond: {
 				groupdun_t group;
 				//中墩
@@ -3064,11 +3167,7 @@ namespace S13S {
 					EnumTree::EnumItem& leafItem = treeNode.first;
 					tyChild = leafItem.first;
 					child = leafItem.second;
-					//if (tyChild == Ty30 || tyChild == Ty20) {
-					//}
-					//else {
-						group.assign(DunSecond, tyChild, &child->front(), child->size());
-					//}
+					group.assign(DunSecond, tyChild, &child->front(), child->size());
 				}
 				//尾墩
 				EnumTree *nodeRoot = nodeLeaf->parent_;//
@@ -3084,72 +3183,118 @@ namespace S13S {
 				assert(child->size() <= 5);
 				//classify_t classify = { 0 };
 				//EnumTree enumList;
+				//printf("\n--- *** ---- start DunSecond\n");
+				//group.PrintCardList(DunSecond);
+				//group.PrintCardList(DunLast);
 				//组墩后剩余牌/散牌
 				uint8_t cpy[MaxSZ] = { 0 };
 				int cpylen = 0, offset = 0;
 				CGameLogic::GetLeftCards(src, len, group.duns, cpy, cpylen);
 				CGameLogic::SortCards(cpy, cpylen, false, true, true);
+				//printf("---------\n");
+				//CGameLogic::PrintCardList(cpy, cpylen, true);
 #if 1
-				{
-					//如果余牌含有重复牌型则跳过
-					typedef uint8_t(*Ptr)[4];
-					Ptr psrc[6] = { 0 };
-					int c = 0, c4 = 0, c3 = 0, c2 = 0, cpylen1 = 0;
-					uint8_t cpy1[MaxSZ] = { 0 };
-					//所有重复四张牌型
-					int const size4 = 3;
-					uint8_t dst4[size4][4] = { 0 };
-					//所有重复三张牌型
-					int const size3 = 4;
-					uint8_t dst3[size3][4] = { 0 };
-					//所有重复二张牌型
-					int const size2 = 6;
-					uint8_t dst2[size2][4] = { 0 };
-					//返回去重后的余牌/散牌cpy
-					c = RemoveRepeatCards(cpy, cpylen, psrc, dst4, c4, dst3, c3, dst2, c2, cpy1, cpylen1);
-					if (c4 > 0 || c3 > 0 || c2 > 0) {
-						//printf("--- *** ---- start DunSecond\n");
-						//group.PrintCardList(DunSecond);
-						//group.PrintCardList(DunLast);
-						//CGameLogic::PrintCardList(cpy, cpylen, true);
-						//assert(false);
-						continue;
-					}
-				}
+// 				{
+// 					//如果余牌含有重复牌型则跳过
+// 					typedef uint8_t(*Ptr)[4];
+// 					Ptr psrc[6] = { 0 };
+// 					int c = 0, c4 = 0, c3 = 0, c2 = 0, cpylen1 = 0;
+// 					uint8_t cpy1[MaxSZ] = { 0 };
+// 					//所有重复四张牌型
+// 					int const size4 = 3;
+// 					uint8_t dst4[size4][4] = { 0 };
+// 					//所有重复三张牌型
+// 					int const size3 = 4;
+// 					uint8_t dst3[size3][4] = { 0 };
+// 					//所有重复二张牌型
+// 					int const size2 = 6;
+// 					uint8_t dst2[size2][4] = { 0 };
+// 					//返回去重后的余牌/散牌cpy
+// 					c = RemoveRepeatCards(cpy, cpylen, psrc, dst4, c4, dst3, c3, dst2, c2, cpy1, cpylen1);
+// 					if (c4 > 0 || c3 > 0 || c2 > 0) {
+// 						//group.PrintCardList(DunSecond);
+// 						//group.PrintCardList(DunLast);
+// 						//CGameLogic::PrintCardList(cpy, cpylen, true);
+// 						//assert(false);
+// 						break;
+// 					}
+// 				}
 #else
-				{
-					CGameLogic::EnumCards(cpy, cpylen, 3, classify, enumList, DunFirst);
-					if (enumList.v30.size() > 0) {
-						tyLeaf = Ty30;//三条
-						leaf = &enumList.v30[0];
-						goto restart;
-					}
-					else if (enumList.v22.size() > 0) {
-						tyLeaf = Ty22;//两对
-					}
-					else if (enumList.v20.size() > 0) {
-						tyLeaf = Ty20;//对子
-						leaf = &enumList.v20[0];
-						goto restart;
-					}
-				}
+// 				{
+// 					CGameLogic::EnumCards(cpy, cpylen, 3, classify, enumList, DunFirst);
+// 					if (enumList.v30.size() > 0) {
+// 						tyLeaf = Ty30;//三条
+// 						leaf = &enumList.v30[0];
+// 						goto restart;
+// 					}
+// 					else if (enumList.v22.size() > 0) {
+// 						tyLeaf = Ty22;//两对
+// 					}
+// 					else if (enumList.v20.size() > 0) {
+// 						tyLeaf = Ty20;//对子
+// 						leaf = &enumList.v20[0];
+// 						goto restart;
+// 					}
+// 				}
 #endif
 				//补充尾墩
 				{
 					int c = group.needC(DunLast);
 					if (c > 0) {
+						//跳过补牌后出现牌型变化情况
+						{
+							for (int i = 0; i < c; ++i) {
+								uint8_t r = cpy[offset + i];
+								for (int j = 0; j < group.duns[DunLast].GetC(); ++j) {
+									if (CGameLogic::GetCardValue(r) == CGameLogic::GetCardValue(group.duns[DunLast].cards[j])) {
+										continueflag = true;
+										goto continue_;
+									}
+								}
+							}
+						}
 						assert(offset < cpylen);
 						group.append(DunLast, &cpy[offset], c);
 						offset += c;
+						//补牌后判断单墩牌型是否变化
+						HandTy ty = GetDunCardHandTy(DunLast, group.duns[DunLast].cards, group.duns[DunLast].GetC());
+						if (ty != group.duns[DunLast].ty_) {
+							break;
+						}
+						//补牌后判断是否倒水
+						if (IsInverted(DunLast, group.duns[DunLast].cards, group.duns[DunLast].GetC(), group.duns[DunLast].ty_, &group)) {
+							break;
+						}
 					}
 				}
 				//补充中墩
 				{
 					int c = group.needC(DunSecond);
 					if (c > 0) {
+						//跳过补牌后出现牌型变化情况
+						{
+							for (int i = 0; i < c; ++i) {
+								uint8_t r = cpy[offset + i];
+								for (int j = 0; j < group.duns[DunSecond].GetC(); ++j) {
+									if (CGameLogic::GetCardValue(r) == CGameLogic::GetCardValue(group.duns[DunSecond].cards[j])) {
+										continueflag = true;
+										goto continue_;
+									}
+								}
+							}
+						}
 						assert(offset < cpylen);
 						group.append(DunSecond, &cpy[offset], c);
 						offset += c;
+						//补牌后判断单墩牌型是否变化
+						HandTy ty = GetDunCardHandTy(DunSecond, group.duns[DunSecond].cards, group.duns[DunSecond].GetC());
+						if (ty != group.duns[DunSecond].ty_) {
+							break;
+						}
+						//补牌后判断是否倒水
+						if (IsInverted(DunSecond, group.duns[DunSecond].cards, group.duns[DunSecond].GetC(), group.duns[DunSecond].ty_, &group)) {
+							break;
+						}
 					}
 				}
 				//补充头墩
@@ -3158,10 +3303,25 @@ namespace S13S {
 					group.assign(DunFirst, Tysp, &cpy[offset], 3);
 					offset += 3;
 					assert(offset == cpylen);
+					//补牌后判断单墩牌型是否变化
+					HandTy ty = GetDunCardHandTy(DunFirst, group.duns[DunFirst].cards, group.duns[DunFirst].GetC());
+					if (ty == Ty123sc || ty == Tysc || ty == Ty123) {
+						ty = Tysp;
+					}
+					if (ty != group.duns[DunFirst].ty_) {
+						break;
+					}
+					//补牌后判断是否倒水
+					if (IsInverted(DunFirst, group.duns[DunFirst].cards, group.duns[DunFirst].GetC(), group.duns[DunFirst].ty_, &group)) {
+						break;
+					}
 				}
+				//group.PrintCardList(DunFirst);
+				//group.PrintCardList(DunSecond);
+				//group.PrintCardList(DunLast);
  				bool existRepeated = false;
- 				for (std::vector<groupdun_t>::iterator it = enum_groups.begin();
- 					it != enum_groups.end(); ++it) {
+ 				for (std::vector<groupdun_t>::iterator it = enum_groups_tmp.begin();
+ 					it != enum_groups_tmp.end(); ++it) {
  					if (CGameLogic::CompareCards(
 							it->duns[DunLast].cards, it->duns[DunLast].c, it->duns[DunLast].ty_,
  							group.duns[DunLast].cards, group.duns[DunLast].c, group.duns[DunLast].ty_, false, true) == 0 &&
@@ -3175,11 +3335,12 @@ namespace S13S {
 						break;
 					}
  				}
-				if (!existRepeated && enum_groups.size() < MAX_ENUMSZ) {
-					enum_groups.push_back(group);
+				if (!existRepeated && enum_groups_tmp.size() < MAX_ENUMSZ) {
+					enum_groups_tmp.push_back(group);
 				}
 				break;
 			}
+			//////////////////////////////////////////////////////////////
 			case DunFirst: {
 				groupdun_t group;
 				//头墩
@@ -3244,11 +3405,9 @@ namespace S13S {
 				assert(leaf->size() <= 3);
 				classify_t classify = { 0 };
 				EnumTree enumList;
-				//printf("--- *** ---- start DunFirst\n");
+				//printf("\n--- *** ---- start DunFirst\n");				
 				//group.PrintCardList(DunSecond);
 				//group.PrintCardList(DunLast);
-				//叶子节点是否重新组牌过
-				bool restartLeaf = false;
 			restart:
 				//若叶子节点为对子或者三条，则放入头墩，否则当作散牌与余牌合并处理
 				if (tyLeaf == Ty20 || tyLeaf == Ty30) {
@@ -3263,92 +3422,162 @@ namespace S13S {
 				//printf("---------\n");
 				//CGameLogic::PrintCardList(cpy, cpylen, true);
 				if (group.duns[DunFirst].GetC() == 0) {
-					//如果头敦为空
+					//如果头墩为空
 					CGameLogic::EnumCards(cpy, cpylen, 3, classify, enumList, DunFirst);
 					if (enumList.v30.size() > 0) {
 						tyLeaf = Ty30;//三条
 						leaf = &enumList.v30[0];
-						restartLeaf = true;
 						goto restart;
 					}
 					else if (enumList.v20.size() > 0) {
 						tyLeaf = Ty20;//对子
 						leaf = &enumList.v20[0];
-						restartLeaf = true;
 						goto restart;
 					}
 				}
-				//若叶子节点重新组牌过
-				if(restartLeaf) {
-					//如果余牌含有重复牌型则跳过
-					typedef uint8_t(*Ptr)[4];
-					Ptr psrc[6] = { 0 };
-					int c = 0, c4 = 0, c3 = 0, c2 = 0, cpylen1 = 0;
-					uint8_t cpy1[MaxSZ] = { 0 };
-					//所有重复四张牌型
-					int const size4 = 3;
-					uint8_t dst4[size4][4] = { 0 };
-					//所有重复三张牌型
-					int const size3 = 4;
-					uint8_t dst3[size3][4] = { 0 };
-					//所有重复二张牌型
-					int const size2 = 6;
-					uint8_t dst2[size2][4] = { 0 };
-					//返回去重后的余牌/散牌cpy
-					c = RemoveRepeatCards(cpy, cpylen, psrc, dst4, c4, dst3, c3, dst2, c2, cpy1, cpylen1);
-					if (c4 > 0 || c3 > 0 || c2 > 0) {
-						//还有重复牌的话则跳过
-						//assert(false);
-						continue;
-					}
-				}
+// 				{
+// 					//如果余牌含有重复牌型则跳过
+// 					typedef uint8_t(*Ptr)[4];
+// 					Ptr psrc[6] = { 0 };
+// 					int c = 0, c4 = 0, c3 = 0, c2 = 0, cpylen1 = 0;
+// 					uint8_t cpy1[MaxSZ] = { 0 };
+// 					//所有重复四张牌型
+// 					int const size4 = 3;
+// 					uint8_t dst4[size4][4] = { 0 };
+// 					//所有重复三张牌型
+// 					int const size3 = 4;
+// 					uint8_t dst3[size3][4] = { 0 };
+// 					//所有重复二张牌型
+// 					int const size2 = 6;
+// 					uint8_t dst2[size2][4] = { 0 };
+// 					//返回去重后的余牌/散牌cpy
+// 					c = RemoveRepeatCards(cpy, cpylen, psrc, dst4, c4, dst3, c3, dst2, c2, cpy1, cpylen1);
+// 					if (c4 > 0 || c3 > 0 || c2 > 0) {
+// 						//group.PrintCardList(DunFirst);
+// 						//group.PrintCardList(DunSecond);
+// 						//group.PrintCardList(DunLast);
+// 						//CGameLogic::PrintCardList(cpy, cpylen, true);
+// 						//assert(false);
+// 						break;
+// 					}
+// 				}
 				//补充尾墩
 				{
 					int c = group.needC(DunLast);
 					if (c > 0) {
+						//跳过补牌后出现牌型变化情况
+						{
+							for (int i = 0; i < c; ++i) {
+								uint8_t r = cpy[offset + i];
+								for (int j = 0; j < group.duns[DunLast].GetC(); ++j) {
+									if (CGameLogic::GetCardValue(r) == CGameLogic::GetCardValue(group.duns[DunLast].cards[j])) {
+										continueflag = true;
+										goto continue_;
+									}
+								}
+							}
+						}
 						assert(offset < cpylen);
 						group.append(DunLast, &cpy[offset], c);
 						offset += c;
+						//补牌后判断单墩牌型是否变化
+						HandTy ty = GetDunCardHandTy(DunLast, group.duns[DunLast].cards, group.duns[DunLast].GetC());
+						if (ty != group.duns[DunLast].ty_) {
+							break;
+						}
+						//补牌后判断是否倒水
+						if (IsInverted(DunLast, group.duns[DunLast].cards, group.duns[DunLast].GetC(), group.duns[DunLast].ty_, &group)) {
+							break;
+						}
 					}
 				}
 				//补充中墩
 				{
 					int c = group.needC(DunSecond);
 					if (c > 0) {
+						//跳过补牌后出现牌型变化情况
+						{
+							for (int i = 0; i < c; ++i) {
+								uint8_t r = cpy[offset + i];
+								for (int j = 0; j < group.duns[DunSecond].GetC(); ++j) {
+									if (CGameLogic::GetCardValue(r) == CGameLogic::GetCardValue(group.duns[DunSecond].cards[j])) {
+										continueflag = true;
+										goto continue_;
+									}
+								}
+							}
+						}
 						assert(offset < cpylen);
 						group.append(DunSecond, &cpy[offset], c);
 						offset += c;
+						//补牌后判断单墩牌型是否变化
+						HandTy ty = GetDunCardHandTy(DunSecond, group.duns[DunSecond].cards, group.duns[DunSecond].GetC());
+						if (ty != group.duns[DunSecond].ty_) {
+							break;
+						}
+						//补牌后判断是否倒水
+						if (IsInverted(DunSecond, group.duns[DunSecond].cards, group.duns[DunSecond].GetC(), group.duns[DunSecond].ty_, &group)) {
+							break;
+						}
 					}
 				}
 				//补充头墩
 				{
 					int c = group.needC(DunFirst);
 					if (c > 0) {
+						//跳过补牌后出现牌型变化情况
+						{
+							for (int i = 0; i < c; ++i) {
+								uint8_t r = cpy[offset + i];
+								for (int j = 0; j < group.duns[DunFirst].GetC(); ++j) {
+									if (CGameLogic::GetCardValue(r) == CGameLogic::GetCardValue(group.duns[DunFirst].cards[j])) {
+										continueflag = true;
+										goto continue_;
+									}
+								}
+							}
+						}
 						assert(offset < cpylen);
 						group.append(DunFirst, &cpy[offset], c);
 						offset += c;
 						assert(offset == cpylen);
+						//补牌后判断单墩牌型是否变化
+						HandTy ty = GetDunCardHandTy(DunFirst, group.duns[DunFirst].cards, group.duns[DunFirst].GetC());
+						if (ty == Ty123sc || ty == Tysc || ty == Ty123) {
+							ty = Tysp;
+						}
+						if (ty != group.duns[DunFirst].ty_) {
+							break;
+						}
+						//补牌后判断是否倒水
+						if (IsInverted(DunFirst, group.duns[DunFirst].cards, group.duns[DunFirst].GetC(), group.duns[DunFirst].ty_, &group)) {
+							break;
+						}
 					}
 				}
+				//group.PrintCardList(DunFirst);
+				//group.PrintCardList(DunSecond);
+				//group.PrintCardList(DunLast);
 				//该组是特殊牌型(三同花顺/三顺子/三同花)
 				if (group.specialTy == TyThree123sc || group.specialTy == TyThree123 || group.specialTy == TyThreesc) {
-					//特殊牌型放在枚举几组最优解前面
-#if 1
-					group.duns[DunFirst].ty_ = group.specialTy;
-					group.duns[DunSecond].ty_ = group.specialTy;
-					group.duns[DunLast].ty_ = group.specialTy;
-#endif
 					//如果是三顺子，除去三同花
 					if (spec_groups.size() > 0) {
 						assert(spec_groups.size() == 1);
 						spec_groups.pop_back();
 					}
+					//当作普通牌型，头墩散牌
+					group.duns[DunFirst] = Tysp;
+					enum_groups_tmp.push_back(group);
+					//特殊牌型放在枚举几组最优解前面
+					group.duns[DunFirst].ty_ = group.specialTy;
+					group.duns[DunSecond].ty_ = group.specialTy;
+					group.duns[DunLast].ty_ = group.specialTy;
 					spec_groups.push_back(group);
 				}
 				else {
 					bool existRepeated = false;
-					for (std::vector<groupdun_t>::iterator it = enum_groups.begin();
-						it != enum_groups.end(); ++it) {
+					for (std::vector<groupdun_t>::iterator it = enum_groups_tmp.begin();
+						it != enum_groups_tmp.end(); ++it) {
 						if (CGameLogic::CompareCards(
 							it->duns[DunLast].cards, it->duns[DunLast].c, it->duns[DunLast].ty_,
 							group.duns[DunLast].cards, group.duns[DunLast].c, group.duns[DunLast].ty_, false, true) == 0 &&
@@ -3362,8 +3591,8 @@ namespace S13S {
 							break;
 						}
 					}
-					if (!existRepeated && enum_groups.size() < MAX_ENUMSZ) {
-						enum_groups.push_back(group);
+					if (!existRepeated && enum_groups_tmp.size() < MAX_ENUMSZ) {
+						enum_groups_tmp.push_back(group);
 					}
 				}
 				break;
@@ -3673,6 +3902,89 @@ namespace S13S {
 				}
 			}
 		}
+		if (enum_groups_tmp.size() == 0) {
+			CGameLogic::PrintCardList(src, len);
+		}
+		assert(enum_groups_tmp.size() > 0);
+		assert(enum_groups.size() == 0);
+		std::vector<groupdun_t const*> v;
+#if 1
+		//尾墩最大/中墩最大/头墩最大
+		groupdun_t const* maxLast = NULL, *maxSecond = NULL, *maxFirst = NULL;
+		for (std::vector<groupdun_t>::const_iterator it = enum_groups_tmp.begin();
+			it != enum_groups_tmp.end(); ++it) {
+			//const_cast<groupdun_t&>(*it).PrintCardList(DunFirst);
+			//const_cast<groupdun_t&>(*it).PrintCardList(DunSecond);
+			//const_cast<groupdun_t&>(*it).PrintCardList(DunLast);
+			if (it == enum_groups_tmp.begin()) {
+				maxFirst = maxSecond = maxLast = &*it;
+			}
+			else {
+				{
+					//不比较散牌/单张
+					//不比较次大的对子(两对之间)
+					//不比较葫芦的对子(葫芦之间)
+					int bv = CGameLogic::CompareCards(
+						it->duns[DunSecond].cards, it->duns[DunSecond].c, it->duns[DunSecond].ty_,
+						maxSecond->duns[DunSecond].cards, maxSecond->duns[DunSecond].c, maxSecond->duns[DunSecond].ty_, false, false, false, false);
+					if (bv > 0) {
+						maxSecond = &*it;
+					}
+					else if (bv == 0) {
+						//没有赋值则赋值当前
+						if (maxSecond == maxLast) {
+							maxSecond = &*it;
+						}
+					}
+				}
+				{
+					//不比较散牌/单张
+					//不比较次大的对子(两对之间)
+					//不比较葫芦的对子(葫芦之间)
+					int bv = CGameLogic::CompareCards(
+						it->duns[DunFirst].cards, it->duns[DunFirst].c, it->duns[DunFirst].ty_,
+						maxFirst->duns[DunFirst].cards, maxFirst->duns[DunFirst].c, maxFirst->duns[DunFirst].ty_, false, false, false, false);
+					if (bv > 0) {
+						maxFirst = &*it;
+					}
+					else if (bv == 0) {
+						//没有赋值则赋值当前
+						//指向maxSecond则赋值当前
+						if (maxFirst == maxLast || maxFirst == maxSecond) {
+							maxFirst = &*it;
+						}
+					}
+				}
+			}
+		}
+		//尾墩最大
+		if (maxLast) {
+			v.push_back(maxLast);
+		}
+		//中墩最大
+		if (maxSecond && maxSecond != maxLast) {
+			v.push_back(maxSecond);
+		}
+		//头墩最大
+		if (maxFirst && maxFirst != maxSecond && maxFirst != maxLast) {
+			v.push_back(maxFirst);
+		}
+#else
+		for (std::vector<groupdun_t>::const_iterator it = enum_groups_tmp.begin();
+			it != enum_groups_tmp.end(); ++it) {
+			if (v.size() >= MAX_ENUMSZ) {
+				break;
+			}
+			v.push_back(&*it);
+		}
+#endif
+		//按输赢得水排序(不计打枪/全垒打)
+		std::sort(&v.front(), &v.front() + v.size(), GlobalCompareCardsByScore);
+		for (std::vector<groupdun_t const*>::const_iterator it = v.begin();
+			it != v.end(); ++it) {
+			enum_groups.push_back(**it);
+		}
+		assert(enum_groups.size() > 0);
 		assert(groups.size() == 0);
 		//特殊牌型
 		for (std::vector<groupdun_t>::const_iterator it = spec_groups.begin();
@@ -3680,17 +3992,983 @@ namespace S13S {
 			assert(spec_groups.size() == 1);
 			groups.push_back(&*it);
 		}
-		if (enum_groups.size() == 0) {
-			CGameLogic::PrintCardList(src, len);
-		}
-		//枚举最优解牌型排序
-		assert(enum_groups.size() > 0);
 		//枚举牌型(几组最优解)
 		for (std::vector<groupdun_t>::const_iterator it = enum_groups.begin();
 			it != enum_groups.end(); ++it) {
 			groups.push_back(&*it);
 		}
 		assert(groups.size() > 0);
+	}
+	
+	//src与dst两组之间按输赢得水比大小(不计打枪/全垒打)
+	//src uint8_t const* 一组牌(13张)
+	//dst uint8_t const* 一组牌(13张)
+	//sp bool 是否比较散牌/单张
+	//sd bool 是否比较次大的对子(两对之间比较)
+	//dz bool 是否比较葫芦的对子(葫芦之间比较)
+	int CGameLogic::CompareCardsByScore(groupdun_t const* psrc, groupdun_t const* pdst, bool sp, bool sd, bool dz) {
+		std::vector<groupdun_t const*> groups;
+		groups.push_back(psrc);
+		groups.push_back(pdst);
+		s13s::CMD_S_CompareCards compareCards_[2];
+		int c = 0;
+		int chairIDs[MaxEnumSZ] = { 0 };
+		for (int i = 0; i < groups.size(); ++i) {
+			//用于求两两组合
+			chairIDs[c++] = i;
+			//比牌玩家桌椅ID
+			compareCards_[i].mutable_player()->set_chairid(i);
+			//获取座椅玩家确定的三墩牌型
+			groupdun_t const *player_select = groups[i];
+			const_cast<groupdun_t*&>(groups[i])->deltascore = 0;
+		}
+		std::vector<std::vector<int>> vec;
+		CFuncC fnC;
+		fnC.FuncC(c, 2, vec);
+		//CFuncC::Print(vec);
+		for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
+			it != vec.end(); ++it) {
+			assert(it->size() == 2);//两两比牌
+			int src_chairid = chairIDs[(*it)[0]];//src椅子ID
+			int dst_chairid = chairIDs[(*it)[1]];//dst椅子ID
+			assert(src_chairid < groups.size());
+			assert(dst_chairid < groups.size());
+			//获取src确定的三墩牌型
+			S13S::CGameLogic::groupdun_t const *src = groups[src_chairid];
+			//获取dst确定的三墩牌型
+			S13S::CGameLogic::groupdun_t const *dst = groups[dst_chairid];
+			{
+				//追加src比牌对象 ////////////
+				s13s::ComparePlayer* src_peer = compareCards_[src_chairid].add_peers();
+				//追加src比牌结果 ////////////
+				s13s::CompareResult* src_result = compareCards_[src_chairid].add_results();
+			}
+			{
+				//追加dst比牌对象 ////////////
+				s13s::ComparePlayer* dst_peer = compareCards_[dst_chairid].add_peers();
+				//追加dst比牌结果 ////////////
+				s13s::CompareResult* dst_result = compareCards_[dst_chairid].add_results();
+			}
+			//////////////////////////////////////////////////////////////
+			//比较头墩
+			{
+				//单墩比牌，头墩要么三条/对子/乌龙，同花顺/同花/顺子都要改成乌龙
+				if (src->duns[S13S::DunFirst].ty_ == S13S::Ty123sc ||
+					src->duns[S13S::DunFirst].ty_ == S13S::Tysc ||
+					src->duns[S13S::DunFirst].ty_ == S13S::Ty123) {
+					//assert(src->duns[S13S::DunFirst].ty_ == S13S::Tysp);
+					const_cast<S13S::CGameLogic::groupdun_t*>(src)->duns[S13S::DunFirst].ty_ = S13S::Tysp;
+				}
+				//单墩比牌，头墩要么三条/对子/乌龙，同花顺/同花/顺子都要改成乌龙
+				if (dst->duns[S13S::DunFirst].ty_ == S13S::Ty123sc ||
+					dst->duns[S13S::DunFirst].ty_ == S13S::Tysc ||
+					dst->duns[S13S::DunFirst].ty_ == S13S::Ty123) {
+					//assert(dst->duns[S13S::DunFirst].ty_ == S13S::Tysp);
+					const_cast<S13S::CGameLogic::groupdun_t*>(dst)->duns[S13S::DunFirst].ty_ = S13S::Tysp;
+				}
+				int winner = -1, loser = -1;
+				int dt = S13S::DunFirst;
+				if (src->duns[dt].ty_ != dst->duns[dt].ty_) {
+					//牌型不同比牌型
+					if (src->duns[dt].ty_ > dst->duns[dt].ty_) {
+						winner = src_chairid; loser = dst_chairid;
+					}
+					else if (src->duns[dt].ty_ < dst->duns[dt].ty_) {
+						winner = dst_chairid; loser = src_chairid;
+					}
+					else {
+						assert(false);
+					}
+				}
+				else {
+					//牌型相同比大小
+					assert(src->duns[dt].GetC() == 3);
+					assert(dst->duns[dt].GetC() == 3);
+					int bv = S13S::CGameLogic::CompareCards(
+						src->duns[dt].cards, dst->duns[dt].cards, dst->duns[dt].GetC(), false, dst->duns[dt].ty_, sp, sd, dz);
+					if (bv > 0) {
+						winner = src_chairid; loser = dst_chairid;
+					}
+					else if (bv < 0) {
+						winner = dst_chairid; loser = src_chairid;
+					}
+					else {
+						//头墩和
+						//assert(false);
+					}
+				}
+				if (winner == -1) {
+					//头墩和
+					winner = src_chairid; loser = dst_chairid;
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//src比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//头墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//和了
+							item->set_winlost(0);
+							//和分
+							item->set_score(0);
+							//和的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//dst比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//头墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//和了
+							item->set_winlost(0);
+							//和分
+							item->set_score(0);
+							//和的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				//乌龙/对子获胜赢1水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Tysp ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty20) {
+						{
+							int index = compareCards_[winner].results_size() - 1;
+							assert(index >= 0);
+							//赢家比牌结果 ////////////
+							s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+							//头墩输赢信息
+							s13s::CompareItem* item = result->add_items();
+							{
+								//赢了
+								item->set_winlost(1);
+								//赢分
+								item->set_score(1);
+								//赢的牌型
+								item->set_ty(groups[winner]->duns[dt].ty_);
+								//对方牌型
+								item->set_peerty(groups[loser]->duns[dt].ty_);
+							}
+						}
+						{
+							int index = compareCards_[loser].results_size() - 1;
+							assert(index >= 0);
+							//输家比牌结果 ////////////
+							s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+							//头墩输赢信息
+							s13s::CompareItem* item = result->add_items();
+							{
+								//输了
+								item->set_winlost(-1);
+								//输分
+								item->set_score(-1);
+								//输的牌型
+								item->set_ty(groups[loser]->duns[dt].ty_);
+								//对方牌型
+								item->set_peerty(groups[winner]->duns[dt].ty_);
+							}
+						}
+				}
+				//三条摆头墩获胜赢3水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Ty30) {
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//赢家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//头墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//赢了
+							item->set_winlost(1);
+							//赢分
+							item->set_score(3);
+							//赢的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//输家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//头墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//输了
+							item->set_winlost(-1);
+							//输分
+							item->set_score(-3);
+							//输的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				else {
+					assert(false);
+				}
+			}
+			//////////////////////////////////////////////////////////////
+			//比较中墩
+			{
+				int winner = -1, loser = -1;
+				int dt = S13S::DunSecond;
+				if (src->duns[dt].ty_ != dst->duns[dt].ty_) {
+					//牌型不同比牌型
+					if (src->duns[dt].ty_ > dst->duns[dt].ty_) {
+						winner = src_chairid; loser = dst_chairid;
+					}
+					else if (src->duns[dt].ty_ < dst->duns[dt].ty_) {
+						winner = dst_chairid; loser = src_chairid;
+					}
+					else {
+						assert(false);
+					}
+				}
+				else {
+					//牌型相同比大小
+					assert(src->duns[dt].GetC() == 5);
+					assert(dst->duns[dt].GetC() == 5);
+					int bv = S13S::CGameLogic::CompareCards(
+						src->duns[dt].cards, dst->duns[dt].cards, dst->duns[dt].GetC(), false, dst->duns[dt].ty_, sp, sd, dz);
+					if (bv > 0) {
+						winner = src_chairid; loser = dst_chairid;
+					}
+					else if (bv < 0) {
+						winner = dst_chairid; loser = src_chairid;
+					}
+					else {
+						//中墩和
+						//assert(false);
+					}
+				}
+				if (winner == -1) {
+					//中墩和
+					winner = src_chairid; loser = dst_chairid;
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//src比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//和了
+							item->set_winlost(0);
+							//和分
+							item->set_score(0);
+							//和的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//dst比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//和了
+							item->set_winlost(0);
+							//和分
+							item->set_score(0);
+							//和的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				//乌龙/对子/两对/三条/顺子/同花获胜赢1水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Tysp ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty20 ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty22 ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty30 ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty123 ||
+						groups[winner]->duns[dt].ty_ == S13S::Tysc) {
+						{
+							int index = compareCards_[winner].results_size() - 1;
+							assert(index >= 0);
+							//赢家比牌结果 ////////////
+							s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+							//中墩输赢信息
+							s13s::CompareItem* item = result->add_items();
+							{
+								//赢了
+								item->set_winlost(1);
+								//赢分
+								item->set_score(1);
+								//赢的牌型
+								item->set_ty(groups[winner]->duns[dt].ty_);
+								//对方牌型
+								item->set_peerty(groups[loser]->duns[dt].ty_);
+							}
+						}
+						{
+							int index = compareCards_[loser].results_size() - 1;
+							assert(index >= 0);
+							//输家比牌结果 ////////////
+							s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+							//中墩输赢信息
+							s13s::CompareItem* item = result->add_items();
+							{
+								//输了
+								item->set_winlost(-1);
+								//输分
+								item->set_score(-1);
+								//输的牌型
+								item->set_ty(groups[loser]->duns[dt].ty_);
+								//对方牌型
+								item->set_peerty(groups[winner]->duns[dt].ty_);
+							}
+						}
+				}
+				//葫芦摆中墩获胜赢2水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Ty32) {
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//赢家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//赢了
+							item->set_winlost(1);
+							//赢分
+							item->set_score(2);
+							//赢的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//输家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//输了
+							item->set_winlost(-1);
+							//输分
+							item->set_score(-2);
+							//输的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				//铁支摆中墩获胜赢8水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Ty40) {
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//赢家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//赢了
+							item->set_winlost(1);
+							//赢分
+							item->set_score(8);
+							//赢的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//输家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//输了
+							item->set_winlost(-1);
+							//输分
+							item->set_score(-8);
+							//输的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				//同花顺摆中墩获胜赢10水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Ty123sc) {
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//赢家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//赢了
+							item->set_winlost(1);
+							//赢分
+							item->set_score(10);
+							//赢的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//输家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//中墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//输了
+							item->set_winlost(-1);
+							//输分
+							item->set_score(-10);
+							//输的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				else {
+					assert(false);
+				}
+			}
+			//////////////////////////////////////////////////////////////
+			//比较尾墩
+			{
+				int winner = -1, loser = -1;
+				int dt = S13S::DunLast;
+				if (src->duns[dt].ty_ != dst->duns[dt].ty_) {
+					//牌型不同比牌型
+					if (src->duns[dt].ty_ > dst->duns[dt].ty_) {
+						winner = src_chairid; loser = dst_chairid;
+					}
+					else if (src->duns[dt].ty_ < dst->duns[dt].ty_) {
+						winner = dst_chairid; loser = src_chairid;
+					}
+					else {
+						assert(false);
+					}
+				}
+				else {
+					//牌型相同比大小
+					assert(src->duns[dt].GetC() == 5);
+					assert(dst->duns[dt].GetC() == 5);
+					int bv = S13S::CGameLogic::CompareCards(
+						src->duns[dt].cards, dst->duns[dt].cards, dst->duns[dt].GetC(), false, dst->duns[dt].ty_, sp, sd, dz);
+					if (bv > 0) {
+						winner = src_chairid; loser = dst_chairid;
+					}
+					else if (bv < 0) {
+						winner = dst_chairid; loser = src_chairid;
+					}
+					else {
+						//尾墩和
+						//assert(false);
+					}
+				}
+				if (winner == -1) {
+					//尾墩和
+					winner = src_chairid; loser = dst_chairid;
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//src比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//尾墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//和了
+							item->set_winlost(0);
+							//和分
+							item->set_score(0);
+							//和的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//dst比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//尾墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//和了
+							item->set_winlost(0);
+							//和分
+							item->set_score(0);
+							//和的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				//乌龙/对子/两对/三条/顺子/同花/葫芦获胜赢1水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Tysp ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty20 ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty22 ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty30 ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty123 ||
+						groups[winner]->duns[dt].ty_ == S13S::Tysc ||
+						groups[winner]->duns[dt].ty_ == S13S::Ty32) {
+						{
+							int index = compareCards_[winner].results_size() - 1;
+							assert(index >= 0);
+							//赢家比牌结果 ////////////
+							s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+							//尾墩输赢信息
+							s13s::CompareItem* item = result->add_items();
+							{
+								//赢了
+								item->set_winlost(1);
+								//赢分
+								item->set_score(1);
+								//赢的牌型
+								item->set_ty(groups[winner]->duns[dt].ty_);
+								//对方牌型
+								item->set_peerty(groups[loser]->duns[dt].ty_);
+							}
+						}
+						{
+							int index = compareCards_[loser].results_size() - 1;
+							assert(index >= 0);
+							//输家比牌结果 ////////////
+							s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+							//尾墩输赢信息
+							s13s::CompareItem* item = result->add_items();
+							{
+								//输了
+								item->set_winlost(-1);
+								//输分
+								item->set_score(-1);
+								//输的牌型
+								item->set_ty(groups[loser]->duns[dt].ty_);
+								//对方牌型
+								item->set_peerty(groups[winner]->duns[dt].ty_);
+							}
+						}
+				}
+				//铁支摆尾墩获胜赢4水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Ty40) {
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//赢家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//尾墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//赢了
+							item->set_winlost(1);
+							//赢分
+							item->set_score(4);
+							//赢的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//输家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//尾墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//输了
+							item->set_winlost(-1);
+							//输分
+							item->set_score(-4);
+							//输的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				//同花顺摆尾墩获胜赢5水
+				else if (groups[winner]->duns[dt].ty_ == S13S::Ty123sc) {
+					{
+						int index = compareCards_[winner].results_size() - 1;
+						assert(index >= 0);
+						//赢家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[winner].mutable_results(index);
+						//尾墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//赢了
+							item->set_winlost(1);
+							//赢分
+							item->set_score(5);
+							//赢的牌型
+							item->set_ty(groups[winner]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[loser]->duns[dt].ty_);
+						}
+					}
+					{
+						int index = compareCards_[loser].results_size() - 1;
+						assert(index >= 0);
+						//输家比牌结果 ////////////
+						s13s::CompareResult* result = compareCards_[loser].mutable_results(index);
+						//尾墩输赢信息
+						s13s::CompareItem* item = result->add_items();
+						{
+							//输了
+							item->set_winlost(-1);
+							//输分
+							item->set_score(-5);
+							//输的牌型
+							item->set_ty(groups[loser]->duns[dt].ty_);
+							//对方牌型
+							item->set_peerty(groups[winner]->duns[dt].ty_);
+						}
+					}
+				}
+				else {
+					{
+						assert(false);
+					}
+				}
+			}
+		}
+		//玩家对其它玩家打枪
+		std::map<uint8_t, std::vector<uint8_t>> shootIds;
+		//统计判断打枪/全垒打
+		for (int i = 0; i < groups.size(); ++i) {
+			if (true) {
+				//判断是否全垒打
+				int shootc = 0;
+				//当前比牌玩家
+				s13s::PlayerItem const& player = compareCards_[i].player();
+				//遍历玩家所有比牌对象
+				for (int j = 0; j < compareCards_[i].peers_size(); ++j) {
+					s13s::ComparePlayer const& peer = compareCards_[i].peers(j);
+					s13s::CompareResult const& result = compareCards_[i].results(j);
+					int winc = 0, lostc = 0, sumscore = 0;
+					//自己特殊牌型或对方特殊牌型
+					assert(result.items_size() == (
+						player.group().specialty() >= S13S::TyThreesc ||
+						peer.group().specialty() >= S13S::TyThreesc) ? 0 : 3);
+					//玩家与当前比牌对象比头/中/尾三墩输赢得水总分，不考虑打枪
+					for (int d = 0; d < result.items_size(); ++d) {
+						if (result.items(d).winlost() == 1) {
+							++winc;
+						}
+						else if (result.items(d).winlost() == -1) {
+							++lostc;
+						}
+						sumscore += result.items(d).score();
+					}
+					//三墩不考虑打枪输赢得水总分 赢分+/和分0/输分-
+					const_cast<s13s::CompareResult&>(result).set_score(sumscore);
+					//特殊牌型不参与打枪
+					if (player.group().specialty() >= S13S::TyThreesc ||
+						peer.group().specialty() >= S13S::TyThreesc) {
+						const_cast<s13s::CompareResult&>(result).set_shoot(0);//-1被打枪/0不打枪/1打枪
+						continue;
+					}
+					if (winc == result.items_size()) {
+						//玩家三墩全部胜过比牌对象，则玩家对比牌对象打枪，中枪者付给打枪者2倍的水
+						const_cast<s13s::CompareResult&>(result).set_shoot(1);//-1被打枪/0不打枪/1打枪
+						//统计当前玩家打枪次数
+						++shootc;
+						//玩家对比牌对象打枪
+						shootIds[i].push_back(peer.chairid());
+					}
+					else if (lostc == result.items_size()) {
+						//比牌对象三墩全部胜过玩家，则比牌对象对玩家打枪，中枪者付给打枪者2倍的水
+						const_cast<s13s::CompareResult&>(result).set_shoot(-1);//-1被打枪/0不打枪/1打枪
+					}
+					else {
+						const_cast<s13s::CompareResult&>(result).set_shoot(0);//-1被打枪/0不打枪/1打枪
+					}
+				}
+				if (shootc == compareCards_[i].peers_size() && compareCards_[i].peers_size() > 1) {
+					//全垒打，玩家三墩全部胜过其它玩家，且至少打2枪，中枪者付给打枪者4倍的水
+					compareCards_[i].set_allshoot(1);//-1被全垒打/0无全垒打/1全垒打
+					//其它比牌对象都是被全垒打
+					for (int k = 0; k < groups.size(); ++k) {
+						if (k != i) {
+							if (true) {
+								//-1被全垒打/0无全垒打/1全垒打
+								compareCards_[k].set_allshoot(-1);
+								//allshoot=-1被全垒打，记下全垒打桌椅ID
+								compareCards_[k].set_fromchairid(i);
+							}
+						}
+					}
+				}
+			}
+		}
+		//其它玩家之间打枪
+		for (int i = 0; i < groups.size(); ++i) {
+			if (true) {
+				//当前比牌玩家
+				s13s::PlayerItem const& player = compareCards_[i].player();
+				//遍历玩家所有比牌对象
+				for (int j = 0; j < compareCards_[i].peers_size(); ++j) {
+					s13s::ComparePlayer const& peer = compareCards_[i].peers(j);
+					//s13s::CompareResult const& result = compareCards_[i].results(j);
+					std::map<uint8_t, std::vector<uint8_t>>::const_iterator it = shootIds.find(peer.chairid());
+					if (it != shootIds.end()) {
+						for (std::vector<uint8_t>::const_iterator ir = it->second.begin();
+							ir != it->second.end(); ++ir) {
+							//排除当前玩家
+							if (*ir != i) {
+								assert(player.chairid() == i);
+								const_cast<s13s::ComparePlayer&>(peer).add_shootids(*ir);
+							}
+						}
+					}
+				}
+			}
+		}
+		//计算包括打枪/全垒打在内输赢得水总分
+		for (int i = 0; i < groups.size(); ++i) {
+			if (true) {
+				//玩家输赢得水总分，不含特殊牌型输赢分
+				int deltascore = 0;
+				//遍历玩家所有比牌对象
+				for (int j = 0; j < compareCards_[i].peers_size(); ++j) {
+					s13s::ComparePlayer const& peer = compareCards_[i].peers(j);
+					s13s::CompareResult const& result = compareCards_[i].results(j);
+					//1打枪(对当前比牌对象打枪)
+					if (result.shoot() == 1) {
+						//1全垒打
+						if (compareCards_[i].allshoot() == 1) {
+							//-1被全垒打/0无全垒打/1全垒打
+							deltascore += 4 * result.score();
+						}
+						else {
+							//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+							if (compareCards_[i].allshoot() == -1) {
+							}
+							else {
+							}
+							//-1被打枪/0不打枪/1打枪
+							deltascore += 2 * result.score();
+						}
+					}
+					//-1被打枪(被当前比牌对象打枪)
+					else if (result.shoot() == -1) {
+						//-1被全垒打
+						if (compareCards_[i].allshoot() == -1) {
+							//被当前比牌对象全垒打
+							if (peer.chairid() == compareCards_[i].fromchairid()) {
+								//-1被全垒打/0无全垒打/1全垒打
+								deltascore += 4 * result.score();
+							}
+							//被另外比牌对象全垒打
+							else {
+								//-1被打枪/0不打枪/1打枪
+								deltascore += 2 * result.score();
+							}
+						}
+						else {
+							//-1被打枪/0不打枪/1打枪
+							deltascore += 2 * result.score();
+						}
+					}
+					//0不打枪(与当前比牌对象互不打枪)
+					else {
+						//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+						if (compareCards_[i].allshoot() == -1) {
+						}
+						else {
+							//一定不是全垒打，-1被打枪/0不打枪/1打枪
+							assert(compareCards_[i].allshoot() == 0);
+						}
+						assert(result.shoot() == 0);
+						deltascore += result.score();
+					}
+				}
+				//玩家输赢得水总分，不含特殊牌型输赢分
+				compareCards_[i].set_deltascore(deltascore);
+				const_cast<groupdun_t*&>(groups[i])->deltascore = compareCards_[i].deltascore();
+				//printf("玩家[%d]输赢得水总分[%d]，不含特殊牌型输赢分\n", i, compareCards_[i].deltascore());
+			}
+		}
+		//座椅玩家与其余玩家按墩比输赢分
+		//不含打枪/全垒打与打枪/全垒打分开计算
+		//计算特殊牌型输赢分
+		//统计含打枪/全垒打/特殊牌型输赢得水总分
+		for (int i = 0; i < groups.size(); ++i) {
+			if (true) {
+
+				//三墩打枪/全垒打输赢算水
+				int allshootscore = 0;
+				//当前比牌玩家
+				s13s::PlayerItem const& player = compareCards_[i].player();
+				//遍历各墩(头墩/中墩/尾墩)
+				for (int d = S13S::DunFirst; d <= S13S::DunLast; ++d) {
+					//按墩比输赢分
+					int sumscore = 0;
+					//按墩计算打枪输赢分
+					int sumshootscore = 0;
+					{
+						//自己特殊牌型，不按墩比牌，输赢水数在specitem中
+						if (player.group().specialty() >= S13S::TyThreesc) {
+						}
+						else {
+							//遍历比牌对象
+							for (int j = 0; j < compareCards_[i].peers_size(); ++j) {
+								s13s::ComparePlayer const& peer = compareCards_[i].peers(j);
+								s13s::CompareResult const& result = compareCards_[i].results(j);
+								//对方特殊牌型，不按墩比牌，输赢水数在specitem中
+								if (peer.group().specialty() >= S13S::TyThreesc) {
+									continue;
+								}
+								//累加指定墩输赢得水积分，不含打枪/全垒打
+								sumscore += result.items(d).score();
+								//1打枪(对当前比牌对象打枪)
+								if (result.shoot() == 1) {
+									//1全垒打
+									if (compareCards_[i].allshoot() == 1) {
+										//-1被全垒打/0无全垒打/1全垒打
+										sumshootscore += 3/*4*/ * result.items(d).score();
+									}
+									else {
+										//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+										if (compareCards_[i].allshoot() == -1) {
+										}
+										else {
+										}
+										//-1被打枪/0不打枪/1打枪
+										sumshootscore += 1/*2*/ * result.items(d).score();
+									}
+								}
+								//-1被打枪(被当前比牌对象打枪)
+								else if (result.shoot() == -1) {
+									//-1被全垒打
+									if (compareCards_[i].allshoot() == -1) {
+										//被当前比牌对象全垒打
+										if (peer.chairid() == compareCards_[i].fromchairid()) {
+											//-1被全垒打/0无全垒打/1全垒打
+											sumshootscore += 3/*4*/ * result.items(d).score();
+										}
+										//被另外比牌对象全垒打
+										else {
+											//-1被打枪/0不打枪/1打枪
+											sumshootscore += 1/*2*/ * result.items(d).score();
+										}
+									}
+									else {
+										//-1被打枪/0不打枪/1打枪
+										sumshootscore += 1/*2*/ * result.items(d).score();
+									}
+								}
+								//0不打枪(与当前比牌对象互不打枪)
+								else {
+									//-1被全垒打(被另外比牌对象打枪，并且该比牌对象是全垒打)
+									if (compareCards_[i].allshoot() == -1) {
+									}
+									else {
+										//一定不是全垒打，-1被打枪/0不打枪/1打枪
+										assert(compareCards_[i].allshoot() == 0);
+									}
+									assert(result.shoot() == 0);
+									//sumshootscore += 0/*1*/ * result.items(d).score();
+								}
+							}
+						}
+					}
+					//座椅玩家输赢得水积分(头/中/尾/特殊)
+					compareCards_[i].add_itemscores(sumscore);
+					//按墩计算打枪/全垒打输赢分
+					compareCards_[i].add_itemscorepure(sumshootscore);
+					//三墩打枪/全垒打输赢算水
+					allshootscore += sumshootscore;
+				}
+				{
+					//特殊牌型输赢算水(无打枪/全垒打)
+					int sumspecscore = 0;
+					{
+						//遍历比牌对象
+						for (int j = 0; j < compareCards_[i].peers_size(); ++j) {
+							s13s::ComparePlayer const& peer = compareCards_[i].peers(j);
+							s13s::CompareResult const& result = compareCards_[i].results(j);
+							//自己普通牌型，对方特殊牌型
+							//自己特殊牌型，对方普通牌型
+							//自己特殊牌型，对方特殊牌型
+							if (result.has_specitem()) {
+								//累加特殊比牌算水
+								sumspecscore += result.specitem().score();
+							}
+						}
+					}
+					//座椅玩家输赢得水积分(头/中/尾/特殊)
+					compareCards_[i].add_itemscores(sumspecscore);
+					//三墩打枪/全垒打输赢算水 + 特殊牌型输赢算水(无打枪/全垒打)
+					compareCards_[i].add_itemscorepure(allshootscore + sumspecscore);
+					//玩家输赢得水总分，含打枪/全垒打，含特殊牌型输赢分
+					int32_t deltascore = compareCards_[i].deltascore();
+					compareCards_[i].set_deltascore(deltascore + sumspecscore);
+					const_cast<groupdun_t*&>(groups[i])->deltascore = compareCards_[i].deltascore();
+					//printf("玩家[%d]输赢得水总分[%d]，含打枪/全垒打，含特殊牌型输赢分\n", i, compareCards_[i].deltascore());
+				}
+			}
+		}
+		//比牌对方输赢得水总分
+		for (int i = 0; i < groups.size(); ++i) {
+			if (true) {
+				for (int j = 0; j < compareCards_[i].peers_size(); ++j) {
+					s13s::ComparePlayer const& peer = compareCards_[i].peers(j);
+					int32_t deltascore = compareCards_[peer.chairid()].deltascore();
+					const_cast<s13s::ComparePlayer&>(peer).set_deltascore(deltascore);
+				}
+			}
+		}
+		//两组牌按输赢得水比大小相同的情况下
+		if (psrc->deltascore == pdst->deltascore) {
+			//尾墩大的摆前面
+			if (psrc->duns[DunLast].ty_ > pdst->duns[DunLast].ty_) {
+				return 1;
+			}
+			//尾墩相同，中墩大的摆前面
+			else if (psrc->duns[DunLast].ty_ == pdst->duns[DunLast].ty_ &&
+				psrc->duns[DunSecond].ty_ > pdst->duns[DunSecond].ty_) {
+				return 1;
+			}
+			//尾墩相同[，中墩相同]，头敦大的摆前面
+			else if (psrc->duns[DunLast].ty_ == pdst->duns[DunLast].ty_ &&
+				/*psrc->duns[DunSecond].ty_ == pdst->duns[DunSecond].ty_ &&*/
+				psrc->duns[DunFirst].ty_ > pdst->duns[DunFirst].ty_) {
+				return 1;
+			}
+		}
+		return psrc->deltascore - pdst->deltascore;
 	}
 
 	//初始化牌墩
@@ -3952,6 +5230,17 @@ namespace S13S {
 	//ty HandTy 指定墩牌型
 	bool CGameLogic::handinfo_t::IsInverted(DunTy dt, uint8_t const* src, int len, HandTy ty) {
 		S13S::CGameLogic::groupdun_t const *dst = &manual_group;
+		return IsInverted(dt, src, len, ty, dst);
+	}
+	
+	//判断手动摆牌是否倒水
+	//dt DunTy 指定为哪墩
+	//src uint8_t const* 选择的一组牌(5张或3张)
+	//len int 3/5张，头墩3张/中墩5张/尾墩5张
+	//ty HandTy 指定墩牌型
+	//group groupdun_t const* 一组牌墩
+	bool CGameLogic::handinfo_t::IsInverted(DunTy dt, uint8_t const* src, int len, HandTy ty, groupdun_t const* group) {
+		S13S::CGameLogic::groupdun_t const *dst = group;
 		switch (dt)
 		{
 		case DunFirst: {
@@ -4436,8 +5725,8 @@ namespace S13S {
 	//dst uint8_t const* 单墩牌(3/5张)
 	//clr bool 是否比花色
 	//ty HandTy 比较的两单墩牌的普通牌型
-	int CGameLogic::CompareCards(uint8_t const* src, uint8_t const* dst, int n, bool clr, HandTy ty) {
-		return CompareCards(src, n, dst, n, clr, ty);
+	int CGameLogic::CompareCards(uint8_t const* src, uint8_t const* dst, int n, bool clr, HandTy ty, bool sp, bool sd, bool dz) {
+		return CompareCards(src, n, dst, n, clr, ty, sp, sd, dz);
 	}
 	
 	//牌型相同按牌点从大到小顺序逐次比点
@@ -4484,15 +5773,17 @@ namespace S13S {
 	//dstTy HandTy dst牌型
 	//clr bool 是否比花色
 	//sp bool 是否比较散牌/单张
+	//sd bool 是否比较次大的对子(两对之间比较)
+	//dz bool 是否比较葫芦的对子(葫芦之间比较)
 	int CGameLogic::CompareCards(
 		uint8_t const* src, int srcLen, HandTy srcTy,
-		uint8_t const* dst, int dstLen, HandTy dstTy, bool clr, bool sp) {
+		uint8_t const* dst, int dstLen, HandTy dstTy, bool clr, bool sp, bool sd, bool dz) {
 		if (srcTy != dstTy) {
 			//牌型不同比牌型
 			return srcTy - dstTy;
 		}
 		//牌型相同比大小
-		return CompareCards(src, srcLen, dst, dstLen, clr, srcTy, sp);
+		return CompareCards(src, srcLen, dst, dstLen, clr, srcTy, sp, sd, dz);
 	}
 
 	//牌型相同的src与dst两墩之间比大小
@@ -4501,9 +5792,11 @@ namespace S13S {
 	//clr bool 是否比花色
 	//ty HandTy 比较的两单墩牌的普通牌型
 	//sp bool 是否比较散牌/单张
+	//sd bool 是否比较次大的对子(两对之间比较)
+	//dz bool 是否比较葫芦的对子(葫芦之间比较)
 	int CGameLogic::CompareCards(
 		uint8_t const* src, int srcLen,
-		uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp) {
+		uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp, bool sd, bool dz) {
 		switch (ty) {
 		//同花顺之间比较
 		case Ty123sc: return sp ? CompareCardPointBy(src, srcLen, dst, dstLen, clr) : 0;
@@ -4581,8 +5874,11 @@ namespace S13S {
 			if (p0 != p1) {
 				return p0 - p1;
 			}
-			//三张大小相同，比较对子大小
-			return GetCardPoint(cpy_0[0]) - GetCardPoint(cpy_1[0]);
+			if (dz) {
+				//三张大小相同，比较对子大小
+				return GetCardPoint(cpy_0[0]) - GetCardPoint(cpy_1[0]);
+			}
+			break;
 		}
 		//三条之间比较
 		case Ty30: {
@@ -4668,7 +5964,7 @@ namespace S13S {
 				//比较最大的对子
 				return s0 - s1;
 			}
-			if (p0 != p1) {
+			if (sd && p0 != p1) {
 				//比较次大的对子
 				return p0 - p1;
 			}
@@ -4746,7 +6042,7 @@ namespace S13S {
 			CGameLogic::SortCards(cards, MAX_COUNT, true, true, true);
 			//printf("=================================================\n\n");
 			//一副手牌
-			//CGameLogic::PrintCardList(cards, MAX_COUNT);
+			CGameLogic::PrintCardList(cards, MAX_COUNT);
  			//手牌牌型分析
 			int c = CGameLogic::AnalyseHandCards(cards, MAX_COUNT, size, hand);
 			//有特殊牌型时

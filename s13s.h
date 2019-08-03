@@ -29,7 +29,7 @@
 #define MIN_GAME_PLAYER S13S::MinPlayer		//至少2人局
 #define MAX_COUNT		S13S::MaxCount		//每人13张牌
 #define MAX_ROUND       S13S::MaxRound		//最大局数
-#define MAX_ENUMSZ 		10
+#define MAX_ENUMSZ 		20
 
 //十三水
 namespace S13S {
@@ -281,6 +281,16 @@ namespace S13S {
 		//////////////////////////////////////////////////////////////
 		//classify_t 分类牌型
 		struct classify_t {
+			void copy(classify_t const& ref) {
+				c4 = ref.c4;
+				c3 = ref.c3;
+				c2 = ref.c2;
+				cpylen = ref.cpylen;
+				memcpy(dst4, ref.dst4, sizeof(dst4));
+				memcpy(dst3, ref.dst3, sizeof(dst3));
+				memcpy(dst2, ref.dst2, sizeof(dst2));
+				memcpy(cpy, ref.cpy, sizeof(cpy));
+			}
 			int c4, c3, c2;
 			//所有重复四张牌型
 			static int const size4 = 3;
@@ -352,6 +362,8 @@ namespace S13S {
 					duns[i].Reset();
 					duns[i].dt_ = DunTy(i);
 				}
+				deltascore = 0;
+				chairID = -1;
 			}
 			groupdun_t(groupdun_t const& ref) {
 				copy(ref);
@@ -363,6 +375,8 @@ namespace S13S {
 				start = ref.start;
 				specialTy = ref.specialTy;
 				memcpy(duns, ref.duns, sizeof(dundata_t)*DunMax);
+				deltascore = ref.deltascore;
+				chairID = ref.chairID;
 				return *this;
 			}
 			void Reset() {
@@ -400,6 +414,11 @@ namespace S13S {
 			HandTy specialTy;
 			//[0]头墩(3)/[1]中墩(5)/[2]尾墩(5)
 			dundata_t duns[DunMax];
+		public:
+			//按输赢得水比大小(不计打枪/全垒打)
+			int deltascore;
+			//玩家座椅ID
+			int chairID;
 		};
 		//////////////////////////////////////////////////////////////
 		//handinfo_t 一副手牌信息
@@ -410,13 +429,59 @@ namespace S13S {
 				:rootEnumList(NULL)/*, specialTy_(TyNil)*/, chairID(-1),
 				manual_group_index(-1),
 				select_group_index(-1), classify({ 0 }) {
+				forswap = false;
 				Reset();
 			}
 			~handinfo_t() {
-				if (rootEnumList) {
+				//临时对象析构不释放资源
+				if (!forswap && rootEnumList) {
 					rootEnumList->Release();
 					delete rootEnumList;
 				}
+			}
+			handinfo_t(handinfo_t const& ref) {
+				copy(ref);
+			}
+			handinfo_t& operator=(handinfo_t const& ref) {
+				return copy(ref);
+			}
+			handinfo_t& copy(handinfo_t const& ref) {
+				chairID = ref.chairID;
+				spec_groups.clear();
+				for (std::vector<groupdun_t>::const_iterator it = ref.spec_groups.begin();
+					it != ref.spec_groups.end();++it) {
+					spec_groups.push_back(*it);
+				}
+				classify.copy(ref.classify);
+				rootEnumList = ref.rootEnumList;
+				enum_groups.clear();
+				for (std::vector<groupdun_t>::const_iterator it = ref.enum_groups.begin();
+					it != ref.enum_groups.end(); ++it) {
+					enum_groups.push_back(*it);
+				}
+				manual_group.copy(ref.manual_group);
+				manual_group_index = ref.manual_group_index;
+				select_group_index = ref.select_group_index;
+				groups.clear();
+				for (std::vector<groupdun_t const*>::const_iterator it = ref.groups.begin();
+					it != ref.groups.end(); ++it) {
+					groups.push_back(*it);
+				}
+				leafList.clear();
+				for (std::vector<EnumTree::TraverseTreeNode>::const_iterator it = ref.leafList.begin();
+					it != ref.leafList.end(); ++it) {
+					leafList.push_back(*it);
+				}
+				return *this;
+			}
+			static void swap(handinfo_t&src, handinfo_t& dst) {
+				//临时对象
+				handinfo_t t;
+				//临时对象析构不释放资源
+				t.forswap = true;
+				t = src;
+				src = dst;
+				dst = t;
 			}
 			//初始化
 			void Init();
@@ -441,6 +506,13 @@ namespace S13S {
 			//len int 3/5张，头墩3张/中墩5张/尾墩5张
 			//ty HandTy 指定墩牌型
 			bool IsInverted(DunTy dt, uint8_t const* src, int len, HandTy ty);
+			//判断手动摆牌是否倒水
+			//dt DunTy 指定为哪墩
+			//src uint8_t const* 选择的一组牌(5张或3张)
+			//len int 3/5张，头墩3张/中墩5张/尾墩5张
+			//ty HandTy 指定墩牌型
+			//group groupdun_t const* 一组牌墩
+			static bool IsInverted(DunTy dt, uint8_t const* src, int len, HandTy ty, groupdun_t const* group);
 			//手动选牌组墩，给指定墩(头/中/尾墩)选择一组牌(头墩3/中墩5/尾墩5)
 			//dt DunTy 指定为哪墩
 			//src uint8_t const* 选择的一组牌(5张或3张)
@@ -477,6 +549,8 @@ namespace S13S {
 			//返回手牌特殊牌型
 			inline HandTy SpecialTy() { return spec_groups.size() > 0 ? spec_groups.front().specialTy : TyNil; }
 		public:
+			//临时对象析构不释放资源
+			bool forswap;
 			//玩家座椅ID
 			int chairID;
 			//优先特殊牌型
@@ -547,6 +621,13 @@ namespace S13S {
 		static void GetLeftCards(uint8_t const* src, int len,
 			dundata_t const* duns, uint8_t *cpy, int& cpylen);
 	public:
+		//src与dst两组之间按输赢得水比大小(不计打枪/全垒打)
+		//src uint8_t const* 一组牌(13张)
+		//dst uint8_t const* 一组牌(13张)
+		//sp bool 是否比较散牌/单张
+		//sd bool 是否比较次大的对子(两对之间比较)
+		//dz bool 是否比较葫芦的对子(葫芦之间比较)
+		static int CompareCardsByScore(groupdun_t const* src, groupdun_t const* dst, bool sp = true, bool sd = true, bool dz = true);
 		//任意牌型的src与dst两墩之间比大小
 		//src uint8_t const* srcLen张牌
 		//srcTy HandTy src牌型
@@ -554,24 +635,31 @@ namespace S13S {
 		//dstTy HandTy dst牌型
 		//clr bool 是否比花色
 		//sp bool 是否比较散牌/单张
+		//sd bool 是否比较次大的对子(两对之间比较)
+		//dz bool 是否比较葫芦的对子(葫芦之间比较)
 		static int CompareCards(
 			uint8_t const* src, int srcLen, HandTy srcTy,
-			uint8_t const* dst, int dstLen, HandTy dstTy, bool clr, bool sp = true);
+			uint8_t const* dst, int dstLen, HandTy dstTy, bool clr, bool sp = true, bool sd = true, bool dz = true);
 		//牌型相同的src与dst比大小，牌数相同
 		//src uint8_t const* 单墩牌(3/5张)
 		//dst uint8_t const* 单墩牌(3/5张)
 		//clr bool 是否比花色
 		//ty HandTy 比较的两单墩牌的普通牌型
-		static int CompareCards(uint8_t const* src, uint8_t const* dst, int n, bool clr, HandTy ty);
+		//sp bool 是否比较散牌/单张
+		//sd bool 是否比较次大的对子(两对之间比较)
+		//dz bool 是否比较葫芦的对子(葫芦之间比较)
+		static int CompareCards(uint8_t const* src, uint8_t const* dst, int n, bool clr, HandTy ty, bool sp = true, bool sd = true, bool dz = true);
 		//牌型相同的src与dst两墩之间比大小
 		//src uint8_t const* srcLen张牌
 		//dst uint8_t const* dstLen张牌
 		//clr bool 是否比花色
 		//ty HandTy 比较的两单墩牌的普通牌型
 		//sp bool 是否比较散牌/单张
+		//sd bool 是否比较次大的对子(两对之间比较)
+		//dz bool 是否比较葫芦的对子(葫芦之间比较)
 		static int CompareCards(
 			uint8_t const* src, int srcLen,
-			uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp = true);
+			uint8_t const* dst, int dstLen, bool clr, HandTy ty, bool sp = true, bool sd = true, bool dz = true);
 		//牌型相同按牌点从大到小顺序逐次比点
 		//src uint8_t const* srcLen张牌
 		//dst uint8_t const* dstLen张牌
