@@ -906,18 +906,18 @@ namespace S13S {
 		for (int k = 1; k <= n; ++k) {
 			int c = fnC.FuncC(n, k, vec);
 			//printf("\n--- *** ------------------- C(%d,%d)=%d\n", n, k, c);
-			for (std::vector<std::vector<int>>::iterator it = vec.begin();
+			for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 				it != vec.end(); ++it) {
 				assert(k == it->size());
 				//printf("\n--- *** start\n");
 #if 0
-				for (std::vector<int>::iterator ir = it->begin();
+				for (std::vector<int>::const_iterator ir = it->begin();
 					ir != it->end(); ++ir) {
 					printf("%d", *ir);
 				}
  				printf("\n---\n");
 #endif
-// 				for (std::vector<int>::iterator ir = it->begin();
+// 				for (std::vector<int>::const_iterator ir = it->begin();
 // 					ir != it->end(); ++ir) {
 // 					if (*ir < c4) {
 // 						PrintCardList(*psrc[*ir], 4);
@@ -941,7 +941,7 @@ namespace S13S {
 	}
 
 	static bool ExistVec(std::vector<std::vector<uint8_t>>& dst, std::vector<uint8_t>& v) {
-		for (std::vector<std::vector<uint8_t>>::iterator it = dst.begin();
+		for (std::vector<std::vector<uint8_t>>::const_iterator it = dst.begin();
 			it != dst.end(); ++it) {
 			if (it->size() == v.size()) {
 				int i = 0;
@@ -1444,7 +1444,7 @@ namespace S13S {
  				int m = fnC.FuncC(c, n, vec);
 				//printf("--- *** C(%d,%d) = %d\n", c, n, m);
 				//CFuncC::Print(vec);
-				for (std::vector<std::vector<int>>::iterator it = vec.begin();
+				for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 					it != vec.end(); ++it) {
 					if (psrcctx[*it->begin()] - psrcctx[*it->rbegin()] + 1 == n) {
 						//同花顺
@@ -1928,12 +1928,12 @@ namespace S13S {
 		//	PrintCardList(psrc[i][0], get_card_c(psrc[i][0], 4));
 		//}
 		//printf("\n--- *** ------------------- C(%d,%d)=%d\n", n, 2, c);
-		for (std::vector<std::vector<int>>::iterator it = vec.begin();
+		for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 			it != vec.end(); ++it) {
 			assert(2 == it->size());
 			//printf("\n--- *** start\n");
 #if 0
-			for (std::vector<int>::iterator ir = it->begin();
+			for (std::vector<int>::const_iterator ir = it->begin();
 				ir != it->end(); ++ir) {
 				printf("%d", *ir);
 			}
@@ -1953,9 +1953,9 @@ namespace S13S {
 				int c_1 = FuncC(c1, 2, psrc, (*it)[1], v1);
 				//printf("\n--- C(%d,3)=%d，C(%d,2)=%d\n", c0, c_0, c1, c_1);
 				//////从v1,v0中分别任取一项组合葫芦牌型C(v0.size(),1)*C(v1.size(),1) //////
-				for (std::vector<std::vector<uint8_t>>::iterator it2 = v1.begin();
+				for (std::vector<std::vector<uint8_t>>::const_iterator it2 = v1.begin();
 					it2 != v1.end(); ++it2) {//对子
-					for (std::vector<std::vector<uint8_t>>::iterator it3 = v0.begin();
+					for (std::vector<std::vector<uint8_t>>::const_iterator it3 = v0.begin();
 						it3 != v0.end(); ++it3) {//三张
 #if 0
 						std::vector<uint8_t> v(&it2->front(), &it2->front() + it2->size());
@@ -1963,10 +1963,10 @@ namespace S13S {
 						memcpy(&v.front() + v.size(), &it3->front(), it3->size());
 #else
 						//std::vector<uint8_t> v;
-						//for (std::vector<uint8_t>::iterator ir = it2->begin(); ir != it2->end(); ++ir) {
+						//for (std::vector<uint8_t>::const_iterator ir = it2->begin(); ir != it2->end(); ++ir) {
 						//	v.push_back(*ir);
 						//}
-						//for (std::vector<uint8_t>::iterator ir = it3->begin(); ir != it3->end(); ++ir) {
+						//for (std::vector<uint8_t>::const_iterator ir = it3->begin(); ir != it3->end(); ++ir) {
 						//	v.push_back(*ir);
 						//}
 						bool exist = false;
@@ -1999,9 +1999,9 @@ namespace S13S {
 				int c_1 = FuncC(c1, 3, psrc, (*it)[1], v1);
 				//printf("\n--- C(%d,2)=%d，C(%d,3)=%d\n", c0, c_0, c1, c_1);
 				//////从v1,v0中分别任取一项组合葫芦牌型C(v0.size(),1)*C(v1.size(),1) //////
-				for (std::vector<std::vector<uint8_t>>::iterator it2 = v1.begin();
+				for (std::vector<std::vector<uint8_t>>::const_iterator it2 = v1.begin();
 					it2 != v1.end(); ++it2) {//三张
-					for (std::vector<std::vector<uint8_t>>::iterator it3 = v0.begin();
+					for (std::vector<std::vector<uint8_t>>::const_iterator it3 = v0.begin();
 						it3 != v0.end(); ++it3) {//对子
 #if 0
 						std::vector<uint8_t> v(&it2->front(), &it2->front() + it2->size());
@@ -2009,10 +2009,10 @@ namespace S13S {
 						memcpy(&v.front() + v.size(), &it3->front(), it3->size());
 #else
 						//std::vector<uint8_t> v;
-						//for (std::vector<uint8_t>::iterator ir = it2->begin(); ir != it2->end(); ++ir) {
+						//for (std::vector<uint8_t>::const_iterator ir = it2->begin(); ir != it2->end(); ++ir) {
 						//	v.push_back(*ir);
 						//}
-						//for (std::vector<uint8_t>::iterator ir = it3->begin(); ir != it3->end(); ++ir) {
+						//for (std::vector<uint8_t>::const_iterator ir = it3->begin(); ir != it3->end(); ++ir) {
 						//	v.push_back(*ir);
 						//}
 						bool exist = false;
@@ -2109,12 +2109,12 @@ namespace S13S {
 		//	PrintCardList(psrc[i][0], get_card_c(psrc[i][0], 4));
 		//}
 		//printf("\n--- *** ------------------- C(%d,%d)=%d\n", n, 1, c);
-		for (std::vector<std::vector<int>>::iterator it = vec.begin();
+		for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 			it != vec.end(); ++it) {
 			assert(1 == it->size());
 			//printf("\n--- *** start\n");
 #if 0
-			for (std::vector<int>::iterator ir = it->begin();
+			for (std::vector<int>::const_iterator ir = it->begin();
 				ir != it->end(); ++ir) {
 				printf("%d", *ir);
 			}
@@ -2131,13 +2131,13 @@ namespace S13S {
 				int c_0 = FuncC(c0, 3, psrc, (*it)[0], v0);
 				//printf("\n--- C(%d,3)=%d\n", c0, c_0);
 				//////从v0中任取一项组合三条牌型C(v0.size(),1) //////
-				for (std::vector<std::vector<uint8_t>>::iterator it3 = v0.begin();
+				for (std::vector<std::vector<uint8_t>>::const_iterator it3 = v0.begin();
 					it3 != v0.end(); ++it3) {//三张
 #if 0
 					std::vector<uint8_t> v(&it3->front(), &it3->front() + it3->size());
 #else
 					//std::vector<uint8_t> v;
-					//for (std::vector<uint8_t>::iterator ir = it3->begin(); ir != it3->end(); ++ir) {
+					//for (std::vector<uint8_t>::const_iterator ir = it3->begin(); ir != it3->end(); ++ir) {
 					//	v.push_back(*ir);
 					//}
 					bool exist = false;
@@ -2270,12 +2270,12 @@ namespace S13S {
 		//	PrintCardList(psrc[i][0], get_card_c(psrc[i][0], 4));
 		//}
 		//printf("\n--- *** ------------------- C(%d,%d)=%d\n", n, 2, c);
-		for (std::vector<std::vector<int>>::iterator it = vec.begin();
+		for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 			it != vec.end(); ++it) {
 			assert(2 == it->size());
 			//printf("\n--- *** start\n");
 #if 0
-			for (std::vector<int>::iterator ir = it->begin();
+			for (std::vector<int>::const_iterator ir = it->begin();
 				ir != it->end(); ++ir) {
 				printf("%d", *ir);
 			}
@@ -2294,9 +2294,9 @@ namespace S13S {
 			int c_1 = FuncC(c1, 2, psrc, (*it)[1], v1);
 			//printf("\n--- C(%d,2)=%d，C(%d,2)=%d\n", c0, c_0, c1, c_1);
 			//////从v1,v0中分别任取一项组合两对子牌型C(v0.size(),1)*C(v1.size(),1) //////
-			for (std::vector<std::vector<uint8_t>>::iterator it2 = v1.begin();
+			for (std::vector<std::vector<uint8_t>>::const_iterator it2 = v1.begin();
 				it2 != v1.end(); ++it2) {//对子
-				for (std::vector<std::vector<uint8_t>>::iterator it3 = v0.begin();
+				for (std::vector<std::vector<uint8_t>>::const_iterator it3 = v0.begin();
 					it3 != v0.end(); ++it3) {//对子
 #if 0
 					std::vector<uint8_t> v(&it2->front(), &it2->front() + it2->size());
@@ -2304,10 +2304,10 @@ namespace S13S {
 					memcpy(&v.front() + v.size(), &it3->front(), it3->size());
 #else
 					//std::vector<uint8_t> v;
-					//for (std::vector<uint8_t>::iterator ir = it2->begin(); ir != it2->end(); ++ir) {
+					//for (std::vector<uint8_t>::const_iterator ir = it2->begin(); ir != it2->end(); ++ir) {
 					//	v.push_back(*ir);
 					//}
-					//for (std::vector<uint8_t>::iterator ir = it3->begin(); ir != it3->end(); ++ir) {
+					//for (std::vector<uint8_t>::const_iterator ir = it3->begin(); ir != it3->end(); ++ir) {
 					//	v.push_back(*ir);
 					//}
 					bool exist = false;
@@ -2402,12 +2402,12 @@ namespace S13S {
 		//	PrintCardList(psrc[i][0], get_card_c(psrc[i][0], 4));
 		//}
 		//printf("\n--- *** ------------------- C(%d,%d)=%d\n", n, 1, c);
-		for (std::vector<std::vector<int>>::iterator it = vec.begin();
+		for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 			it != vec.end(); ++it) {
 			assert(1 == it->size());
 			//printf("\n--- *** start\n");
 #if 0
-			for (std::vector<int>::iterator ir = it->begin();
+			for (std::vector<int>::const_iterator ir = it->begin();
 				ir != it->end(); ++ir) {
 				printf("%d", *ir);
 			}
@@ -2424,13 +2424,13 @@ namespace S13S {
 			int c_0 = FuncC(c0, 2, psrc, (*it)[0], v0);
 			//printf("\n--- C(%d,2)=%d\n", c0, c_0);
 			//////从v0中任取一项组合对子牌型C(v0.size(),1) //////
-			for (std::vector<std::vector<uint8_t>>::iterator it3 = v0.begin();
+			for (std::vector<std::vector<uint8_t>>::const_iterator it3 = v0.begin();
 				it3 != v0.end(); ++it3) {//二张
 #if 0
 				std::vector<uint8_t> v(&it3->front(), &it3->front() + it3->size());
 #else
 // 				std::vector<uint8_t> v;
-// 				for (std::vector<uint8_t>::iterator ir = it3->begin(); ir != it3->end(); ++ir) {
+// 				for (std::vector<uint8_t>::const_iterator ir = it3->begin(); ir != it3->end(); ++ir) {
 // 					v.push_back(*ir);
 // 				}
 				bool exist = false;
@@ -2814,7 +2814,7 @@ namespace S13S {
 					//rootEnumList->PrintCursorEnumCards();
 					//printf("--- *** --------------------------------------------------\n");
 					
-					std::map<uint64_t, bool>::iterator it = masks.find(maskRoot);
+					std::map<uint64_t, bool>::const_iterator it = masks.find(maskRoot);
 					if (it == masks.end()) {
 						//根节点为叶子节点，记录尾墩
 						leafList.push_back(EnumTree::TraverseTreeNode(rootEnumList, cursorRoot));
@@ -2878,7 +2878,7 @@ namespace S13S {
 						//rootEnumList->PrintCursorEnumCards();
 						//printf("--- *** --------------------------------------------------\n");
 						
-						std::map<uint64_t, bool>::iterator it = masks.find(maskChild);
+						std::map<uint64_t, bool>::const_iterator it = masks.find(maskChild);
 						if (it == masks.end()) {
 							//子节点为叶子节点，记录中墩和尾墩，由叶子节点向上查找根节点
 							leafList.push_back(EnumTree::TraverseTreeNode(childEnumList, cursorChild));
@@ -2935,7 +2935,7 @@ namespace S13S {
 					--- *** *** *** *** *** 余牌：♣Q
 					--- *** --------------------------------------------------
 					*/
-					//std::map<uint64_t, bool>::iterator it = masks.find(maskChild);
+					//std::map<uint64_t, bool>::const_iterator it = masks.find(maskChild);
 					//if (it == masks.end()) {	
 						//printf("\n取头墩 = [%s] ", StringHandTy(tyLeaf).c_str());
 						//PrintCardList(&leaf->front(), leaf->size());
@@ -3138,7 +3138,7 @@ namespace S13S {
 				//group.PrintCardList(DunSecond);
 				//group.PrintCardList(DunLast);
 				bool existRepeated = false;
-				for (std::vector<groupdun_t>::iterator it = enum_groups_tmp.begin();
+				for (std::vector<groupdun_t>::const_iterator it = enum_groups_tmp.begin();
 					it != enum_groups_tmp.end(); ++it) {
 					if (CGameLogic::CompareCards(
 						it->duns[DunLast].cards, it->duns[DunLast].c, it->duns[DunLast].ty_,
@@ -3320,7 +3320,7 @@ namespace S13S {
 				//group.PrintCardList(DunSecond);
 				//group.PrintCardList(DunLast);
  				bool existRepeated = false;
- 				for (std::vector<groupdun_t>::iterator it = enum_groups_tmp.begin();
+ 				for (std::vector<groupdun_t>::const_iterator it = enum_groups_tmp.begin();
  					it != enum_groups_tmp.end(); ++it) {
  					if (CGameLogic::CompareCards(
 							it->duns[DunLast].cards, it->duns[DunLast].c, it->duns[DunLast].ty_,
@@ -3579,7 +3579,7 @@ namespace S13S {
 				}
 				else {
 					bool existRepeated = false;
-					for (std::vector<groupdun_t>::iterator it = enum_groups_tmp.begin();
+					for (std::vector<groupdun_t>::const_iterator it = enum_groups_tmp.begin();
 						it != enum_groups_tmp.end(); ++it) {
 						if (CGameLogic::CompareCards(
 							it->duns[DunLast].cards, it->duns[DunLast].c, it->duns[DunLast].ty_,
@@ -6258,7 +6258,7 @@ namespace S13S {
 						//标记手牌特殊牌型
 						handcards->set_specialty(handInfos[i].SpecialTy());
 						int j = 0;
-						for (std::vector<S13S::CGameLogic::groupdun_t>::iterator it = handInfos[i].spec_groups.begin();
+						for (std::vector<S13S::CGameLogic::groupdun_t>::const_iterator it = handInfos[i].spec_groups.begin();
 							it != handInfos[i].spec_groups.end(); ++it) {
 							assert(handInfos[i].spec_groups.size() == 1);
 							//特殊牌型放在枚举几组最优解前面
@@ -6284,7 +6284,7 @@ namespace S13S {
 							}
 							printf("\n\n");
 						}
-						for (std::vector<S13S::CGameLogic::groupdun_t>::iterator it = handInfos[i].enum_groups.begin();
+						for (std::vector<S13S::CGameLogic::groupdun_t>::const_iterator it = handInfos[i].enum_groups.begin();
 							it != handInfos[i].enum_groups.end(); ++it) {
 							//枚举几组最优墩
 							s13s::GroupDunData* group = handcards->add_groups();
@@ -6524,35 +6524,35 @@ namespace S13S {
 							//所有枚举牌型
 							s13s::EnumCards* cards_enums = rspdata.mutable_enums();
 							assert(rootEnumList != NULL);
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v123sc.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v123sc.begin();
 								it != rootEnumList->v123sc.end(); ++it) {
 								cards_enums->add_v123sc(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v40.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v40.begin();
 								it != rootEnumList->v40.end(); ++it) {
 								cards_enums->add_v40(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v32.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v32.begin();
 								it != rootEnumList->v32.end(); ++it) {
 								cards_enums->add_v32(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->vsc.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->vsc.begin();
 								it != rootEnumList->vsc.end(); ++it) {
 								cards_enums->add_vsc(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v123.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v123.begin();
 								it != rootEnumList->v123.end(); ++it) {
 								cards_enums->add_v123(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v30.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v30.begin();
 								it != rootEnumList->v30.end(); ++it) {
 								cards_enums->add_v30(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v22.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v22.begin();
 								it != rootEnumList->v22.end(); ++it) {
 								cards_enums->add_v22(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v20.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v20.begin();
 								it != rootEnumList->v20.end(); ++it) {
 								cards_enums->add_v20(&it->front(), it->size());
 							}
@@ -6748,35 +6748,35 @@ namespace S13S {
 							//所有枚举牌型
 							s13s::EnumCards* cards_enums = rspdata.mutable_enums();
 							assert(rootEnumList != NULL);
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v123sc.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v123sc.begin();
 								it != rootEnumList->v123sc.end(); ++it) {
 								cards_enums->add_v123sc(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v40.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v40.begin();
 								it != rootEnumList->v40.end(); ++it) {
 								cards_enums->add_v40(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v32.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v32.begin();
 								it != rootEnumList->v32.end(); ++it) {
 								cards_enums->add_v32(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->vsc.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->vsc.begin();
 								it != rootEnumList->vsc.end(); ++it) {
 								cards_enums->add_vsc(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v123.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v123.begin();
 								it != rootEnumList->v123.end(); ++it) {
 								cards_enums->add_v123(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v30.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v30.begin();
 								it != rootEnumList->v30.end(); ++it) {
 								cards_enums->add_v30(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v22.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v22.begin();
 								it != rootEnumList->v22.end(); ++it) {
 								cards_enums->add_v22(&it->front(), it->size());
 							}
-							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::iterator it = rootEnumList->v20.begin();
+							for (std::vector<S13S::CGameLogic::EnumTree::CardData>::const_iterator it = rootEnumList->v20.begin();
 								it != rootEnumList->v20.end(); ++it) {
 								cards_enums->add_v20(&it->front(), it->size());
 							}
