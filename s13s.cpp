@@ -3565,10 +3565,13 @@ namespace S13S {
 						assert(spec_groups.size() == 1);
 						spec_groups.pop_back();
 					}
+					HandTy specialTy = group.specialTy;
 					//当作普通牌型，头墩散牌
+					group.specialTy = TyNil;
 					group.duns[DunFirst].ty_ = Tysp;
 					enum_groups_tmp.push_back(group);
 					//特殊牌型放在枚举几组最优解前面
+					group.specialTy = specialTy;
 					group.duns[DunFirst].ty_ = group.specialTy;
 					group.duns[DunSecond].ty_ = group.specialTy;
 					group.duns[DunLast].ty_ = group.specialTy;
