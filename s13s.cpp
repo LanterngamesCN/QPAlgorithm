@@ -1352,7 +1352,7 @@ namespace S13S {
 				ai = i, ac = c, av = v;
 			}
 		}
-		//补位完成后判断能否构成10JDKA牌型A...K
+		//补位完成后判断能否构成10JQKA牌型A...K
 		if (GetCardValue(mark[0]) == A && GetCardValue(mark[K - 1]) == K) {
 			int i;
 			for (i = K - 2; i > K - n; --i) {
@@ -1458,11 +1458,11 @@ namespace S13S {
 						//_.push_back(v);
 						//PrintCardList(&v.front(), v.size());
 					}
-					//判断能否构成10JDKA牌型A...K
+					//判断能否构成10JQKA牌型A...K
 					else if (GetCardValue(mark[psrcctx[*it->rbegin()]]) == A &&
 						     GetCardValue(mark[psrcctx[*it->begin()]]) == K &&
 						psrcctx[*it->begin()] - psrcctx[*(it->rbegin() + 1)] + 1 == n - 1) {
-						//同花顺10JDKA/QKA
+						//同花顺10JQKA/QKA
 						std::vector<uint8_t> v;
 						for (std::vector<int>::const_reverse_iterator ir = it->rbegin();
 							ir != it->rend(); ++ir) {
