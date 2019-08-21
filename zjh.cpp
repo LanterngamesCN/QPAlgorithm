@@ -479,13 +479,13 @@ namespace ZJH {
 	std::string CGameLogic::StringHandTy(HandTy ty) {
 		switch (ty)
 		{
-		case SanPai:   return "SanPai";
-		case DuiZi:    return "DuiZi";
-		case ShunZi:   return "ShunZi";
-		case JinHua:   return "JinHua";
-		case ShunJin:  return "ShunJin";
-		case BaoZi:    return "BaoZi";
-		case TeShu235: return "TeShu235";
+		case Tysp:   return "Tysp";
+		case Ty20:    return "Ty20";
+		case Ty123:   return "Ty123";
+		case Tysc:   return "Tysc";
+		case Ty123sc:  return "Ty123sc";
+		case Ty30:    return "Ty30";
+		case Tysp235: return "Tysp235";
 		}
 		return "";
 	}
@@ -754,14 +754,14 @@ namespace ZJH {
 		if (p0 == p1) {
 			if (p1 == p2) {
 				//豹子(炸弹)：三张值相同的牌
-				return BaoZi;
+				return Ty30;
 			}
 			//对子：二张值相同的牌
-			return DuiZi;
+			return Ty20;
 		}
 		if (p1 == p2) {
 			//对子：二张值相同的牌
-			return DuiZi;
+			return Ty20;
 		}
 		//三张连续牌
 		if ((p1 == p2 + 1) && (p0 == p1 + 1 || p0 == p2 + 12)) {
@@ -774,72 +774,72 @@ namespace ZJH {
 			}
 			if (c0 == c1 && c1 == c2) {
 				//顺金(同花顺)：花色相同的顺子
-				return ShunJin;
+				return Ty123sc;
 			}
 			//顺子：花色不同的顺子
-			return ShunZi;
+			return Ty123;
 		}
 		uint8_t c0 = GetCardColor(cards[0]);
 		uint8_t c1 = GetCardColor(cards[1]);
 		uint8_t c2 = GetCardColor(cards[2]);
 		if (c0 == c1 && c1 == c2) {
 			//金花(同花)：花色相同，非顺子
-			return JinHua;
+			return Tysc;
 		}
 		if (p0 == 0x05 && p1 == 0x03 && p2 == 0x02) {
 			//特殊：散牌中的235
-			return TeShu235;
+			return Tysp235;
 		}
 		//散牌(高牌/单张)：三张牌不组成任何类型的牌
-		return SanPai;
+		return Tysp;
 	}
 	
 	//玩家手牌类型
-	HandTy CGameLogic::GetHandCardsType(uint8_t *cards, bool noTeshu235) {
+	HandTy CGameLogic::GetHandCardsType(uint8_t *cards, bool sp235) {
 		HandTy ty = GetHandCardsType_private(cards);
 		//不考虑特殊牌型
-		if(noTeshu235) {
-			if (ty == TeShu235) {
-				ty = SanPai;
+		if(!sp235) {
+			if (ty == Tysp235) {
+				ty = Tysp;
 			}
 		}
 		return ty;
 	}
 
 	//比较手牌大小 >0-cards1大 <0-cards2大
-	int CGameLogic::CompareHandCards(uint8_t *cards1, uint8_t *cards2, bool noTeshu235)
+	int CGameLogic::CompareHandCards(uint8_t *cards1, uint8_t *cards2, bool sp235)
 	{
-		HandTy t0 = GetHandCardsType(cards1, noTeshu235);
-		HandTy t1 = GetHandCardsType(cards2, noTeshu235);
+		HandTy t0 = GetHandCardsType(cards1, sp235);
+		HandTy t1 = GetHandCardsType(cards2, sp235);
 		if (t0 == t1) {
 			//牌型相同情况
-			if (t0 == TeShu235) {
-				t0 = t1 = SanPai;
+			if (t0 == Tysp235) {
+				t0 = t1 = Tysp;
 			}
 		label:
 			switch (t0)
 			{
-			case SanPai:
+			case Tysp:
 			{
 				return CompareSanPai(cards1, cards2);
 			}
-			case DuiZi:
+			case Ty20:
 			{
 				return CompareDuiZi(cards1, cards2);
 			}
-			case ShunZi:
+			case Ty123:
 			{
 				return CompareShunZi(cards1, cards2);
 			}
-			case JinHua:
+			case Tysc:
 			{
 				return CompareJinHua(cards1, cards2);
 			}
-			case ShunJin:
+			case Ty123sc:
 			{
 				return CompareShunJin(cards1, cards2);
 			}
-			case BaoZi:
+			case Ty30:
 			{
 				return CompareBaoZi(cards1, cards2);
 			}
@@ -847,16 +847,16 @@ namespace ZJH {
 		}
 		else /*if (t0 != t1)*/ {
 			//牌型不同情况
-			if (t0 == TeShu235) {
-				if (t1 == BaoZi) {
+			if (t0 == Tysp235) {
+				if (t1 == Ty30) {
 					return t0 - t1;
 				}
-				t0 = SanPai;
-			} else if (t1 == TeShu235) {
-				if (t0 == BaoZi) {
+				t0 = Tysp;
+			} else if (t1 == Tysp235) {
+				if (t0 == Ty30) {
 					return t0 - t1;
 				}
-				t1 = SanPai;
+				t1 = Tysp;
 			}
 			if (t0 == t1) {
 				goto label;
@@ -905,7 +905,7 @@ namespace ZJH {
 			}
 			
 			uint8_t cards[2][MAX_COUNT] = { 0 };
-			HandTy ty[2] = { ZJH::SanPai };
+			HandTy ty[2] = { ZJH::Tysp };
 			
 			for (int i = 0; i < 2; ++i) {
 				//发牌
@@ -916,9 +916,9 @@ namespace ZJH {
 				ty[i] = CGameLogic::GetHandCardsType(&(cards[i])[0]);
 			}
 			
-			if (ty[0] != ZJH::SanPai && ty[1] != ZJH::SanPai) {
-			//if ((ty[0] == ZJH::TeShu235 && ty[1] == ZJH::BaoZi) ||
-			//	(ty[1] == ZJH::TeShu235 && ty[0] == ZJH::BaoZi)) {
+			if (ty[0] != ZJH::Tysp && ty[1] != ZJH::Tysp) {
+			//if ((ty[0] == ZJH::Tysp235 && ty[1] == ZJH::Ty30) ||
+			//	(ty[1] == ZJH::Tysp235 && ty[0] == ZJH::Ty30)) {
 				std::string s1 = CGameLogic::StringCards(&(cards[0])[0], MAX_COUNT);
 				std::string s2 = CGameLogic::StringCards(&(cards[1])[0], MAX_COUNT);
 				std::string cc = CGameLogic::CompareHandCards(&(cards[0])[0], &(cards[1])[0]) > 0 ? ">" : "<";
@@ -943,7 +943,7 @@ namespace ZJH {
 		if (flag > 0) {
 			CGameLogic g;
 			uint8_t cards[2][MAX_COUNT] = { 0 };
-			HandTy ty[2] = { ZJH::SanPai };
+			HandTy ty[2] = { ZJH::Tysp };
 			//line[2]构造一副手牌3张
 			CGameLogic::MakeCardList(lines[2], &(cards[0])[0], MAX_COUNT);
 			CGameLogic::MakeCardList(lines[3], &(cards[1])[0], MAX_COUNT);

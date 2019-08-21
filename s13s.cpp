@@ -4011,7 +4011,9 @@ namespace S13S {
 	//dz bool 是否比较葫芦的对子(葫芦之间比较)
 	int CGameLogic::CompareCardsByScore(groupdun_t const* psrc, groupdun_t const* pdst, bool sp, bool sd, bool dz) {
 		std::vector<groupdun_t const*> groups;
+		//groups[0]指向psrc
 		groups.push_back(psrc);
+		//groups[1]指向pdst
 		groups.push_back(pdst);
 		s13s::CMD_S_CompareCards compareCards[2];
 		int c = 0;
@@ -4023,6 +4025,7 @@ namespace S13S {
 			compareCards[i].mutable_player()->set_chairid(i);
 			//获取座椅玩家确定的三墩牌型
 			groupdun_t const *player_select = groups[i];
+			//compareCards[i]对应groups[i]
 			const_cast<groupdun_t*&>(groups[i])->deltascore = 0;
 		}
 		std::vector<std::vector<int>> vec;
@@ -4037,9 +4040,9 @@ namespace S13S {
 			assert(src_chairid < groups.size());
 			assert(dst_chairid < groups.size());
 			//获取src确定的三墩牌型
-			S13S::CGameLogic::groupdun_t const *src = groups[src_chairid];
+			S13S::CGameLogic::groupdun_t const *src = groups[src_chairid];//[1]指向pdst
 			//获取dst确定的三墩牌型
-			S13S::CGameLogic::groupdun_t const *dst = groups[dst_chairid];
+			S13S::CGameLogic::groupdun_t const *dst = groups[dst_chairid];//[0]指向psrc
 			{
 				//追加src比牌对象 ////////////
 				s13s::ComparePlayer* src_peer = compareCards[src_chairid].add_peers();
@@ -5426,6 +5429,7 @@ namespace S13S {
 				}
 				//玩家输赢得水总分，不含特殊牌型输赢分
 				compareCards[i].set_deltascore(deltascore);
+				//compareCards[i]对应groups[i]
 				const_cast<groupdun_t*&>(groups[i])->deltascore = compareCards[i].deltascore();
 				//printf("玩家[%d]输赢得水总分[%d]，不含特殊牌型输赢分\n", i, compareCards[i].deltascore());
 			}
@@ -5545,6 +5549,7 @@ namespace S13S {
 					//玩家输赢得水总分，含打枪/全垒打，含特殊牌型输赢分
 					int32_t deltascore = compareCards[i].deltascore();
 					compareCards[i].set_deltascore(deltascore + sumspecscore);
+					//compareCards[i]对应groups[i]
 					const_cast<groupdun_t*&>(groups[i])->deltascore = compareCards[i].deltascore();
 					//printf("玩家[%d]输赢得水总分[%d]，含打枪/全垒打，含特殊牌型输赢分\n", i, compareCards[i].deltascore());
 				}
@@ -5895,7 +5900,7 @@ namespace S13S {
 			break;
 		}
 		case DunSecond:{
-			//不得小于前墩
+			//不得小于头墩
 			if (dst->needC(DunFirst) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunFirst].ty_) {
@@ -5910,7 +5915,7 @@ namespace S13S {
 					return true;
 				}
 			}
-			//不得大于后墩
+			//不得大于尾墩
 			if (dst->needC(DunLast) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunLast].ty_) {
@@ -5928,7 +5933,7 @@ namespace S13S {
 			break;
 		}
 		case DunLast: {
-			//不得小于前墩
+			//不得小于头墩
 			if (dst->needC(DunFirst) == 0) {
 				//牌型不同比牌型
 				if (ty != dst->duns[DunFirst].ty_) {
