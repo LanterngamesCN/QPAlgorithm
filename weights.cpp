@@ -8,20 +8,22 @@
 #include <string.h>
 
 #include "weights.h"
+#include "Random.h"
 
-//Ëæ»úÖÖ×Ó
+//éšæœºç§å­
 static struct srand_init_t {
 	srand_init_t() {
 		srand(time(NULL));
 	}
 }s_srand_init;
 
-//Ëæ»úÊı[a,b]
+//éšæœºæ•°[a,b]
 extern int RandomBetween(int a, int b) {
-	return a + rand() % (b - a + 1);
+	//return a + rand() % (b - a + 1);
+	return CRandom::Instance().Random_Int(a, b);
 }
 
-//°´È¨ÖµÀ´Ëæ»ú
+//æŒ‰æƒå€¼æ¥éšæœº
 int GetResultByWeight(int weight[], int len) {
 	int sum = 0;
 	for (int i = 0; i < len; ++i) {
@@ -39,7 +41,7 @@ int GetResultByWeight(int weight[], int len) {
 	}
 }
 
-//È¨ÖØ³Ø
+//æƒé‡æ± 
 CWeight::CWeight() {
 	count_ = 0;
 	memset(indexID_, 0, sizeof(int)*MAX_WEIGHT);
@@ -50,7 +52,7 @@ CWeight::~CWeight() {
 
 }
 
-//³õÊ¼»¯È¨ÖØ¼¯ºÏ
+//åˆå§‹åŒ–æƒé‡é›†åˆ
 void CWeight::init(int weight[], int len)
 {
 	if (len > MAX_WEIGHT) {
@@ -64,13 +66,14 @@ void CWeight::init(int weight[], int len)
 	count_ = len;
 }
 
-//Ëæ»úÈ¨ÖØĞòÁĞ
+//éšæœºæƒé‡åºåˆ—
 void CWeight::shuffleSeq()
 {
 	int c = RandomBetween(5, 10);
 	for (int k = 0; k < c; ++k) {
 		for (int i = 0; i < count_; ++i) {
-			int j = (rand() % count_);
+			//int j = (rand() % count_);
+			int j = (RandomBetween(100, 100000) % count_);
 			if (i != j) {
 				std::swap(weights_[i], weights_[j]);
 				std::swap(indexID_[i], indexID_[j]);
@@ -79,7 +82,7 @@ void CWeight::shuffleSeq()
 	}
 }
 
-//°´È¨ÖµÀ´Ëæ»ú
+//æŒ‰æƒå€¼æ¥éšæœº
 int CWeight::getResultByWeight()
 {
 	int i = GetResultByWeight(weights_, count_);
@@ -90,8 +93,8 @@ int CWeight::getResultByWeight()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-//¸ù¾İ»»ÅÆ¸ÅÂÊÈ¨ÖØ¼ÆËãµ±Ç°ÊÇ·ñ»»ÅÆ
-//ratioExchange »»ÅÆ¸ÅÂÊÈ¨ÖØ 
+//æ ¹æ®æ¢ç‰Œæ¦‚ç‡æƒé‡è®¡ç®—å½“å‰æ˜¯å¦æ¢ç‰Œ
+//ratioExchange æ¢ç‰Œæ¦‚ç‡æƒé‡ 
 ExchangeTy CalcExchangeOrNot(int ratioExchange) {
 	int weight[MaxExchange] = { ratioExchange,100 - ratioExchange };
 	CWeight pool;
@@ -108,9 +111,9 @@ ExchangeTy CalcExchangeOrNot2(CWeight& pool) {
 	return (ExchangeTy)pool.getResultByWeight();
 }
 
-//²âÊÔ°´È¨ÖØËæ»ú¸ÅÂÊ½á¹û
-//Ğ´ÈëÎÄ¼şÔÙµ¼ÈëExcel²¢²åÈëÍ¼±í²é¿´¸ÅÂÊÕıÌ¬·Ö²¼Çé¿ö
-//filename char const* ÒªĞ´ÈëµÄÎÄ¼ş Èç/home/testweight.txt
+//æµ‹è¯•æŒ‰æƒé‡éšæœºæ¦‚ç‡ç»“æœ
+//å†™å…¥æ–‡ä»¶å†å¯¼å…¥Excelå¹¶æ’å…¥å›¾è¡¨æŸ¥çœ‹æ¦‚ç‡æ­£æ€åˆ†å¸ƒæƒ…å†µ
+//filename char const* è¦å†™å…¥çš„æ–‡ä»¶ å¦‚/home/testweight.txt
 void TestWeightsRatio(char const* filename) {
 	while (1) {
 		if ('q' == getchar()) {
@@ -121,10 +124,10 @@ void TestWeightsRatio(char const* filename) {
 		if (fp == NULL) {
 			return;
 		}
-		int c = 100;			//Ñ­»·×Ü´ÎÊı
-		int scale = 1000;		//·Å´ó±¶Êı
-		int ratioExC = 50;		//»»ÅÆ¸ÅÂÊ
-		int exC = 0, noExC = 0; //»»ÅÆ/²»»»ÅÆ·Ö±ğÍ³¼Æ´ÎÊı
+		int c = 100;			//å¾ªç¯æ€»æ¬¡æ•°
+		int scale = 1000;		//æ”¾å¤§å€æ•°
+		int ratioExC = 50;		//æ¢ç‰Œæ¦‚ç‡
+		int exC = 0, noExC = 0; //æ¢ç‰Œ/ä¸æ¢ç‰Œåˆ†åˆ«ç»Ÿè®¡æ¬¡æ•°
 		CWeight pool;
 		int weight[MaxExchange] = { ratioExC*scale,(100 - ratioExC)*scale };
 		pool.init(weight, MaxExchange);
@@ -136,7 +139,7 @@ void TestWeightsRatio(char const* filename) {
 			else if (ty == NoExchange) {
 				++noExC;
 			}
-			//Ğ´ÈëÎÄ¼şÔÙµ¼ÈëExcel²¢²åÈëÍ¼±í²é¿´¸ÅÂÊÕıÌ¬·Ö²¼Çé¿ö
+			//å†™å…¥æ–‡ä»¶å†å¯¼å…¥Excelå¹¶æ’å…¥å›¾è¡¨æŸ¥çœ‹æ¦‚ç‡æ­£æ€åˆ†å¸ƒæƒ…å†µ
 			char ch[10] = { 0 };
 			sprintf(ch, "%d\t", ty == Exchange ? 1 : -1);
 			fwrite(ch, strlen(ch), 1, fp);

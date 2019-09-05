@@ -878,7 +878,21 @@ namespace ZJH {
 		}
 		return false;
 	}
-
+	
+	//手牌点数最大牌
+	uint8_t CGameLogic::MaxCard(uint8_t *cards) {
+		//手牌按牌点从大到小排序(AK...32)
+		SortCards(cards, MaxCount, false, false, false);
+		return cards[0];
+	}
+	
+	//手牌点数最小牌
+	uint8_t CGameLogic::MinCard(uint8_t *cards) {
+		//手牌按牌点从大到小排序(AK...32)
+		SortCards(cards, MaxCount, false, false, false);
+		return cards[2];
+	}
+	
 	//比较手牌大小 >0-cards1大 <0-cards2大
 	bool CGameLogic::GreaterHandCards(boost::shared_ptr<uint8_t>& cards1, boost::shared_ptr<uint8_t>& cards2)
 	{

@@ -18,7 +18,7 @@
 #include <boost/shared_ptr.hpp>
 
 #ifndef isZero
-#define isZero(a)        ((a>-0.000001) && (a<0.000001))
+#define isZero(a)        (((a)>-0.000001) && ((a)<0.000001))
 #endif//isZero
 
 #define MAX_CARD_TOTAL	ZJH::MaxCardTotal	//牌总个数
@@ -42,7 +42,7 @@ namespace ZJH {
 	const int MaxPlayer		= 5;	//最多5人局
 	const int MinPlayer		= 2;	//至少2人局
 	const int MaxCount		= 3;	//每人3张牌
-	const int MaxRound		= 1;	//最大局数
+	const int MaxRound		= 20;	//最大局数
 	
 	//手牌类型：从小到大
 	//散牌<对子<顺子<金花<同花顺<豹子；AAA<特殊235
@@ -158,6 +158,10 @@ namespace ZJH {
 		static HandTy GetHandCardsType(uint8_t *cards, bool sp235 = false);
 		//是否含带A散牌
 		static bool HasCardValue(uint8_t *cards, uint8_t cardValue = A, int count = 1);
+		//手牌点数最大牌
+		static uint8_t MaxCard(uint8_t *cards);
+		//手牌点数最小牌
+		static uint8_t MinCard(uint8_t *cards);
 		//比较手牌大小 >0-cards1大 <0-cards2大
 		static int CompareHandCards(uint8_t *cards1, uint8_t *cards2, bool sp235 = false);
 		//比较手牌大小 >0-cards1大 <0-cards2大
