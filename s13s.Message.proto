@@ -4,23 +4,23 @@ package s13s;
 enum SUBID
 {
 	//客户端命令结构
-	SUB_C_MANUALCARDS		= 1; // 手动摆牌 CMD_C_ManualCards
-	SUB_C_MAKESUREDUNHANDTY = 2; // 确定三墩牌型 CMD_C_MakesureDunHandTy
-	SUB_C_CANCELCARDS		= 3; // 手动摆牌取消哪一墩的牌 CMD_C_CancelCards
+	SUB_C_MANUALCARDS		= 1; //手动摆牌 CMD_C_ManualCards
+	SUB_C_MAKESUREDUNHANDTY = 2; //确定三墩牌型 CMD_C_MakesureDunHandTy
+	SUB_C_CANCELCARDS		= 3; //手动摆牌取消哪一墩的牌 CMD_C_CancelCards
 	
-	// 服务器命令结构
-	SUB_SC_GAMESCENE_FREE		= 201;				//空闲场景消息		CMD_S_StatusFree
-	SUB_SC_GAMESCENE_PLAY		= 202;				//游戏中场景消息	CMD_S_StatusPlay
-	//SUB_SC_GAMESCENE_COMPARE 	= 203;				//发送比牌场景		CMD_S_StatusCompare
-	SUB_SC_GAMESCENE_END		= 203;				//游戏结束			CMD_S_StatusEnd
+	//服务器命令结构
+	SUB_SC_GAMESCENE_FREE		= 201;//空闲场景消息		CMD_S_StatusFree
+	SUB_SC_GAMESCENE_PLAY		= 202;//游戏中场景消息	CMD_S_StatusPlay
+	//SUB_SC_GAMESCENE_COMPARE 	= 203;//发送比牌场景		CMD_S_StatusCompare
+	SUB_SC_GAMESCENE_END		= 203;//游戏结束场景		CMD_S_StatusEnd
 	
-	SUB_S_GAME_START			= 100;				//游戏开始			CMD_S_GameStart
-	SUB_S_MANUALCARDS			= 101;				//手动摆牌			CMD_S_ManualCards		
-	//SUB_S_COMPARECARDS      	= 102;				//玩家之间两两比牌	CMD_S_CompareCards	
-	SUB_S_MAKESUREDUNHANDTY     = 103;				//理牌完成，确定三墩牌型	CMD_S_MakesureDunHandTy
-	SUB_S_GAME_END				= 105;				//游戏结束			CMD_S_GameEnd
-	SUB_S_CANCELCARDS			= 106; 				//手动摆牌取消哪一墩的牌 CMD_S_CancelCards
-	SUB_S_ANDROID_CARD			= 113;				//机器人牌			CMD_S_AndroidCard
+	SUB_S_GAME_START			= 100;//游戏开始			CMD_S_GameStart
+	SUB_S_MANUALCARDS			= 101;//手动摆牌			CMD_S_ManualCards		
+	//SUB_S_COMPARECARDS      	= 102;//玩家之间两两比牌	CMD_S_CompareCards	
+	SUB_S_MAKESUREDUNHANDTY     = 103;//理牌完成，确定三墩牌型	CMD_S_MakesureDunHandTy
+	SUB_S_GAME_END				= 105;//游戏结束			CMD_S_GameEnd
+	SUB_S_CANCELCARDS			= 106;//手动摆牌取消哪一墩的牌 CMD_S_CancelCards
+	SUB_S_ANDROID_CARD			= 113;//机器人牌			CMD_S_AndroidCard
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ message HandCards
 {
 	required bytes cards         = 1; //一副13张手牌
 	required int32 specialTy     = 2; //标记手牌特殊牌型
-	repeated GroupDunData groups = 3; //枚举几组最优墩(开元或得胜是给了3组，这里给了5组)
+	repeated GroupDunData groups = 3; //枚举几组最优墩(开元或德胜是给了3组，这里给了5组)
 }
 ////////////////////////////////////////////////////////////////////////////////
 //枚举牌型
@@ -237,6 +237,7 @@ message AndroidPlayer
 //机器人扑克
 message CMD_S_AndroidCard
 {
-	optional string roundId        = 1; //牌局标识
-	repeated AndroidPlayer players = 2; //其它玩家信息
+	optional string roundId        = 1; //牌局编号
+	repeated AndroidPlayer players = 2; //玩家信息
+	//optional int64 stockScore      = 3; //当前库存
 };
