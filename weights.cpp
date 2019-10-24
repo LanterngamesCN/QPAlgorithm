@@ -25,18 +25,19 @@ extern int RandomBetween(int a, int b) {
 
 //按权值来随机
 int GetResultByWeight(int weight[], int len) {
+	printf("\n\n\n\n-- *** GetResultByWeight\n");
 	int sum = 0;
 	for (int i = 0; i < len; ++i) {
+		printf("\nw[%d]=%d\n", i, weight[i]);
 		sum += weight[i];
 	}
+	int r = RandomBetween(1, sum), c = r;
 	for (int i = 0; i < len; ++i) {
-		int r = RandomBetween(1, sum);
-		if (r <= weight[i]) {
-			//printf("\nv:%d < w:%d ", r, weight[i]);
+		c -= weight[i];
+		if (c <= 0) {
+			printf("\nsum=%d r=%d i=%d\n", sum, r, i);
+			printf("-------------------------\n");
 			return i;
-		}
-		else {
-			sum -= weight[i];
 		}
 	}
 }
