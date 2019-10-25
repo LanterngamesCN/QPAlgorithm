@@ -25,18 +25,21 @@ extern int RandomBetween(int a, int b) {
 
 //按权值来随机
 int GetResultByWeight(int weight[], int len) {
-	printf("\n\n\n\n-- *** GetResultByWeight\n");
+	//printf("\n\n\n\n-- *** GetResultByWeight\n");
 	int sum = 0;
 	for (int i = 0; i < len; ++i) {
-		printf("\nw[%d]=%d\n", i, weight[i]);
+		//printf("\nw[%d]=%d\n", i, weight[i]);
 		sum += weight[i];
+	}
+	if (sum <= 1) {
+		return 0;
 	}
 	int r = RandomBetween(1, sum), c = r;
 	for (int i = 0; i < len; ++i) {
 		c -= weight[i];
 		if (c <= 0) {
-			printf("\nsum=%d r=%d i=%d\n", sum, r, i);
-			printf("-------------------------\n");
+			//printf("\nsum=%d r=%d i=%d\n", sum, r, i);
+			//printf("-------------------------\n");
 			return i;
 		}
 	}
@@ -127,13 +130,50 @@ void TestWeightsRatio(char const* filename) {
 		}
 		int c = 100;			//循环总次数
 		int scale = 1000;		//放大倍数
-		int ratioExC = 50;		//换牌概率
+		int ratioExC = 30;		//换牌概率
 		int exC = 0, noExC = 0; //换牌/不换牌分别统计次数
 		CWeight pool;
 		int weight[MaxExchange] = { ratioExC*scale,(100 - ratioExC)*scale };
 		pool.init(weight, MaxExchange);
 		for (int i = 0; i < c; ++i) {
 			ExchangeTy ty = CalcExchangeOrNot2(pool);
+			if (ty == Exchange) {
+				++exC;
+			}
+			else if (ty == NoExchange) {
+				++noExC;
+			}
+			//写入文件再导入Excel并插入图表查看概率正态分布情况
+			char ch[10] = { 0 };
+			sprintf(ch, "%d\t", ty == Exchange ? 1 : -1);
+			fwrite(ch, strlen(ch), 1, fp);
+		}
+		fflush(fp);
+		fclose(fp);
+		printf("c:%d:%d scale:%d ratioExC:%d exC:%d:ratio:%.02f\n",
+			c, exC + noExC, scale, ratioExC,
+			exC, ((float)exC) / (float)(exC + noExC));
+	}
+}
+
+void TestWeightsRatio2(char const* filename) {
+	while (1) {
+		if ('q' == getchar()) {
+			break;
+		}
+		remove(filename);
+		FILE* fp = fopen(filename, "a");
+		if (fp == NULL) {
+			return;
+		}
+		int c = 100;			//循环总次数
+		int scale = 1000;		//放大倍数
+		int ratioExC = 50;		//换牌概率
+		int exC = 0, noExC = 0; //换牌/不换牌分别统计次数
+		CWeight pool;
+		int weight[MaxExchange] = { ratioExC*scale,(100 - ratioExC)*scale };
+		for (int i = 0; i < c; ++i) {
+			int ty = GetResultByWeight(weight, 2);
 			if (ty == Exchange) {
 				++exC;
 			}

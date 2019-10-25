@@ -46,5 +46,6 @@ extern ExchangeTy CalcExchangeOrNot2(CWeight& pool);
 //写入文件再导入Excel并插入图表查看概率正态分布情况
 //filename char const* 要写入的文件 如/home/testweight.txt
 extern void TestWeightsRatio(char const* filename);
+extern void TestWeightsRatio2(char const* filename);
 
 #endif
