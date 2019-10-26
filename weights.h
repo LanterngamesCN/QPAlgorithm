@@ -48,4 +48,27 @@ extern ExchangeTy CalcExchangeOrNot2(CWeight& pool);
 extern void TestWeightsRatio(char const* filename);
 extern void TestWeightsRatio2(char const* filename);
 
+
+
+//权重池
+class CWeight2 {
+public:
+	CWeight2();
+	~CWeight2();
+public:
+	//初始化权重集合
+	int init(int weight[], int len);
+	//随机权重序列
+	void shuffleSeq();
+	//按权值来随机
+	int getResultByWeight(int randval);
+public:
+	int count_, sum_;		 //统计个数
+	int weights_[MAX_WEIGHT];//权重集合
+	int indexID_[MAX_WEIGHT];//对应索引
+};
+
+extern ExchangeTy CalcExchangeOrNot3(CWeight2& pool, int randval);
+
+extern void TestWeightsRatio3(char const* filename);
 #endif
