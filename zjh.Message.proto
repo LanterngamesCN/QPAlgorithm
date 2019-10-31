@@ -237,7 +237,7 @@ message CMD_S_AndroidCard
 	optional int64 stockScore      = 4;//当前库存
 	optional int64 StockLowLimit   = 5;//
 	optional int64 StockHighLimit  = 6;//
-	repeated Values robots         = 7;// 
+	optional AndroidConfig cfg     = 7;// 
 };
 ////////////////////////////////////////////////////////////////////////////////
 //超过局数结束
@@ -263,8 +263,37 @@ message CMD_C_NULL
 {
 }
 ////////////////////////////////////////////////////////////////////////////////
-//机器人配置
+//机器人参数
+message param_t
+{
+	//看牌参数
+	repeated float K_ = 1;
+	//牌比玩家大，权值倍率，修正参数
+	repeated float W1_ = 2;
+	optional float P1_ = 3;
+	//牌比玩家小，权值倍率，修正参数
+	repeated float W2_ = 4;
+	optional float P2_ = 5;
+}
+////////////////////////////////////////////////////////////////////////////////
+//胜率/权值
 message Values
 {
-	repeated double values   = 1;//[0]胜率 [1]权重
+	repeated double values      = 1;//[0]胜率 [1]权重
+}
+////////////////////////////////////////////////////////////////////////////////
+//机器人配置
+message AndroidConfig
+{
+	optional bool special235_   = 1;//判断特殊牌型
+	optional bool freeLookover_ = 2;//开启随时看牌
+	optional bool freeGiveup_   = 3;//开启随时弃牌
+	optional bool useStrategy_  = 4;//启用三套决策(0,1,2)
+	optional int32 scale        = 5; //放大倍数
+	repeated param_t param      = 6;//收分[0]/正常[1]/放分[2]，看牌参数，权值倍率，修正参数
+	repeated int32 ratioKP      = 7;//看牌概率
+	repeated int32 SP0          = 8;//收分时三套决策(0,1,2)几率
+	repeated int32 SP1          = 9;//正常时三套决策(0,1,2)几率
+	repeated int32 SP2          = 10;//放分时三套决策(0,1,2)几率
+	repeated Values robots      = 11;//
 }
