@@ -798,19 +798,19 @@ namespace ZJH {
 	HandTy CGameLogic::GetHandCardsType(uint8_t *cards, bool sp235) {
 		HandTy ty = GetHandCardsType_private(cards);
 		//不考虑特殊牌型
-		if(!sp235) {
+		//if(!sp235) {
 			if (ty == Tysp235) {
 				ty = Tysp;
 			}
-		}
+		//}
 		return ty;
 	}
 
 	//比较手牌大小 >0-cards1大 <0-cards2大
 	int CGameLogic::CompareHandCards(uint8_t *cards1, uint8_t *cards2, bool sp235)
 	{
-		HandTy t0 = GetHandCardsType(cards1, sp235);
-		HandTy t1 = GetHandCardsType(cards2, sp235);
+		HandTy t0 = GetHandCardsType_private(cards1);
+		HandTy t1 = GetHandCardsType_private(cards2);
 		if (t0 == t1) {
 			//牌型相同情况
 			if (t0 == Tysp235) {
@@ -847,13 +847,13 @@ namespace ZJH {
 		}
 		else /*if (t0 != t1)*/ {
 			//牌型不同情况
-			if (t0 == Tysp235) {
-				if (t1 == Ty30) {
+			if (sp235 && t0 == Tysp235) {//Tysp235 > AAA
+				if (t1 == Ty30 && GetCardValue(cards2[0]) == A) {
 					return t0 - t1;
 				}
 				t0 = Tysp;
-			} else if (t1 == Tysp235) {
-				if (t0 == Ty30) {
+			} else if (sp235 && t1 == Tysp235) {//AAA < Tysp235
+				if (t0 == Ty30 && GetCardValue(cards1[0]) == A) {
 					return t0 - t1;
 				}
 				t1 = Tysp;
@@ -952,17 +952,19 @@ namespace ZJH {
 		//1->文件读取手牌 0->随机生成13张牌
 		int flag = atoi(lines[0].c_str());
 		//默认最多枚举多少组墩
-		int size = atoi(lines[1].c_str());
+		//int size = atoi(lines[1].c_str());
 		//1->文件读取手牌 0->随机生成13张牌
 		if (flag > 0) {
 			CGameLogic g;
-			uint8_t cards[2][MAX_COUNT] = { 0 };
-			HandTy ty[2] = { ZJH::Tysp };
+			uint8_t cards[5][MAX_COUNT] = { 0 };
+			HandTy ty[5] = { ZJH::Tysp };
 			//line[2]构造一副手牌3张
-			CGameLogic::MakeCardList(lines[2], &(cards[0])[0], MAX_COUNT);
-			CGameLogic::MakeCardList(lines[3], &(cards[1])[0], MAX_COUNT);
-			
-			for (int i = 0; i < 2; ++i) {
+			CGameLogic::MakeCardList(lines[4], &(cards[0])[0], MAX_COUNT);
+			CGameLogic::MakeCardList(lines[5], &(cards[1])[0], MAX_COUNT);
+			CGameLogic::MakeCardList(lines[6], &(cards[2])[0], MAX_COUNT);
+			CGameLogic::MakeCardList(lines[7], &(cards[3])[0], MAX_COUNT);
+			CGameLogic::MakeCardList(lines[8], &(cards[4])[0], MAX_COUNT);
+			for (int i = 0; i < 5; ++i) {
 				//手牌排序
 				CGameLogic::SortCards(&(cards[i])[0], MAX_COUNT, true, true, true);
 				//手牌牌型

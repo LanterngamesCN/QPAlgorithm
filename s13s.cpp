@@ -4023,6 +4023,12 @@ namespace S13S {
 			chairIDs[c++] = i;
 			//比牌玩家桌椅ID
 			compareCards[i].mutable_player()->set_chairid(i);
+			//桌椅玩家选择一组墩(含头墩/中墩/尾墩)
+			s13s::GroupDunData* player_group = compareCards[i].mutable_player()->mutable_group();
+			//从哪墩开始的
+			player_group->set_start(S13S::DunFirst);
+			//总体对应特殊牌型 ////////////
+			player_group->set_specialty(groups[i]->specialTy);
 			//获取座椅玩家确定的三墩牌型
 			groupdun_t const *player_select = groups[i];
 			//compareCards[i]对应groups[i]
@@ -4034,24 +4040,44 @@ namespace S13S {
 		//CFuncC::Print(vec);
 		for (std::vector<std::vector<int>>::const_iterator it = vec.begin();
 			it != vec.end(); ++it) {
-			assert(it->size() == 2);//两两比牌
-			int src_chairid = chairIDs[(*it)[0]];//src椅子ID
-			int dst_chairid = chairIDs[(*it)[1]];//dst椅子ID
+			assert(it->size() == 2 && (*it)[0] > (*it)[1]);//两两比牌
+			int src_chairid = chairIDs[(*it)[0]];//chairIDs[1] pdst椅子ID
+			int dst_chairid = chairIDs[(*it)[1]];//chairIDs[0] psrc椅子ID
 			assert(src_chairid < groups.size());
 			assert(dst_chairid < groups.size());
 			//获取src确定的三墩牌型
-			S13S::CGameLogic::groupdun_t const *src = groups[src_chairid];//[1]指向pdst
+			S13S::CGameLogic::groupdun_t const *src = groups[src_chairid]; assert(src == pdst);//[1]指向pdst
 			//获取dst确定的三墩牌型
-			S13S::CGameLogic::groupdun_t const *dst = groups[dst_chairid];//[0]指向psrc
+			S13S::CGameLogic::groupdun_t const *dst = groups[dst_chairid]; assert(dst == psrc);//[0]指向psrc
 			{
 				//追加src比牌对象 ////////////
 				s13s::ComparePlayer* src_peer = compareCards[src_chairid].add_peers();
+				{
+					//比牌对象桌椅ID
+					src_peer->set_chairid(dst_chairid);
+					//比牌对象选择一组墩
+					s13s::GroupDunData* src_peer_select = src_peer->mutable_group();
+					//从哪墩开始的
+					src_peer_select->set_start(S13S::DunFirst);
+					//总体对应特殊牌型 ////////////
+					src_peer_select->set_specialty(dst->specialTy);
+				}
 				//追加src比牌结果 ////////////
 				s13s::CompareResult* src_result = compareCards[src_chairid].add_results();
 			}
 			{
 				//追加dst比牌对象 ////////////
 				s13s::ComparePlayer* dst_peer = compareCards[dst_chairid].add_peers();
+				{
+					//比牌对象桌椅ID
+					dst_peer->set_chairid(src_chairid);
+					//比牌对象选择一组墩
+					s13s::GroupDunData* dst_peer_select = dst_peer->mutable_group();
+					//从哪墩开始的
+					dst_peer_select->set_start(S13S::DunFirst);
+					//总体对应特殊牌型 ////////////
+					dst_peer_select->set_specialty(src->specialTy);
+				}
 				//追加dst比牌结果 ////////////
 				s13s::CompareResult* dst_result = compareCards[dst_chairid].add_results();
 			}
