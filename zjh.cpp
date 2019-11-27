@@ -798,9 +798,9 @@ namespace ZJH {
 	HandTy CGameLogic::GetHandCardsType(uint8_t *cards, bool sp235) {
 		HandTy ty = GetHandCardsType_private(cards);
 		//不考虑特殊牌型
-		//if(!sp235) {
+		//if (!sp235) {
 			if (ty == Tysp235) {
-				ty = Tysp;
+				ty = Tysp;//客户端只展示Tysp类型
 			}
 		//}
 		return ty;
@@ -811,6 +811,15 @@ namespace ZJH {
 	{
 		HandTy t0 = GetHandCardsType_private(cards1);
 		HandTy t1 = GetHandCardsType_private(cards2);
+		if (!sp235) {
+			//比牌不考虑特殊牌型
+			if (t0 == Tysp235) {
+				t0 = Tysp;
+			}
+			if (t1 == Tysp235) {
+				t1 = Tysp;
+			}
+		}
 		if (t0 == t1) {
 			//牌型相同情况
 			if (t0 == Tysp235) {
@@ -847,12 +856,14 @@ namespace ZJH {
 		}
 		else /*if (t0 != t1)*/ {
 			//牌型不同情况
-			if (sp235 && t0 == Tysp235) {//Tysp235 > AAA
+			if (t0 == Tysp235) {
+				//Tysp235 > AAA
 				if (t1 == Ty30 && GetCardValue(cards2[0]) == A) {
 					return t0 - t1;
 				}
 				t0 = Tysp;
-			} else if (sp235 && t1 == Tysp235) {//AAA < Tysp235
+			} else if (t1 == Tysp235) {
+				//AAA < Tysp235
 				if (t0 == Ty30 && GetCardValue(cards1[0]) == A) {
 					return t0 - t1;
 				}
@@ -935,7 +946,7 @@ namespace ZJH {
 			//	(ty[1] == ZJH::Tysp235 && ty[0] == ZJH::Ty30)) {
 				std::string s1 = CGameLogic::StringCards(&(cards[0])[0], MAX_COUNT);
 				std::string s2 = CGameLogic::StringCards(&(cards[1])[0], MAX_COUNT);
-				std::string cc = CGameLogic::CompareHandCards(&(cards[0])[0], &(cards[1])[0]) > 0 ? ">" : "<";
+				std::string cc = CGameLogic::CompareHandCards(&(cards[0])[0], &(cards[1])[0], false) > 0 ? ">" : "<";
 				printf("[%s]%s %s [%s]%s\n",
 					CGameLogic::StringHandTy(ty[0]).c_str(), s1.c_str(),
 					cc.c_str(),
@@ -961,10 +972,10 @@ namespace ZJH {
 			//line[2]构造一副手牌3张
 			CGameLogic::MakeCardList(lines[4], &(cards[0])[0], MAX_COUNT);
 			CGameLogic::MakeCardList(lines[5], &(cards[1])[0], MAX_COUNT);
-			CGameLogic::MakeCardList(lines[6], &(cards[2])[0], MAX_COUNT);
-			CGameLogic::MakeCardList(lines[7], &(cards[3])[0], MAX_COUNT);
-			CGameLogic::MakeCardList(lines[8], &(cards[4])[0], MAX_COUNT);
-			for (int i = 0; i < 5; ++i) {
+			//CGameLogic::MakeCardList(lines[6], &(cards[2])[0], MAX_COUNT);
+			//CGameLogic::MakeCardList(lines[7], &(cards[3])[0], MAX_COUNT);
+			//CGameLogic::MakeCardList(lines[8], &(cards[4])[0], MAX_COUNT);
+			for (int i = 0; i < 2; ++i) {
 				//手牌排序
 				CGameLogic::SortCards(&(cards[i])[0], MAX_COUNT, true, true, true);
 				//手牌牌型
@@ -972,7 +983,7 @@ namespace ZJH {
 			}
 			std::string s1 = CGameLogic::StringCards(&(cards[0])[0], MAX_COUNT);
 			std::string s2 = CGameLogic::StringCards(&(cards[1])[0], MAX_COUNT);
-			std::string cc = CGameLogic::CompareHandCards(&(cards[0])[0], &(cards[1])[0]) > 0 ? ">" : "<";
+			std::string cc = CGameLogic::CompareHandCards(&(cards[0])[0], &(cards[1])[0], true) > 0 ? ">" : "<";
 			printf("[%s]%s %s [%s]%s\n",
 				CGameLogic::StringHandTy(ty[0]).c_str(), s1.c_str(),
 				cc.c_str(),
