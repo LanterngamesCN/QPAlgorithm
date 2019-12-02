@@ -17,6 +17,7 @@
 
 #include "cfg.h"
 #include "zjh.h"
+#include "weights.h"
 
 namespace ZJH {
 	
@@ -30,7 +31,7 @@ namespace ZJH {
 	};
 
 	//构造函数
-	CGameLogic::CGameLogic()
+	CGameLogic::CGameLogic() : rand_(seed_())
 	{
 		index_ = 0;
 		memset(cardsData_, 0, sizeof(uint8_t)*MaxCardTotal);
@@ -66,19 +67,24 @@ namespace ZJH {
 	//洗牌
 	void CGameLogic::ShuffleCards()
 	{
+#if 0
 		//printf("-- *** 洗牌...\n");
-		static uint32_t seed = (uint32_t)time(NULL);
-		//int c = rand() % 20 + 5;
-		int c = rand_r(&seed) % 20 + 5;
+		int c = RandomBetween(500, 1000);			//循环总次数
+		int scale = 1000;							//放大倍数
+		int ratioExC = 60;							//换牌概率
+		CWeight pool;
+		int weight[MaxExchange] = { ratioExC*scale,(100 - ratioExC)*scale };
 		for (int k = 0; k < c; ++k) {
 			for (int i = 0; i < MaxCardTotal; ++i) {
-				//int j = rand() % MaxCardTotal;
-				int j = rand_r(&seed) % MaxCardTotal;
-				if (i != j) {
+				int j = RandomBetween(0, MaxCardTotal - 1);
+				if (i != j && Exchange == CalcExchangeOrNot2(pool)) {
 					std::swap(cardsData_[i], cardsData_[j]);
 				}
 			}
 		}
+#else
+		std::shuffle(&cardsData_[0], &cardsData_[MAX_CARD_TOTAL], rand_);
+#endif
 		index_ = 0;
 	}
 
@@ -92,6 +98,7 @@ namespace ZJH {
 		if (n > Remaining()) {
 			return;
 		}
+		std::shuffle(&cardsData_[index_], &cardsData_[MAX_CARD_TOTAL], rand_);
 		int k = 0;
 		for (int i = index_; i < index_ + n; ++i) {
 			assert(i < MaxCardTotal);

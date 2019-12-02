@@ -14,6 +14,7 @@
 #include <memory.h>
 #include <list>
 #include <vector>
+#include <algorithm>
 #include <boost/get_pointer.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -169,6 +170,9 @@ namespace ZJH {
 	private:
 		int8_t index_;
 		uint8_t cardsData_[MaxCardTotal];
+	private:
+		std::random_device seed_;
+		std::mt19937 rand_;
 	};
 };
 
