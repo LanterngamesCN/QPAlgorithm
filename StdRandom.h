@@ -74,27 +74,19 @@ namespace STD {
 	public:
 		//mt生成器随机整数
 		int randInt_mt(bool bv = false) {
-			return bv ?
-				iValue_(STD::Generator::instance().get_mt())
-				: iValue_(inst_.get_mt());
+			return iValue_(bv ? STD::Generator::instance().get_mt() : inst_.get_mt());
 		}
 		//re生成器随机整数
 		int randInt_re(bool bv = false) {
-			return bv ?
-				iValue_(STD::Generator::instance().get_re())
-				: iValue_(inst_.get_re());;
+			return iValue_(bv ? STD::Generator::instance().get_re() : inst_.get_re());
 		}
 		//mt生成器随机浮点数
 		float randFloat_mt(bool bv = false) {
-			return bv ? 
-				fValue_(STD::Generator::instance().get_mt())
-				: fValue_(inst_.get_mt());
+			return fValue_(bv ? STD::Generator::instance().get_mt() : inst_.get_mt());
 		}
 		//re生成器随机浮点数
 		float randFloat_re(bool bv = false) {
-			return bv ? 
-				fValue_(STD::Generator::instance().get_re())
-				: fValue_(inst_.get_re());
+			return fValue_(bv ? STD::Generator::instance().get_re() : inst_.get_re());
 		}
 	private:
 		STD::Generator inst_;
