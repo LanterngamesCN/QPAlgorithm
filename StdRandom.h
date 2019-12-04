@@ -125,7 +125,7 @@ namespace STD {
 		void shuffle() {
 			for (int i = len_ - 1; i > 0; --i) {
 				std::uniform_int_distribution<decltype(i)> d(0, i);
-				int j = d(Generator::instance().get_mt());
+				int j = d(STD::Generator::instance().get_mt());
 				std::swap(weight_[i], weight_[j]);
 				std::swap(indxId_[i], indxId_[j]);
 			}
