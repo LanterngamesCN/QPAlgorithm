@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <utility>
 #include <random>
+#include <chrono>
+//{std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())}
+//{std::chrono::system_clock::now().time_since_epoch().count()}
 
 #ifndef MAX_WEIGHT
 #define MAX_WEIGHT 10
@@ -27,8 +30,8 @@ namespace STD {
 	class Generator {
 	public:
 		Generator()
-			: mt_({ rd_() })
-			, re_({ rd_() }) {
+			: mt_({ std::random_device{}() })
+			, re_({ std::random_device{}() }) {
 		}
 		static Generator& instance() {
 			static Generator gen_;
@@ -41,11 +44,10 @@ namespace STD {
 			return re_;
 		}
 	private:
-		std::random_device rd_;
 		std::mt19937 mt_;
 		std::default_random_engine re_;
 	};
-	
+
 	//////////////////////////////////////
 	//Random
 	using RangeInt = std::uniform_int_distribution<>::param_type;
@@ -54,40 +56,50 @@ namespace STD {
 	public:
 		explicit Random() {}
 		//整数范围
-		explicit Random(int a, int b) :i_(a, b) {
-		}
+		explicit Random(int a, int b)
+			: iValue_(a, b) {}
 		//浮点范围
-		explicit Random(float a, float b) :f_(a, b) {
-		}
-	public:
+		explicit Random(float a, float b)
+			: fValue_(a, b) {}
+		//整数范围
 		Random& betweenInt(int a, int b) {
-			i_.param(RangeInt{ a, b });
+			iValue_.param(RangeInt{ a, b });
 			return *this;
 		}
+		//浮点范围
 		Random& betweenFloat(float a, float b) {
-			i_.param(RangeInt{ a, b });
+			fValue_.param(RangeFloat{ a, b });
 			return *this;
 		}
 	public:
 		//mt生成器随机整数
-		int randInt_mt() {
-			return i_(Generator::instance().get_mt());
+		int randInt_mt(bool bv = false) {
+			return bv ?
+				iValue_(STD::Generator::instance().get_mt())
+				: iValue_(inst_.get_mt());
 		}
 		//re生成器随机整数
-		int randInt_re() {
-			return i_(Generator::instance().get_re());
+		int randInt_re(bool bv = false) {
+			return bv ?
+				iValue_(STD::Generator::instance().get_re())
+				: iValue_(inst_.get_re());;
 		}
 		//mt生成器随机浮点数
-		float randFloat_mt() {
-			return f_(Generator::instance().get_mt());
+		float randFloat_mt(bool bv = false) {
+			return bv ? 
+				fValue_(STD::Generator::instance().get_mt())
+				: fValue_(inst_.get_mt());
 		}
 		//re生成器随机浮点数
-		float randFloat_re() {
-			return f_(Generator::instance().get_re());
+		float randFloat_re(bool bv = false) {
+			return bv ? 
+				fValue_(STD::Generator::instance().get_re())
+				: fValue_(inst_.get_re());
 		}
 	private:
-		std::uniform_real_distribution<float> f_;
-		std::uniform_int_distribution<> i_;
+		STD::Generator inst_;
+		std::uniform_int_distribution<> iValue_;
+		std::uniform_real_distribution<float> fValue_;
 	};
 
 	//////////////////////////////////////
@@ -131,7 +143,7 @@ namespace STD {
 			}
 		}
 		//按权值来随机，返回索引
-		int getResult() {
+		int getResult(bool bv = false) {
 			if (sum_ <= 1) {
 				return indxId_[0];
 			}
@@ -140,7 +152,7 @@ namespace STD {
 				printf("w[%d]=%d\n", indxId_[i], weight_[i]);
 			}
 #endif
-			int r = rand_.randInt_mt(), c = r;
+			int r = rand_.randInt_mt(bv), c = r;
 			for (int i = 0; i < len_; ++i) {
 				c -= weight_[i];
 				if (c <= 0) {
