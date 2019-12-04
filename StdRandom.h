@@ -19,9 +19,9 @@
 
 //#define DEBUG_PRINT
 
-//±ê×¼¿âµÄÎ±Ëæ»úº¯Êı
+//æ ‡å‡†åº“çš„ä¼ªéšæœºå‡½æ•°
 namespace STD {
-	//²âÊÔÓÃÀı
+	//æµ‹è¯•ç”¨ä¾‹
 	static void test001();
 	static void test002(char const* filename);
 
@@ -55,42 +55,42 @@ namespace STD {
 	class Random {
 	public:
 		explicit Random() {}
-		//ÕûÊı·¶Î§
+		//æ•´æ•°èŒƒå›´
 		explicit Random(int a, int b)
 			: iValue_(a, b) {}
-		//¸¡µã·¶Î§
+		//æµ®ç‚¹èŒƒå›´
 		explicit Random(float a, float b)
 			: fValue_(a, b) {}
-		//ÕûÊı·¶Î§
+		//æ•´æ•°èŒƒå›´
 		Random& betweenInt(int a, int b) {
 			iValue_.param(RangeInt{ a, b });
 			return *this;
 		}
-		//¸¡µã·¶Î§
+		//æµ®ç‚¹èŒƒå›´
 		Random& betweenFloat(float a, float b) {
 			fValue_.param(RangeFloat{ a, b });
 			return *this;
 		}
 	public:
-		//mtÉú³ÉÆ÷Ëæ»úÕûÊı
+		//mtç”Ÿæˆå™¨éšæœºæ•´æ•°
 		int randInt_mt(bool bv = false) {
 			return bv ?
 				iValue_(STD::Generator::instance().get_mt())
 				: iValue_(inst_.get_mt());
 		}
-		//reÉú³ÉÆ÷Ëæ»úÕûÊı
+		//reç”Ÿæˆå™¨éšæœºæ•´æ•°
 		int randInt_re(bool bv = false) {
 			return bv ?
 				iValue_(STD::Generator::instance().get_re())
 				: iValue_(inst_.get_re());;
 		}
-		//mtÉú³ÉÆ÷Ëæ»ú¸¡µãÊı
+		//mtç”Ÿæˆå™¨éšæœºæµ®ç‚¹æ•°
 		float randFloat_mt(bool bv = false) {
 			return bv ? 
 				fValue_(STD::Generator::instance().get_mt())
 				: fValue_(inst_.get_mt());
 		}
-		//reÉú³ÉÆ÷Ëæ»ú¸¡µãÊı
+		//reç”Ÿæˆå™¨éšæœºæµ®ç‚¹æ•°
 		float randFloat_re(bool bv = false) {
 			return bv ? 
 				fValue_(STD::Generator::instance().get_re())
@@ -106,14 +106,14 @@ namespace STD {
 	//Weight
 	class Weight {
 	public:
-		//È¨ÖØ³Ø
+		//æƒé‡æ± 
 		Weight() {
 			sum_ = 0;
 			len_ = 0;
 			memset(indxId_, 0, sizeof(int)*MAX_WEIGHT);
 			memset(weight_, 0, sizeof(int)*MAX_WEIGHT);
 		}
-		//³õÊ¼»¯È¨ÖØ¼¯ºÏ
+		//åˆå§‹åŒ–æƒé‡é›†åˆ
 		void init(int weight[], int len)
 		{
 			if (len > MAX_WEIGHT) {
@@ -130,10 +130,10 @@ namespace STD {
 				return;
 			}
 			len_ = len;
-			//Ëæ»úÊı·¶Î§
+			//éšæœºæ•°èŒƒå›´
 			rand_.betweenInt(1, sum_);
 		}
-		//È¨ÖØËæ»úÖØÅÅ
+		//æƒé‡éšæœºé‡æ’
 		void shuffle() {
 			for (int i = len_ - 1; i > 0; --i) {
 				std::uniform_int_distribution<decltype(i)> d(0, i);
@@ -142,7 +142,7 @@ namespace STD {
 				std::swap(indxId_[i], indxId_[j]);
 			}
 		}
-		//°´È¨ÖµÀ´Ëæ»ú£¬·µ»ØË÷Òı
+		//æŒ‰æƒå€¼æ¥éšæœºï¼Œè¿”å›ç´¢å¼•
 		int getResult(bool bv = false) {
 			if (sum_ <= 1) {
 				return indxId_[0];
@@ -165,49 +165,49 @@ namespace STD {
 			}
 		}
 	public:
-		STD::Random rand_;		//Ëæ»úÊıÖµ
-		int sum_;				//È¨ÖµÖ®ºÍ
-		int len_;				//Í³¼Æ¸öÊı
-		int weight_[MAX_WEIGHT];//È¨ÖØ¼¯ºÏ
-		int indxId_[MAX_WEIGHT];//¶ÔÓ¦Ë÷Òı
+		STD::Random rand_;		//éšæœºæ•°å€¼
+		int sum_;				//æƒå€¼ä¹‹å’Œ
+		int len_;				//ç»Ÿè®¡ä¸ªæ•°
+		int weight_[MAX_WEIGHT];//æƒé‡é›†åˆ
+		int indxId_[MAX_WEIGHT];//å¯¹åº”ç´¢å¼•
 	};
 
-	//²âÊÔÓÃÀı
+	//æµ‹è¯•ç”¨ä¾‹
 	static void test001() {
 
-		//Ëæ»úÊı[5,10]
+		//éšæœºæ•°[5,10]
 		STD::Random r1(5, 10);
 		r1.randInt_mt();
 
-		//Ëæ»úÊı[5,10]
+		//éšæœºæ•°[5,10]
 		STD::Random r2;
 		r2.betweenInt(5, 10).randInt_mt();
 
-		//Ëæ»ú¸¡µãÊı[0.1,0.9]
+		//éšæœºæµ®ç‚¹æ•°[0.1,0.9]
 		STD::Random r3(0.1f, 0.9f);
 		r3.randFloat_mt();
 
-		//Ëæ»ú¸¡µãÊı[0.1,0.9]
+		//éšæœºæµ®ç‚¹æ•°[0.1,0.9]
 		STD::Random r4;
 		r4.betweenFloat(0.1f, 0.9f).randFloat_mt();
 
-		//¸ÅÂÊ·Ö±ğÎª30, 20, 50
+		//æ¦‚ç‡åˆ†åˆ«ä¸º30, 20, 50
 		int weight[3] = { 30,20,50 };
 		STD::Weight w;
-		//³õÊ¼»¯
+		//åˆå§‹åŒ–
 		w.init(weight, 3);
-		//Ëæ»ú10´Î
+		//éšæœº10æ¬¡
 		for (int i = 0; i < 10; ++i) {
-			//È¨ÖµËæ»úÖØÅÅ£¬¿ÉÒÔ²»µ÷ÓÃ
+			//æƒå€¼éšæœºé‡æ’ï¼Œå¯ä»¥ä¸è°ƒç”¨
 			w.shuffle();
-			//·µ»ØËæ»úË÷Òı
+			//è¿”å›éšæœºç´¢å¼•
 			w.getResult();
 		}
 	}
 
-	//²âÊÔ°´È¨ÖØËæ»ú¸ÅÂÊ½á¹û
-	//Ğ´ÈëÎÄ¼şÔÙµ¼ÈëExcel²¢²åÈëÍ¼±í²é¿´¸ÅÂÊÕıÌ¬·Ö²¼Çé¿ö
-	//filename char const* ÒªĞ´ÈëµÄÎÄ¼ş Èç/home/testweight.txt
+	//æµ‹è¯•æŒ‰æƒé‡éšæœºæ¦‚ç‡ç»“æœ
+	//å†™å…¥æ–‡ä»¶å†å¯¼å…¥Excelå¹¶æ’å…¥å›¾è¡¨æŸ¥çœ‹æ¦‚ç‡æ­£æ€åˆ†å¸ƒæƒ…å†µ
+	//filename char const* è¦å†™å…¥çš„æ–‡ä»¶ å¦‚/home/testweight.txt
 	static void test002(char const* filename) {
 		while (1) {
 			if ('q' == getchar()) {
@@ -218,20 +218,20 @@ namespace STD {
 			if (fp == NULL) {
 				return;
 			}
-			int c = 1000;			//Ñ­»·×Ü´ÎÊı
-			int scale = 10;			//·Å´ó±¶Êı
-			int ratioExC = 25;		//»»ÅÆ¸ÅÂÊ
-			int exC = 0, noExC = 0; //»»ÅÆ/²»»»ÅÆ·Ö±ğÍ³¼Æ´ÎÊı
-			//¸ÅÂÊ·Ö±ğÎªratioExC, 100 - ratioExC
+			int c = 1000;			//å¾ªç¯æ€»æ¬¡æ•°
+			int scale = 10;			//æ”¾å¤§å€æ•°
+			int ratioExC = 25;		//æ¢ç‰Œæ¦‚ç‡
+			int exC = 0, noExC = 0; //æ¢ç‰Œ/ä¸æ¢ç‰Œåˆ†åˆ«ç»Ÿè®¡æ¬¡æ•°
+			//æ¦‚ç‡åˆ†åˆ«ä¸ºratioExC, 100 - ratioExC
 			int weight[2] = { ratioExC*scale,(100 - ratioExC)*scale };
 			STD::Weight w;
-			//³õÊ¼»¯
+			//åˆå§‹åŒ–
 			w.init(weight, 2);
-			//Ëæ»úc´Î
+			//éšæœºcæ¬¡
 			for (int i = 0; i < c; ++i) {
-				//È¨ÖµËæ»úÖØÅÅ£¬¿ÉÒÔ²»µ÷ÓÃ
+				//æƒå€¼éšæœºé‡æ’ï¼Œå¯ä»¥ä¸è°ƒç”¨
 				w.shuffle();
-				//·µ»ØËæ»úË÷Òı
+				//è¿”å›éšæœºç´¢å¼•
 				int index = w.getResult();
 				if (index == 0) {
 					++exC;
@@ -239,7 +239,7 @@ namespace STD {
 				else if (index == 1) {
 					++noExC;
 				}
-				//Ğ´ÈëÎÄ¼şÔÙµ¼ÈëExcel²¢²åÈëÍ¼±í²é¿´¸ÅÂÊÕıÌ¬·Ö²¼Çé¿ö
+				//å†™å…¥æ–‡ä»¶å†å¯¼å…¥Excelå¹¶æ’å…¥å›¾è¡¨æŸ¥çœ‹æ¦‚ç‡æ­£æ€åˆ†å¸ƒæƒ…å†µ
 				char ch[10] = { 0 };
 				sprintf(ch, "%d\t", index == 0 ? 1 : -1);
 				fwrite(ch, strlen(ch), 1, fp);
