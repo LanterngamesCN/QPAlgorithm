@@ -20,6 +20,7 @@
 #include "funcC.h"
 #include "s13s.h"
 #include "weights.h"
+#include "StdRandom.h"
 
 //protobuf测试
 #include "s13s.Message.pb.h"
@@ -73,18 +74,15 @@ namespace S13S {
 	void CGameLogic::ShuffleCards()
 	{
 		//printf("-- *** 洗牌...\n");
-		static uint32_t seed = (uint32_t)time(NULL);
-		//int c = rand() % 20 + 5;
-		int c = rand_r(&seed) % 20 + 5;
-		for (int k = 0; k < c; ++k) {
-			for (int i = 0; i < MaxCardTotal; ++i) {
-				//int j = rand() % MaxCardTotal;
-				int j = rand_r(&seed) % MaxCardTotal;
-				if (i != j) {
-					std::swap(cardsData_[i], cardsData_[j]);
-				}
-			}
+#if 0
+		for (int i = MaxCardTotal - 1; i > 0; --i) {
+			std::uniform_int_distribution<decltype(i)> d(0, i);
+			int j = d(STD::Generator::instance().get_mt());
+			std::swap(cardsData_[i], cardsData_[j]);
 		}
+#else
+		std::shuffle(&cardsData_[0], &cardsData_[MAX_CARD_TOTAL], STD::Generator::instance().get_mt());
+#endif
 		index_ = 0;
 	}
 
@@ -98,6 +96,7 @@ namespace S13S {
 		if (n > Remaining()) {
 			return;
 		}
+		std::shuffle(&cardsData_[index_], &cardsData_[MAX_CARD_TOTAL], STD::Generator::instance().get_mt());
 		int k = 0;
 		for (int i = index_; i < index_ + n; ++i) {
 			assert(i < MaxCardTotal);

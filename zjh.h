@@ -170,9 +170,6 @@ namespace ZJH {
 	private:
 		int8_t index_;
 		uint8_t cardsData_[MaxCardTotal];
-	private:
-		std::random_device seed_;
-		std::mt19937 rand_;
 	};
 };
 
