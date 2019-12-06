@@ -9,13 +9,10 @@
 #include <algorithm>
 #include <utility>
 #include <random>
+#include <vector>
 #include <chrono>
 //{std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())}
 //{std::chrono::system_clock::now().time_since_epoch().count()}
-
-#ifndef MAX_WEIGHT
-#define MAX_WEIGHT 10
-#endif
 
 //#define DEBUG_PRINT
 
@@ -101,19 +98,14 @@ namespace STD {
 		//权重池
 		Weight() {
 			sum_ = 0;
-			len_ = 0;
-			memset(indxId_, 0, sizeof(int)*MAX_WEIGHT);
-			memset(weight_, 0, sizeof(int)*MAX_WEIGHT);
 		}
 		//初始化权重集合
 		void init(int weight[], int len)
 		{
-			if (len > MAX_WEIGHT) {
-				printf("CWeight::init ERR: len:%d > MAX_WEIGHT:%d\n", len, MAX_WEIGHT);
-				return;
-			}
+			indxId_.resize(len);
+			weight_.resize(len);
 			sum_ = 0;
-			for (int i = 0; i < len; ++i) {
+			for (int i = 0; i < weight_.size(); ++i) {
 				weight_[i] = weight[i];
 				indxId_[i] = i;
 				sum_ += weight[i];
@@ -121,13 +113,12 @@ namespace STD {
 			if (sum_ <= 1) {
 				return;
 			}
-			len_ = len;
 			//随机数范围
 			rand_.betweenInt(1, sum_);
 		}
 		//权重随机重排
 		void shuffle() {
-			for (int i = len_ - 1; i > 0; --i) {
+			for (int i = weight_.size() - 1; i > 0; --i) {
 				std::uniform_int_distribution<decltype(i)> d(0, i);
 				int j = d(STD::Generator::instance().get_mt());
 				std::swap(weight_[i], weight_[j]);
@@ -140,12 +131,12 @@ namespace STD {
 				return indxId_[0];
 			}
 #ifdef DEBUG_PRINT
-			for (int i = 0; i < len_; ++i) {
+			for (int i = 0; i < weight_.size(); ++i) {
 				printf("w[%d]=%d\n", indxId_[i], weight_[i]);
 			}
 #endif
 			int r = rand_.randInt_mt(bv), c = r;
-			for (int i = 0; i < len_; ++i) {
+			for (int i = 0; i < weight_.size(); ++i) {
 				c -= weight_[i];
 				if (c <= 0) {
 #ifdef DEBUG_PRINT
@@ -157,11 +148,10 @@ namespace STD {
 			}
 		}
 	public:
-		STD::Random rand_;		//随机数值
-		int sum_;				//权值之和
-		int len_;				//统计个数
-		int weight_[MAX_WEIGHT];//权重集合
-		int indxId_[MAX_WEIGHT];//对应索引
+		STD::Random rand_;		 //随机数值
+		int sum_;				 //权值之和
+		std::vector<int> weight_;//权重集合
+		std::vector<int> indxId_;//对应索引
 	};
 
 	//测试用例
