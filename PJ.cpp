@@ -95,7 +95,7 @@ namespace QZPJ {
 		for (int k = 0; k < 5; ++k) {
 			for (int i = 0; i < MaxCardTotal; ++i) {
 				int j = rand() % MaxCardTotal;
-				swap(cardsData_[i], cardsData_[j]);
+				std::swap(cardsData_[i], cardsData_[j]);
 			}
 		}
 		index_ = 0;
