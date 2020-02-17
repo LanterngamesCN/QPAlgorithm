@@ -3389,7 +3389,8 @@ namespace S13S {
 							specialTy = group.specialTy = TyThree123;
 						}
 					}
-					else if (tyRoot == Tysc && tyChild == Tysc && tyLeaf == Tysc) {
+					//Fixed BUG：三同花：尾墩(Tysc)/中墩(Tysc)/头墩(Tysc/Ty123sc)
+					else if (tyRoot == Tysc && tyChild == Tysc && (tyLeaf == Tysc || tyLeaf == Ty123sc)) {
 						//如果不是三同花顺且不是三顺子且不是三同花
 						if (specialTy != TyThree123sc && specialTy != TyThree123 && specialTy != TyThreesc) {
 							//三同花
