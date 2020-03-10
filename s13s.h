@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by andy_ro@qq.com
 // 			5/26/2019
 //
@@ -425,10 +425,24 @@ namespace S13S {
 		class handinfo_t {
 			friend class CGameLogic;
 		public:
+			//玩家手牌字符串，根据选择的墩牌型拼接手牌
+			//3b2c110,04352607384,323d2d1d0d7,3,10;342b0b1,2336062a1a2,22123929096,0,8;
+			//一个分号";"分割一个玩家，每个分号内用逗号","隔开玩家的3墩牌，分号前一位表示玩家选牌结果，玩家选牌结果前一位表示玩家座位号(0/1/2/3)
+			//两位表示1张牌，第1位是花色，第2位数是牌值，头墩3张，中墩和尾墩各5张，每墩最后一位字符表示牌型
+			//玩家选牌结果
+			enum SelectTy {
+				ManualCard0 = 0x00,                  //手动摆牌，索引0
+				ManualCard1 = 0x01,                  //手动摆牌，索引1
+				ManualCard2 = 0x02,                  //手动摆牌，索引2
+				ManualCard3 = 0x03,                  //手动摆牌，索引3
+				RecommandCard0 = 0x08 | ManualCard0, //推荐牌型，索引0
+				RecommandCard1 = 0x08 | ManualCard1, //推荐牌型，索引1
+				RecommandCard2 = 0x08 | ManualCard2, //推荐牌型，索引2
+			};
 			handinfo_t()
 				:rootEnumList(NULL)/*, specialTy_(TyNil)*/, chairID(-1),
 				manual_group_index(-1),
-				select_group_index(-1), classify({ 0 }) {
+				select_group_index(-1), classify({ 0 }), select_result_({ 0 }) {
 				forswap = false;
 				Reset();
 			}
@@ -462,6 +476,7 @@ namespace S13S {
 				manual_group.copy(ref.manual_group);
 				manual_group_index = ref.manual_group_index;
 				select_group_index = ref.select_group_index;
+				select_result_ = ref.select_result_;
 				groups.clear();
 				for (std::vector<groupdun_t const*>::const_iterator it = ref.groups.begin();
 					it != ref.groups.end(); ++it) {
@@ -527,6 +542,8 @@ namespace S13S {
 			//groupindex int 若 >=0 从enum_groups中选择一组，对应groups中索引
 			//groupindex int 若 <= -1 指向manual_group对应groups中索引
 			bool Select(int groupindex);
+			//返回玩家选牌结果
+			SelectTy GetSelectResult();
 			//返回手牌确定的三墩牌型
 			groupdun_t const* GetSelected();
 			//手牌是否已确定三墩牌型
@@ -571,6 +588,11 @@ namespace S13S {
 			int select_group_index;
 			//合并 spec_groups & enum_groups & manual_group
 			std::vector<groupdun_t const*> groups;
+			struct {
+				//int index;//指向select_group_index
+				bool manual; //手动摆牌
+				//HandTy specialTy;//特殊牌型
+			}select_result_;
 			//叶子节点列表
 			//枚举几组最优墩(头墩&中墩&尾墩加起来为一组)，由叶子节点向上往根节点遍历
 			//叶子节点 dt_ 成员判断当前是从哪墩节点开始，

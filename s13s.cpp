@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by andy_ro@qq.com
 // 			5/26/2019
 //
@@ -6052,6 +6052,7 @@ namespace S13S {
 	//groupindex int 若 <= -1 指向manual_group对应groups中索引
 	bool CGameLogic::handinfo_t::Select(int groupindex) {
 		if (groupindex >= 0) {
+			//含有特殊牌型
 			if (spec_groups.size() > 0) {
 				assert(spec_groups.size() == 1);
 				//枚举几组最优解必须存在
@@ -6060,7 +6061,14 @@ namespace S13S {
 				assert(groupindex < spec_groups.size() + enum_groups.size());
 				//选择特殊牌型/枚举一组
 				select_group_index = groupindex;
+				//选择推荐牌型
+				assert(groups.size() > 0);
+				//select_result_.index = select_group_index;
+				select_result_.manual = false;
+				//select_result_.specialTy = select_group_index == 0 ?
+				//	groups[select_group_index]->specialTy : TyNil;
 			}
+			//不含特殊牌型
 			else {
 				//枚举几组最优解必须存在
 				assert(enum_groups.size() > 0);
@@ -6069,6 +6077,10 @@ namespace S13S {
 				//从枚举最优解中选择一组
 				//直接选择枚举中的一组进行比牌
 				select_group_index = groupindex;
+				//选择推荐牌型
+				//select_result_.index = select_group_index;
+				select_result_.manual = false;
+				//select_result_.specialTy = TyNil;
 			}
 		}
 		else {
@@ -6082,10 +6094,39 @@ namespace S13S {
 			assert(GetManualC() == MAX_COUNT);
 			//手动摆牌构成的一组进行比牌
 			select_group_index = manual_group_index;
+			//选择摆牌牌型
+			//select_result_.index = select_group_index;
+			select_result_.manual = true;
+			//select_result_.specialTy = TyNil;
 		}
 		return select_group_index != -1;
 	}
 	
+	//返回玩家选牌结果
+	CGameLogic::handinfo_t::SelectTy CGameLogic::handinfo_t::GetSelectResult() {
+		uint8_t c = 0;
+		if (select_group_index >= 0) {
+			c = select_result_.manual ?
+				//玩家选择手动摆牌
+				//第4 bit位 0x00 选择手动摆牌
+				//低3 bit位 0x01/0x02/0x03 牌型对应索引id
+				(0x00 | (0x07 & select_group_index)) :
+				//玩家选择推荐牌型
+				//第4 bit位 0x08 选择推荐牌型
+				//低3 bit位 0x01/0x02/0x03 牌型对应索引id
+				(0x08 | (0x07 & select_group_index));
+		}
+		assert(
+			c == handinfo_t::ManualCard0 ||
+			c == handinfo_t::ManualCard1 ||
+			c == handinfo_t::ManualCard2 ||
+			c == handinfo_t::ManualCard3 ||
+			c == handinfo_t::RecommandCard0 ||
+			c == handinfo_t::RecommandCard1 ||
+			c == handinfo_t::RecommandCard2);
+		return (SelectTy)c;
+	}
+
 	//返回手牌确定的三墩牌型
 	CGameLogic::groupdun_t const* CGameLogic::handinfo_t::GetSelected() {
 		assert(select_group_index != -1);
