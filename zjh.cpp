@@ -668,12 +668,20 @@ namespace ZJH {
 		}
 		else {
 			c0 = GetCardColor(cards1[1]);
+			//对牌点数大于单牌点数
+			if (p0 > sp0) {
+				c0 = GetCardColor(cards1[0]);
+			}
 		}
 		if (sp1 == p1) {
 			c1 = GetCardColor(cards2[0]);
 		}
 		else {
 			c1 = GetCardColor(cards2[1]);
+			//对牌点数大于单牌点数
+			if (p1 > sp1) {
+				c1 = GetCardColor(cards2[0]);
+			}
 		}
 		return c0 - c1;
 	}
