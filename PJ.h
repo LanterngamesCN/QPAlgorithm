@@ -128,6 +128,8 @@ namespace PJ {
 		void DebugListCards();
 		//剩余牌数
 		int8_t Remaining();
+		//余牌
+		uint8_t const* LeftCards();
 		//洗牌
 		void ShuffleCards();
 		//发牌，生成n张玩家手牌
@@ -160,6 +162,8 @@ namespace PJ {
 		static std::string StringCards(uint8_t const* cards, int n);
 		//打印n张牌
 		static void PrintCardList(uint8_t const* cards, int n);
+		//手牌字符串
+		static std::string hexString(uint8_t* cards, int n);
 	private:
 		//拆分字符串"32 14"
 		static void CardsBy(std::string const& strcards, std::vector<std::string>& vec);

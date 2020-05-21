@@ -93,6 +93,11 @@ namespace PJ {
 	int8_t CGameLogic::Remaining() {
 		return int8_t(MaxCardTotal - index_);
 	}
+	
+	//余牌
+	uint8_t const* CGameLogic::LeftCards() {
+		return &cardsData_[index_];
+	}
 
 	//洗牌
 	void CGameLogic::ShuffleCards()
@@ -486,6 +491,21 @@ namespace PJ {
 			x |= cHex(data[i]) << ((len - i - 1) * 4);
 		}
 		return x;
+	}
+
+	static std::string hexChar(uint8_t c) {
+		char s[5] = { 0 };
+		snprintf(s, sizeof(s), "%02x", c);
+		return s;
+	}
+
+	//手牌字符串
+	std::string CGameLogic::hexString(uint8_t* cards, int n) {
+		std::string s;
+		for (int i = 0; i < n; ++i) {
+			s += hexChar(cards[i]);
+		}
+		return s;
 	}
 
 	//生成n张牌<-"32 14"
