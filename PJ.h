@@ -163,7 +163,7 @@ namespace PJ {
 		//打印n张牌
 		static void PrintCardList(uint8_t const* cards, int n);
 		//手牌字符串
-		static std::string hexString(uint8_t* cards, int n);
+		static std::string hexString(uint8_t const* cards, int n);
 	private:
 		//拆分字符串"32 14"
 		static void CardsBy(std::string const& strcards, std::vector<std::string>& vec);

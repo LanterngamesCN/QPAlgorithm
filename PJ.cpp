@@ -500,7 +500,7 @@ namespace PJ {
 	}
 
 	//手牌字符串
-	std::string CGameLogic::hexString(uint8_t* cards, int n) {
+	std::string CGameLogic::hexString(uint8_t const* cards, int n) {
 		std::string s;
 		for (int i = 0; i < n; ++i) {
 			s += hexChar(cards[i]);
