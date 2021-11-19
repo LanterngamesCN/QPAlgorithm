@@ -1,3 +1,7 @@
+//
+// Created by andy_ro@qq.com
+// 			11/19/2021
+//
 #ifndef STD_RANDOM_H
 #define STD_RANDOM_H
 
