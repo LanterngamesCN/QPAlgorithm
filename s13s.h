@@ -1,6 +1,6 @@
 //
 // Created by andy_ro@qq.com
-// 			5/26/2019
+// 			11/19/2021
 //
 #ifndef GAME_LOGIC_S13S_H
 #define GAME_LOGIC_S13S_H
@@ -29,7 +29,8 @@
 #define MIN_GAME_PLAYER S13S::MinPlayer		//至少2人局
 #define MAX_COUNT		S13S::MaxCount		//每人13张牌
 #define MAX_ROUND       S13S::MaxRound		//最大局数
-#define MAX_ENUMSZ 		20
+#define MAX_DEPTH		600                 //遍历最大条目
+#define MAX_ENUMSZ 		20					//枚举最大条目
 
 //十三水
 namespace S13S {
@@ -119,7 +120,7 @@ namespace S13S {
 	//牌值对应占位->A,2,,,K,0 牌点对应占位->0,2,,,K,A
 	int const MaxSZ = K + 1;
 	//枚举兄弟节点数目
-	int const MaxEnumSZ = 1500;
+	//int const MaxEnumSZ = 1500;
 
 	//游戏逻辑类
 	class CGameLogic
@@ -168,7 +169,7 @@ namespace S13S {
 		//手牌字符串
 		static std::string StringCards(uint8_t const* cards, int n);
 		//打印n张牌
-		static void PrintCardList(uint8_t const* cards, int n, bool hide = true);
+		static void PrintCardList(uint8_t const* cards, int n, bool hide = true, bool newline = true);
 		//获取牌有效列数
 		//cards uint8_t const* 相同牌值n张牌(n<=4)
 		//n uint8_t 黑/红/梅/方4张牌
@@ -204,6 +205,8 @@ namespace S13S {
 			typedef std::pair<EnumItem, EnumTree*>      TreeNode;
 			//树节点，pair<树节点指针，对应树枚举项>
 			typedef std::pair<EnumTree*, int>   TraverseTreeNode;
+			//树节点，pair<枚举项牌型，对应余牌枚举子项列表>
+			typedef std::vector<TreeNode>			TreeNodeList;
 		public:
 			EnumTree() {
 				Reset();
@@ -241,6 +244,10 @@ namespace S13S {
 			bool GetNextEnumItem(uint8_t const* src, int len,
 				CardData const*& dst, HandTy& ty,
 				int& cursor, uint8_t *cpy, int& cpylen);
+			//判断是否首个枚举项
+			bool IsFirstEnumItem() { return cursor_ == 0; }
+			//判断是否最后一个枚举项
+			bool IsLastEnumItem() { return cursor_ + 1 == tree_.size(); }
 		public:
 			//所有同花色五张/三张连续牌(五张/三张同花顺)
 			std::vector<CardData> v123sc;
@@ -263,14 +270,16 @@ namespace S13S {
 		public:
 			//标识头/中/尾墩
 			DunTy dt_;
+			//插入标记
+			bool insert_;
 			//遍历游标
-			int c, cursor_;
+			int cursor_;
 			//父亲节点
 			EnumTree* parent_;
 			//对应父节点游标位置
 			int parentcursor_;
 			//pair<枚举项牌型，对应余牌枚举子项列表>，多叉树结构
-			TreeNode tree[MaxEnumSZ];
+			TreeNodeList tree_;
 		public:
 			//内存泄漏检测
 #ifdef _MEMORY_LEAK_DETECK_

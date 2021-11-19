@@ -19,7 +19,6 @@
 #include "cfg.h"
 #include "funcC.h"
 #include "s13s.h"
-#include "weights.h"
 #include "StdRandom.h"
 
 //protobuf测试
@@ -528,14 +527,15 @@ namespace S13S {
 	}
 	
 	//打印n张牌
-	void CGameLogic::PrintCardList(uint8_t const* cards, int n, bool hide) {
+	void CGameLogic::PrintCardList(uint8_t const* cards, int n, bool hide, bool newline) {
 		for (int i = 0; i < n; ++i) {
 			if (cards[i] == 0 && hide) {
 				continue;
 			}
 			printf("%s ", StringCard(cards[i]).c_str());
 		}
-		printf("\n");
+		if (newline)
+			printf("\n");
 	}
 
 	//获取牌有效列数
@@ -2746,10 +2746,7 @@ namespace S13S {
 		HandTy tyLeaf = TyNil, tyChild = TyNil, tyRoot = TyNil;
 		EnumTree::CardData const *leaf = NULL, *child = NULL, *root = NULL;
 		
-		//防止重复添加
-		std::map<uint64_t, bool> masks;
-		uint64_t maskRoot = 0, maskChild = 0;
-
+		//hand.chairID = chairID;
 		hand.Init();
 		//叶子节点列表
 		//枚举几组最优墩(头墩&中墩&尾墩加起来为一组)，由叶子节点向上往根节点遍历
@@ -2763,8 +2760,7 @@ namespace S13S {
 #endif
 		//枚举尾墩/5张 //////
 		EnumCards(src, len, 5, hand.classify, *rootEnumList, DunLast);
-	entry_root_iterator:
-		while (c < n) {
+		while (true) {
 			//返回一个枚举牌型及对应的余牌
 			//按同花顺/铁支/葫芦/同花/顺子/三条/两对/对子/散牌的顺序
 			memset(cpy, 0, MaxSZ * sizeof(uint8_t));
@@ -2791,35 +2787,14 @@ namespace S13S {
 			childEnumList->parent_ = rootEnumList;
 			childEnumList->parentcursor_ = cursorRoot;
 			
-			//计算根节点游标掩码
-			maskRoot = (uint64_t)((cursorRoot + 1) & 0xFFFFFFFF);
-
 			classify_t classify = { 0 };
 			//从余牌中枚举中墩/5张 //////
 			EnumCards(psrc, lensrc, 5, classify, *childEnumList, DunSecond);
-			
-			//printf("\n\n\n--- *** --------------------------------------------------\n");
-			//childEnumList->PrintEnumCards(false, TyAllBase);
-			//printf("--- *** --------------------------------------------------\n\n\n");
-
-		entry_child_iterator:
-			while (c < n) {
+			while (true) {
 				//返回一个枚举牌型及对应的余牌
 				//按同花顺/铁支/葫芦/同花/顺子/三条/两对/对子/散牌的顺序
 				memset(cpy2, 0, MaxSZ * sizeof(uint8_t));
 				if (!childEnumList->GetNextEnumItem(psrc, lensrc, child, tyChild, cursorChild, cpy2, cpylen2)) {
-					
-					//printf("--- *** --------------------------------------------------\n");
-					//rootEnumList->PrintCursorEnumCards();
-					//printf("--- *** --------------------------------------------------\n");
-					
-					std::map<uint64_t, bool>::const_iterator it = masks.find(maskRoot);
-					if (it == masks.end()) {
-						//根节点为叶子节点，记录尾墩
-						leafList.push_back(EnumTree::TraverseTreeNode(rootEnumList, cursorRoot));
-						masks[maskRoot] = true;
-						++c;
-					}
 					break;
 				}
 				//跳过三墩牌组合出现倒水情况
@@ -2827,20 +2802,28 @@ namespace S13S {
 					//牌型不同比牌型
 					if (tyChild != tyRoot) {
 						if (tyChild > tyRoot) {
+							//printf("取中墩 = [%s] ", StringHandTy(tyChild).c_str());
+							//PrintCardList(&child->front(), child->size(), false);
+							//printf(" 倒水\n");
+							//printf("取尾墩 = [%s] ", StringHandTy(tyRoot).c_str());
+							//PrintCardList(&root->front(), root->size());
 							continue;
 						}
 					}
-					else {
-						//牌型相同从大到小比点数，葫芦牌型比较三张的大小(中间的牌)
-						if (CGameLogic::CompareCards(
-							&root->front(), root->size(),
-							&child->front(), child->size(), false, tyChild) < 0) {
-							continue;
-						}
+					//牌型相同从大到小比点数，葫芦牌型比较三张的大小(中间的牌)
+					else if (CGameLogic::CompareCards(
+						&root->front(), root->size(),
+						&child->front(), child->size(), false, tyChild) < 0) {
+						//printf("取中墩 = [%s] ", StringHandTy(tyChild).c_str());
+						//PrintCardList(&child->front(), child->size(), false);
+						//printf(" 倒水\n");
+						//printf("取尾墩 = [%s] ", StringHandTy(tyRoot).c_str());
+						//PrintCardList(&root->front(), root->size());
+						continue;
 					}
 				}
 				
-				//printf("\n取中墩 = [%s] ", StringHandTy(tyChild).c_str());
+				//printf("取中墩 = [%s] ", StringHandTy(tyChild).c_str());
 				//PrintCardList(&child->front(), child->size());
 				//childEnumList->PrintCursorEnumCards();
 
@@ -2859,107 +2842,102 @@ namespace S13S {
 				leafEnumList->parent_ = childEnumList;
 				leafEnumList->parentcursor_ = cursorChild;
 				
-				//计算子节点游标掩码
-				maskChild = (uint64_t)(((cursorChild + 1) & 0xFFFFFFFF) << 24) | (uint64_t)((cursorRoot + 1) & 0xFFFFFFFF);
-				//printf("cursorRoot: %d cursorChild: %d\n", cursorRoot + 1, cursorChild + 1);
-				
 				classify_t classify = { 0 };
 				//从余牌中枚举头墩/3张 //////
 				EnumCards(psrc2, lensrc2, 3, classify, *leafEnumList, DunFirst);
-				while (c < n) {
+				while (true) {
 					//返回一个枚举牌型及对应的余牌
 					//按同花顺/铁支/葫芦/同花/顺子/三条/两对/对子/散牌的顺序
 					memset(cpy3, 0, MaxSZ * sizeof(uint8_t));
 					if (!leafEnumList->GetNextEnumItem(psrc2, lensrc2, leaf, tyLeaf, cursorLeaf, cpy3, cpylen3)) {
-						
-						//printf("--- *** --------------------------------------------------\n");
-						//childEnumList->PrintCursorEnumCards();
-						//rootEnumList->PrintCursorEnumCards();
-						//printf("--- *** --------------------------------------------------\n");
-						
-						std::map<uint64_t, bool>::const_iterator it = masks.find(maskChild);
-						if (it == masks.end()) {
-							//子节点为叶子节点，记录中墩和尾墩，由叶子节点向上查找根节点
-							leafList.push_back(EnumTree::TraverseTreeNode(childEnumList, cursorChild));
-							masks[maskChild] = true;
-							masks[maskRoot] = true;
-							++c;
-						}
 						break;
 					}
 					//跳过三墩牌组合出现倒水情况
-					{
+					if (tyLeaf == Ty30 || tyLeaf == Ty20) {
 						//牌型不同比牌型
 						if (tyLeaf != tyChild) {
-							if(tyLeaf == Ty30 || tyLeaf == Ty20) {
-								if (tyLeaf > tyChild) {
-									continue;
-								}
+							if (tyLeaf > tyChild) {
+								//printf("取头墩 = [%s] ", StringHandTy(tyLeaf).c_str());
+								//PrintCardList(&leaf->front(), leaf->size(), false);
+								//printf(" 倒水\n");
+								//printf("取中墩 = [%s] ", StringHandTy(tyChild).c_str());
+								//PrintCardList(&child->front(), child->size());
+								//printf("取尾墩 = [%s] ", StringHandTy(tyRoot).c_str());
+								//PrintCardList(&root->front(), root->size());
+								continue;
 							}
 						}
-						else {
-							if (tyLeaf == Ty30 || tyLeaf == Ty20) {
-								//牌型相同从大到小比点数，葫芦牌型比较三张的大小(中间的牌)
-								if (CGameLogic::CompareCards(
-									&child->front(), child->size(),
-									&leaf->front(), leaf->size(), false, tyLeaf) < 0) {
-									continue;
-								}
-							}
+						//牌型相同从大到小比点数，葫芦牌型比较三张的大小(中间的牌)
+						else if (CGameLogic::CompareCards(
+							&child->front(), child->size(),
+							&leaf->front(), leaf->size(), false, tyLeaf) < 0) {
+							//printf("取头墩 = [%s] ", StringHandTy(tyLeaf).c_str());
+							//PrintCardList(&leaf->front(), leaf->size(), false);
+							//printf(" 倒水\n");
+							//printf("取中墩 = [%s] ", StringHandTy(tyChild).c_str());
+							//PrintCardList(&child->front(), child->size());
+							//printf("取尾墩 = [%s] ", StringHandTy(tyRoot).c_str());
+							//PrintCardList(&root->front(), root->size());
+							continue;
 						}
 					}
-					/*
-					--- *** --------------------------------------------------
-					--- *** 第[1]墩 - 同花顺[Ty123sc]：♦5 ♦6 ♦7
-					--- *** 第[2]墩 - 铁支[Ty40]：♦2 ♣2 ♥2 ♠2
-					--- *** 第[3]墩 - 同花顺[Ty123sc]：♦8 ♦9 ♦10 ♦J ♦Q
-					--- *** *** *** *** *** 余牌：♣Q
-					--- *** --------------------------------------------------
-					--- *** --------------------------------------------------
-					--- *** 第[1]墩 - 同花[Tysc]：♦5 ♦6 ♦Q
-					--- *** 第[2]墩 - 铁支[Ty40]：♦2 ♣2 ♥2 ♠2
-					--- *** 第[3]墩 - 同花顺[Ty123sc]：♦7 ♦8 ♦9 ♦10 ♦J
-					--- *** *** *** *** *** 余牌：♣Q
-					--- *** --------------------------------------------------
-					--- *** --------------------------------------------------
-					--- *** 第[1]墩 - 同花[Tysc]：♦5 ♦J ♦Q
-					--- *** 第[2]墩 - 铁支[Ty40]：♦2 ♣2 ♥2 ♠2
-					--- *** 第[3]墩 - 同花顺[Ty123sc]：♦6 ♦7 ♦8 ♦9 ♦10
-					--- *** *** *** *** *** 余牌：♣Q
-					--- *** --------------------------------------------------
-					--- *** --------------------------------------------------
-					--- *** 第[1]墩 - 同花顺[Ty123sc]：♦10 ♦J ♦Q
-					--- *** 第[2]墩 - 铁支[Ty40]：♦2 ♣2 ♥2 ♠2
-					--- *** 第[3]墩 - 同花顺[Ty123sc]：♦5 ♦6 ♦7 ♦8 ♦9
-					--- *** *** *** *** *** 余牌：♣Q
-					--- *** --------------------------------------------------
-					*/
-					//std::map<uint64_t, bool>::const_iterator it = masks.find(maskChild);
-					//if (it == masks.end()) {	
-						//printf("\n取头墩 = [%s] ", StringHandTy(tyLeaf).c_str());
-						//PrintCardList(&leaf->front(), leaf->size());
-						//leafEnumList->PrintCursorEnumCards();
-						
-						//printf("--- *** --------------------------------------------------\n");
-						//leafEnumList->PrintCursorEnumCards();
-						//childEnumList->PrintCursorEnumCards();
-						//rootEnumList->PrintCursorEnumCards();
-						//printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy3, cpylen3).c_str());
-						//printf("--- *** --------------------------------------------------\n");
+					
+					//printf("取头墩 = [%s] ", StringHandTy(tyLeaf).c_str());
+					//PrintCardList(&leaf->front(), leaf->size());
 
-						//叶子节点作为叶子节点，记录头墩，中墩和尾墩，由叶子节点向上查找父节点和根节点
-						leafList.push_back(EnumTree::TraverseTreeNode(leafEnumList, cursorLeaf));
-						masks[maskChild] = true;
-						masks[maskRoot] = true;
-						++c;
-						//重新从根节点开始迭代游标 //////
-						goto entry_root_iterator;
-					//}
+					if (!childEnumList->insert_)
+						childEnumList->insert_ = true;
+					if (!leafEnumList->insert_)
+						leafEnumList->insert_ = true;
+
+					//printf("--- *** --------------------------------------------------\n");
+					//leafEnumList->PrintCursorEnumCards();
+					//childEnumList->PrintCursorEnumCards();
+					//rootEnumList->PrintCursorEnumCards();
+					//printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy3, cpylen3).c_str());
+					//printf("--- *** --------------------------------------------------\n");
+
+					//叶子节点作为叶子节点，记录头墩，中墩和尾墩，由叶子节点向上查找父节点和根节点
+					leafList.push_back(EnumTree::TraverseTreeNode(leafEnumList, cursorLeaf));
+					if (leafList.size() >= MAX_DEPTH)
+						goto end;
+				}
+				
+				if (!leafEnumList->insert_) {
+					if (!childEnumList->insert_)
+						childEnumList->insert_ = true;
+					leafEnumList->insert_ = true;
+					
+					//printf("--- *** --------------------------------------------------\n");
+					//childEnumList->PrintCursorEnumCards();
+					//rootEnumList->PrintCursorEnumCards();
+					//printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy2, cpylen2).c_str());
+					//printf("--- *** --------------------------------------------------\n");
+					 
+					//子节点为叶子节点，记录中墩和尾墩，由叶子节点向上查找根节点
+					leafList.push_back(EnumTree::TraverseTreeNode(childEnumList, cursorChild));
+					if (leafList.size() >= MAX_DEPTH)
+						goto end;
 				}
 			}
+			if (!childEnumList->insert_) {
+				childEnumList->insert_ = true;
+				
+				//printf("--- *** --------------------------------------------------\n");
+				//rootEnumList->PrintCursorEnumCards();
+				//printf("--- *** *** *** *** *** 余牌：%s\n", StringCards(cpy, cpylen).c_str());
+				//printf("--- *** --------------------------------------------------\n");
+				
+				//根节点为叶子节点，记录尾墩
+				leafList.push_back(EnumTree::TraverseTreeNode(rootEnumList, cursorRoot));
+				if (leafList.size() >= MAX_DEPTH)
+					goto end;
+			}
 		}
+	end:
+		//printf("--- *** *** *** *** *** leafList.size = %d\n", leafList.size());
 #ifdef _MEMORY_LEAK_DETECK_
-		printf("--- *** hand[%d]malloc MemoryCount = %d\n", hand.chairID, hand.rootEnumList->MemoryCount_);
+		//printf("--- *** hand[%d]malloc MemoryCount = %d\n", hand.chairID, hand.rootEnumList->MemoryCount_);
 #endif
 		hand.CalcHandCardsType(src, len);
 		return c;
@@ -2983,6 +2961,18 @@ namespace S13S {
 	//确定手牌牌型
 	void CGameLogic::handinfo_t::CalcHandCardsType(uint8_t const* src, int len) {
 		
+		/*
+		* 枚举节点
+		*			尾max      中      头
+		*			尾min      中max   头
+		*			尾min      中mmin  头max
+		* 
+		* 叶子节点倒序排列
+		*			尾
+		*			中  尾
+		*			头  中  尾
+		*/
+		//尾max/中max/头max
 		//叶子节点(头墩)/子节点(中墩)/根节点(尾墩)
 		int cursorLeaf = 0, cursorChild = 0, cursorRoot = 0;
 		HandTy tyLeaf = TyNil, tyChild = TyNil, tyRoot = TyNil;
@@ -3019,7 +3009,7 @@ namespace S13S {
 				groupdun_t group;
 				//尾墩
 				{
-					EnumTree::TreeNode& treeNode = nodeLeaf->tree[cursorLeaf];
+					EnumTree::TreeNode& treeNode = nodeLeaf->tree_[cursorLeaf];
 					EnumTree::EnumItem& leafItem = treeNode.first;
 					tyRoot = leafItem.first;
 					root = leafItem.second;
@@ -3162,7 +3152,7 @@ namespace S13S {
 				groupdun_t group;
 				//中墩
 				{
-					EnumTree::TreeNode& treeNode = nodeLeaf->tree[cursorLeaf];
+					EnumTree::TreeNode& treeNode = nodeLeaf->tree_[cursorLeaf];
 					EnumTree::EnumItem& leafItem = treeNode.first;
 					tyChild = leafItem.first;
 					child = leafItem.second;
@@ -3173,7 +3163,7 @@ namespace S13S {
 				cursorRoot = nodeLeaf->parentcursor_;//
 				{
 					assert(nodeRoot != NULL);
-					EnumTree::TreeNode& treeNode = nodeRoot->tree[cursorRoot];
+					EnumTree::TreeNode& treeNode = nodeRoot->tree_[cursorRoot];
 					EnumTree::EnumItem& rootItem = treeNode.first;
 					tyRoot = rootItem.first;
 					root = rootItem.second;
@@ -3344,7 +3334,7 @@ namespace S13S {
 				groupdun_t group;
 				//头墩
 				{
-					EnumTree::TreeNode& treeNode = nodeLeaf->tree[cursorLeaf];
+					EnumTree::TreeNode& treeNode = nodeLeaf->tree_[cursorLeaf];
 					EnumTree::EnumItem& leafItem = treeNode.first;
 					tyLeaf = leafItem.first;
 					leaf = leafItem.second;
@@ -3356,7 +3346,7 @@ namespace S13S {
 				cursorChild = nodeLeaf->parentcursor_;//
 				{
 					assert(nodeChild != NULL);
-					EnumTree::TreeNode& treeNode = nodeChild->tree[cursorChild];
+					EnumTree::TreeNode& treeNode = nodeChild->tree_[cursorChild];
 					EnumTree::EnumItem& childItem = treeNode.first;
 					tyChild = childItem.first;
 					child = childItem.second;
@@ -3367,7 +3357,7 @@ namespace S13S {
 				cursorRoot = nodeChild->parentcursor_;//
 				{
 					assert(nodeRoot != NULL);
-					EnumTree::TreeNode& treeNode = nodeRoot->tree[cursorRoot];
+					EnumTree::TreeNode& treeNode = nodeRoot->tree_[cursorRoot];
 					EnumTree::EnumItem& rootItem = treeNode.first;
 					tyRoot = rootItem.first;
 					root = rootItem.second;
@@ -4017,7 +4007,7 @@ namespace S13S {
 		groups.push_back(pdst);
 		s13s::CMD_S_CompareCards compareCards[2];
 		int c = 0;
-		int chairIDs[MaxEnumSZ] = { 0 };
+		int chairIDs[groups.size()];
 		for (int i = 0; i < groups.size(); ++i) {
 			//用于求两两组合
 			chairIDs[c++] = i;
@@ -5302,8 +5292,13 @@ namespace S13S {
 				}
 			}
 		}
+		enum {
+			TOSHOOT = 0,
+			FROMSHOOT = 1,
+			MAX_
+		};
 		//玩家对其它玩家打枪
-		std::map<uint8_t, std::vector<uint8_t>> shootIds;
+		std::map<uint8_t, std::set<uint8_t>> shootIds[MAX_];
 		//统计判断打枪/全垒打
 		for (int i = 0; i < groups.size(); ++i) {
 			if (true) {
@@ -5339,22 +5334,42 @@ namespace S13S {
 						continue;
 					}
 					if (winc == result.items_size()) {
-						//玩家三墩全部胜过比牌对象，则玩家对比牌对象打枪，中枪者付给打枪者2倍的水
+						//玩家三墩全部胜过比牌对象，则玩家对比牌对象打枪(i->peer=1)，中枪者付给打枪者2倍的水
 						const_cast<s13s::CompareResult&>(result).set_shoot(1);//-1被打枪/0不打枪/1打枪
 						//统计当前玩家打枪次数
 						++shootc;
-						//玩家对比牌对象打枪
-						shootIds[i].push_back(peer.chairid());
+						//玩家对比牌对象打枪(peer->i=-1)
+						shootIds[TOSHOOT][i].insert(peer.chairid());
+						shootIds[FROMSHOOT][peer.chairid()].insert(i);
+						for (int l = 0; l < compareCards[peer.chairid()].peers_size(); ++l) {
+							s13s::ComparePlayer const& peer_ = compareCards[peer.chairid()].peers(l);
+							s13s::CompareResult const& result_ = compareCards[peer.chairid()].results(l);
+							if (peer_.chairid() == i) {
+								const_cast<s13s::CompareResult&>(result_).set_shoot(-1);
+								break;
+							}
+						}
 					}
 					else if (lostc == result.items_size()) {
-						//比牌对象三墩全部胜过玩家，则比牌对象对玩家打枪，中枪者付给打枪者2倍的水
+						//比牌对象三墩全部胜过玩家，则比牌对象对玩家打枪(i->peer=-1)，中枪者付给打枪者2倍的水
 						const_cast<s13s::CompareResult&>(result).set_shoot(-1);//-1被打枪/0不打枪/1打枪
+						//比牌对象对玩家打枪(peer->i=1)
+						shootIds[TOSHOOT][peer.chairid()].insert(i);
+						shootIds[FROMSHOOT][i].insert(peer.chairid());
+						for (int l = 0; l < compareCards[peer.chairid()].peers_size(); ++l) {
+							s13s::ComparePlayer const& peer_ = compareCards[peer.chairid()].peers(l);
+							s13s::CompareResult const& result_ = compareCards[peer.chairid()].results(l);
+							if (peer_.chairid() == i) {
+								const_cast<s13s::CompareResult&>(result_).set_shoot(1);
+								break;
+							}
+						}
 					}
 					else {
 						const_cast<s13s::CompareResult&>(result).set_shoot(0);//-1被打枪/0不打枪/1打枪
 					}
 				}
-				if (shootc == compareCards[i].peers_size() && compareCards[i].peers_size() > 1) {
+				if (shootc == compareCards[i].peers_size() && compareCards[i].peers_size() > 2/*1*/) {
 					//全垒打，玩家三墩全部胜过其它玩家，且至少打2枪，中枪者付给打枪者4倍的水
 					compareCards[i].set_allshoot(1);//-1被全垒打/0无全垒打/1全垒打
 					//其它比牌对象都是被全垒打
@@ -5380,17 +5395,40 @@ namespace S13S {
 				for (int j = 0; j < compareCards[i].peers_size(); ++j) {
 					s13s::ComparePlayer const& peer = compareCards[i].peers(j);
 					//s13s::CompareResult const& result = compareCards[i].results(j);
+					//toshootIds 作为打枪者(shoot=1)，被打枪者座椅ID列表
+					{
+						std::map<uint8_t, std::set<uint8_t>>::const_iterator it = shootIds[TOSHOOT].find(peer.chairid());
+						if (it != shootIds[TOSHOOT].end()) {
+							for (std::set<uint8_t>::const_iterator ir = it->second.begin();
+								ir != it->second.end(); ++ir) {
+								const_cast<s13s::ComparePlayer&>(peer).add_toshootids(*ir);
+							}
+						}
+					}
+					//fromshootIds 作为被打枪者(shoot=-1)，来自打枪者座椅ID列表
+					{
+						std::map<uint8_t, std::set<uint8_t>>::const_iterator it = shootIds[FROMSHOOT].find(peer.chairid());
+						if (it != shootIds[FROMSHOOT].end()) {
+							for (std::set<uint8_t>::const_iterator ir = it->second.begin();
+								ir != it->second.end(); ++ir) {
+								const_cast<s13s::ComparePlayer&>(peer).add_fromshootids(*ir);
+							}
+						}
+					}
+#if 0
 					std::map<uint8_t, std::vector<uint8_t>>::const_iterator it = shootIds.find(peer.chairid());
 					if (it != shootIds.end()) {
-						for (std::vector<uint8_t>::const_iterator ir = it->second.begin();
+						for (std::set<uint8_t>::const_iterator ir = it->second.begin();
 							ir != it->second.end(); ++ir) {
 							//排除当前玩家
 							if (*ir != i) {
 								assert(player.chairid() == i);
+								assert(bPlaying_[*ir]);
 								const_cast<s13s::ComparePlayer&>(peer).add_shootids(*ir);
 							}
 						}
 					}
+#endif
 				}
 			}
 		}
@@ -5616,54 +5654,45 @@ namespace S13S {
 	void CGameLogic::EnumTree::Init(DunTy dt) {
 		//按同花顺/铁支/葫芦/同花/顺子/三条/两对/对子顺序依次进行
 		{
-			c = 0;
 			//同花顺
 			for (std::vector<CardData>::const_iterator it = v123sc.begin();
 				it != v123sc.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty123sc, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty123sc, &*it), NULL));
 			}
 			//铁支
 			for (std::vector<CardData>::const_iterator it = v40.begin();
 				it != v40.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty40, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty40, &*it), NULL));
 			}
 			//葫芦
 			for (std::vector<CardData>::const_iterator it = v32.begin();
 				it != v32.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty32, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty32, &*it), NULL));
 			}
 			//同花
 			for (std::vector<CardData>::const_iterator it = vsc.begin();
 				it != vsc.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Tysc, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Tysc, &*it), NULL));
 			}
 			//顺子
 			for (std::vector<CardData>::const_iterator it = v123.begin();
 				it != v123.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty123, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty123, &*it), NULL));
 			}
 			//三条
 			for (std::vector<CardData>::const_iterator it = v30.begin();
 				it != v30.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty30, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty30, &*it), NULL));
 			}
 			//两对
 			for (std::vector<CardData>::const_iterator it = v22.begin();
 				it != v22.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty22, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty22, &*it), NULL));
 			}
 			//对子
 			for (std::vector<CardData>::const_iterator it = v20.begin();
 				it != v20.end(); ++it) {
-				assert(c < MaxEnumSZ);
-				tree[c++] = std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty20, &*it), NULL);
+				tree_.emplace_back(std::make_pair<EnumItem, EnumTree*>(std::make_pair(Ty20, &*it), NULL));
 			}
 			//printf("-- *** tree.size = %d\n", c);
 		}
@@ -5685,8 +5714,9 @@ namespace S13S {
 		v30.clear();
 		v22.clear();
 		v20.clear();
-		c = 0;
+		tree_.clear();
 		cursor_ = -1;
+		insert_ = false;
 	}
 
 	//重置游标
@@ -5696,7 +5726,7 @@ namespace S13S {
 
 	//返回下一个游标
 	bool CGameLogic::EnumTree::GetNextCursor(int& cursor) {
-		if (++cursor_ < c) {
+		if (++cursor_ < tree_.size()) {
 			cursor = cursor_;
 			return true;
 		}
@@ -5827,13 +5857,13 @@ namespace S13S {
 	
 	//返回游标处枚举牌型
 	CGameLogic::EnumTree::EnumItem const* CGameLogic::EnumTree::GetCursorItem(int cursor) {
-		return cursor < c ? &tree[cursor].first : NULL;
+		return cursor < tree_.size() ? &tree_[cursor].first : NULL;
 	}
 	
 	//返回游标处枚举牌型对应余牌枚举子项列表指针
 	CGameLogic::EnumTree*& CGameLogic::EnumTree::GetCursorChild(int cursor)/* __attribute__((noreturn))*/ {
-		assert(cursor < c);
-		return tree[cursor].second;
+		assert(cursor < tree_.size());
+		return tree_[cursor].second;
 	}
 
 	//返回下一个枚举牌型(从大到小返回)
@@ -5842,9 +5872,9 @@ namespace S13S {
 		int& cursor, uint8_t *cpy, int& cpylen) {
 		ty = TyNil;
 		cpylen = 0;
-		if (++cursor_ < c) {
-			ty = tree[cursor_].first.first;
-			dst = tree[cursor_].first.second;
+		if (++cursor_ < tree_.size()) {
+			ty = tree_[cursor_].first.first;
+			dst = tree_[cursor_].first.second;
 			cursor = cursor_;
 			for (int i = 0; i < len; ++i) {
 				CardData::const_iterator it;
@@ -6732,8 +6762,6 @@ namespace S13S {
 			}
 			break;
 		}
-		//默认情况
-		case TyNil:
 		default: return sp ? CompareCardPointBy(src, srcLen, dst, dstLen, clr) : 0;
 		}
 		//assert(false);
@@ -8896,8 +8924,13 @@ namespace S13S {
 						}
 					}
 				}
+				enum {
+					TOSHOOT = 0,
+					FROMSHOOT = 1,
+					MAX_
+				};
 				//玩家对其它玩家打枪
-				std::map<uint8_t, std::vector<uint8_t>> shootIds;
+				std::map<uint8_t, std::set<uint8_t>> shootIds[MAX_];
 				//统计判断打枪/全垒打
 				for (int i = 0; i < GAME_PLAYER; ++i) {
 					if (true) {
@@ -8933,16 +8966,36 @@ namespace S13S {
 								continue;
 							}
 							if (winc == result.items_size()) {
-								//玩家三墩全部胜过比牌对象，则玩家对比牌对象打枪，中枪者付给打枪者2倍的水
+								//玩家三墩全部胜过比牌对象，则玩家对比牌对象打枪(i->peer=1)，中枪者付给打枪者2倍的水
 								const_cast<s13s::CompareResult&>(result).set_shoot(1);//-1被打枪/0不打枪/1打枪
 								//统计当前玩家打枪次数
 								++shootc;
-								//玩家对比牌对象打枪
-								shootIds[i].push_back(peer.chairid());
+								//玩家对比牌对象打枪(peer->i=-1)
+								shootIds[TOSHOOT][i].insert(peer.chairid());
+								shootIds[FROMSHOOT][peer.chairid()].insert(i);
+								for (int l = 0; l < compareCards[peer.chairid()].peers_size(); ++l) {
+									s13s::ComparePlayer const& peer_ = compareCards[peer.chairid()].peers(l);
+									s13s::CompareResult const& result_ = compareCards[peer.chairid()].results(l);
+									if (peer_.chairid() == i) {
+										const_cast<s13s::CompareResult&>(result_).set_shoot(-1);
+										break;
+									}
+								}
 							}
 							else if (lostc == result.items_size()) {
-								//比牌对象三墩全部胜过玩家，则比牌对象对玩家打枪，中枪者付给打枪者2倍的水
+								//比牌对象三墩全部胜过玩家，则比牌对象对玩家打枪(i->peer=-1)，中枪者付给打枪者2倍的水
 								const_cast<s13s::CompareResult&>(result).set_shoot(-1);//-1被打枪/0不打枪/1打枪
+								//比牌对象对玩家打枪(peer->i=1)
+								shootIds[TOSHOOT][peer.chairid()].insert(i);
+								shootIds[FROMSHOOT][i].insert(peer.chairid());
+								for (int l = 0; l < compareCards[peer.chairid()].peers_size(); ++l) {
+									s13s::ComparePlayer const& peer_ = compareCards[peer.chairid()].peers(l);
+									s13s::CompareResult const& result_ = compareCards[peer.chairid()].results(l);
+									if (peer_.chairid() == i) {
+										const_cast<s13s::CompareResult&>(result_).set_shoot(1);
+										break;
+									}
+								}
 							}
 							else {
 								const_cast<s13s::CompareResult&>(result).set_shoot(0);//-1被打枪/0不打枪/1打枪
@@ -8974,9 +9027,30 @@ namespace S13S {
 						for (int j = 0; j < compareCards[i].peers_size(); ++j) {
 							s13s::ComparePlayer const& peer = compareCards[i].peers(j);
 							//s13s::CompareResult const& result = compareCards[i].results(j);
+							//toshootIds 作为打枪者(shoot=1)，被打枪者座椅ID列表
+							{
+								std::map<uint8_t, std::set<uint8_t>>::const_iterator it = shootIds[TOSHOOT].find(peer.chairid());
+								if (it != shootIds[TOSHOOT].end()) {
+									for (std::set<uint8_t>::const_iterator ir = it->second.begin();
+										ir != it->second.end(); ++ir) {
+										const_cast<s13s::ComparePlayer&>(peer).add_toshootids(*ir);
+									}
+								}
+							}
+							//fromshootIds 作为被打枪者(shoot=-1)，来自打枪者座椅ID列表
+							{
+								std::map<uint8_t, std::set<uint8_t>>::const_iterator it = shootIds[FROMSHOOT].find(peer.chairid());
+								if (it != shootIds[FROMSHOOT].end()) {
+									for (std::set<uint8_t>::const_iterator ir = it->second.begin();
+										ir != it->second.end(); ++ir) {
+										const_cast<s13s::ComparePlayer&>(peer).add_fromshootids(*ir);
+									}
+								}
+							}
+#if 0
 							std::map<uint8_t, std::vector<uint8_t>>::const_iterator it = shootIds.find(peer.chairid());
 							if (it != shootIds.end()) {
-								for (std::vector<uint8_t>::const_iterator ir = it->second.begin();
+								for (std::set<uint8_t>::const_iterator ir = it->second.begin();
 									ir != it->second.end(); ++ir) {
 									//排除当前玩家
 									if (*ir != i) {
@@ -8985,6 +9059,7 @@ namespace S13S {
 									}
 								}
 							}
+#endif
 						}
 					}
 				}
